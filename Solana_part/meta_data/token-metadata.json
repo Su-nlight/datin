@@ -2,6 +2,6 @@
   "name": "DATIN Coin",
   "symbol": "DTNC",
   "description": "Public Token for individual users in Datin Application. Does not have a stable value.",
-  "image": "https://github.com/Su-nlight/datin-notfinal/blob/main/Solana_part/meta_data/logo.png",
+  "image": "https://raw.githubusercontent.com/Su-nlight/datin-notfinal/refs/heads/main/Solana_part/meta_data/logo.png",
   "external_url": "https://portfolio.asyncsunlight.me/"
 }
