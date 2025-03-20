@@ -1,0 +1,1726 @@
+[
+    {
+        "id": "x-mitre-collection--dac0d2d7-8653-445c-9bff-82f934c1e858",
+        "name": "Mobile ATT&CK",
+        "description": "ATT&CK for Mobile is a matrix of adversary behavior against mobile devices (smartphones and tablets running the Android or iOS/iPadOS operating systems). ATT&CK for Mobile builds upon NIST's Mobile Threat Catalogue and also contains a separate matrix of network-based effects, which are techniques that an adversary can employ without access to the mobile device itself.",
+        "type": "x-mitre-collection",
+        "created": "2018-01-17T12:56:55.080Z",
+        "modified": "2019-04-30T13:45:13.024Z"
+    },
+    {
+        "id": "course-of-action--25dc1ce8-eb55-4333-ae30-a7cb4f5894a1",
+        "name": "Application Developer Guidance",
+        "description": "This mitigation describes any guidance or training given to developers of applications to avoid introducing security weaknesses that an adversary may be able to take advantage of.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:53.732Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1013",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1013"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--1553b156-6767-47f7-9eb4-2a692505666d",
+        "name": "Application Vetting",
+        "description": "Enterprises can vet applications for exploitable vulnerabilities or unwanted (privacy-invasive or malicious) behaviors. Enterprises can inspect applications themselves or use a third-party service.\n\nEnterprises may impose policies to only allow pre-approved applications to be installed on their devices or may impose policies to block use of specific applications known to have issues. In Bring Your Own Device (BYOD) environments, enterprises may only be able to impose these policies over an enterprise-managed portion of the device.\n\nApplication Vetting is not a complete mitigation. Techniques such as [Detect App Analysis Environment](https://attack.mitre.org/techniques/T1440) exist that can enable adversaries to bypass vetting.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:51.942Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1005",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1005"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--ff4821f6-5afb-481b-8c0f-26c28c0d666c",
+        "name": "Attestation",
+        "description": "Enable remote attestation capabilities when available (such as Android SafetyNet or Samsung Knox TIMA Attestation) and prohibit devices that fail the attestation from accessing enterprise resources.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:52.933Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1002",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1002"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--e944670c-d03a-4e93-a21c-b3d4c53ec4c9",
+        "name": "Caution with Device Administrator Access",
+        "description": "Warn device users not to accept requests to grant Device Administrator access to applications without good reason.\n\nAdditionally, application vetting should include a check on whether the application requests Device Administrator access. Applications that do request Device Administrator access should be carefully scrutinized and only allowed to be used if a valid reason exists.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:51.365Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1007",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1007"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--cf2cccb1-cab8-431a-8ecf-f7874d05f433",
+        "name": "Deploy Compromised Device Detection Method",
+        "description": "A variety of methods exist that can be used to enable enterprises to identify compromised (e.g. rooted/jailbroken) devices, whether using security mechanisms built directly into the device, third-party mobile security applications, enterprise mobility management (EMM)/mobile device management (MDM) capabilities, or other methods. Some methods may be trivial to evade while others may be more sophisticated.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:52.601Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1010",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1010"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--8220b57e-c400-4525-bf69-f8edc6b389a8",
+        "name": "Encrypt Network Traffic",
+        "description": "Application developers should encrypt all of their application network traffic using the Transport Layer Security (TLS) protocol to ensure protection of sensitive data and deter network-based attacks. If desired, application developers could perform message-based encryption of data before passing it for TLS encryption.\n\niOS's App Transport Security feature can be used to help ensure that all application network traffic is appropriately protected. Apple intends to mandate use of App Transport Security  (Citation: TechCrunch-ATS) for all apps in the Apple App Store unless appropriate justification is given.\n\nAndroid's Network Security Configuration feature similarly can be used by app developers to help ensure that all of their application network traffic is appropriately protected  (Citation: Android-NetworkSecurityConfig).\n\nUse of Virtual Private Network (VPN) tunnels, e.g. using the IPsec protocol, can help mitigate some types of network attacks as well.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:50.769Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1009",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1009"
+            },
+            {
+                "url": "https://techcrunch.com/2016/06/14/apple-will-require-https-connections-for-ios-apps-by-the-end-of-2016/",
+                "source_name": "TechCrunch-ATS",
+                "description": "Kate Conger. (2016, June 14). Apple will require HTTPS connections for iOS apps by the end of 2016. Retrieved December 19, 2016."
+            },
+            {
+                "url": "https://developer.android.com/training/articles/security-config.html",
+                "source_name": "Android-NetworkSecurityConfig",
+                "description": "Google. (n.d.). Network Security Configuration. Retrieved December 19, 2016."
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--649f7268-4c12-483b-ac84-4b7bca9fe2ee",
+        "name": "Enterprise Policy",
+        "description": "An enterprise mobility management (EMM), also known as mobile device management (MDM), system can be used to provision policies to mobile devices to control aspects of their allowed behavior.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:53.318Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1012",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1012"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--e829ee51-1caf-4665-ba15-7f8979634124",
+        "name": "Interconnection Filtering",
+        "description": "In order to mitigate Signaling System 7 (SS7) exploitation, the Communications, Security, Reliability, and Interoperability Council (CSRIC) describes filtering interconnections between network operators to block inappropriate requests (Citation: CSRIC5-WG10-FinalReport).",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:50.181Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1014",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1014"
+            },
+            {
+                "url": "https://www.fcc.gov/files/csric5-wg10-finalreport031517pdf",
+                "source_name": "CSRIC5-WG10-FinalReport",
+                "description": "Communications Security, Reliability, Interoperability Council (CSRIC). (2017, March). Working Group 10 Legacy Systems Risk Reductions Final Report. Retrieved May 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--8ccd428d-39da-4e8f-a55b-d48ea1d56e58",
+        "name": "Lock Bootloader",
+        "description": "On devices that provide the capability to unlock the bootloader (hence allowing any operating system code to be flashed onto the device), perform periodic checks to ensure that the bootloader is locked.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:49.554Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1003",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1003"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--bcecd036-f40e-4916-9f8e-fd0ccf0ece8d",
+        "name": "Security Updates",
+        "description": "Install security updates in response to discovered vulnerabilities.\n\nPurchase devices with a vendor and/or mobile carrier commitment to provide security updates in a prompt manner for a set period of time.\n\nDecommission devices that will no longer receive security updates.\n\nLimit or block access to enterprise resources from devices that have not installed recent security updates.\n\nOn Android devices, access can be controlled based on each device's security patch level. On iOS devices, access can be controlled based on the iOS version.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:50.493Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1001",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1001"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--7b1cf46f-784b-405a-a8dd-4624c19d8321",
+        "name": "System Partition Integrity",
+        "description": "Ensure that Android devices being used include and enable the Verified Boot capability, which cryptographically ensures the integrity of the system partition.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:52.270Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1004",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1004"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--d2a199d2-dfea-4d0c-987d-6195ed17be9c",
+        "name": "Use Device-Provided Credential Storage",
+        "description": "Application developers should use device-provided credential storage mechanisms such as Android's KeyStore or iOS's KeyChain. These can prevent credentials from being exposed to an adversary.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:51.053Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1008",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1008"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--0beabf44-e8d8-4ae4-9122-ef56369a2564",
+        "name": "Use Recent OS Version",
+        "description": "New mobile operating system versions bring not only patches against discovered vulnerabilities but also often bring security architecture improvements that provide resilience against potential vulnerabilities or weaknesses that have not yet been discovered. They may also bring improvements that block use of observed adversary techniques.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:51.657Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1006",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1006"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--653492e3-27be-4a0e-b08c-938dd2b7e0e1",
+        "name": "User Guidance",
+        "description": "Describes any guidance or training given to users to set particular configuration settings or avoid specific potentially risky behaviors.",
+        "type": "course-of-action",
+        "created": "2017-10-25T14:48:49.838Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/mitigations/M1011",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "M1011"
+            }
+        ]
+    },
+    {
+        "id": "intrusion-set--bef4c620-0787-42a8-a96d-b7eb6e85917c",
+        "name": "APT28",
+        "description": "[APT28](https://attack.mitre.org/groups/G0007) is a threat group that has been attributed to Russia's Main Intelligence Directorate of the Russian General Staff by a July 2018 U.S. Department of Justice indictment. This group reportedly compromised the Hillary Clinton campaign, the Democratic National Committee, and the Democratic Congressional Campaign Committee in 2016 in an attempt to interfere with the U.S. presidential election. [APT28](https://attack.mitre.org/groups/G0007) has been active since at least January 2007.(Citation: DOJ GRU Indictment Jul 2018) (Citation: Ars Technica GRU indictment Jul 2018) (Citation: Crowdstrike DNC June 2016) (Citation: FireEye APT28) (Citation: SecureWorks TG-4127) (Citation: FireEye APT28 January 2017) (Citation: GRIZZLY STEPPE JAR) (Citation: Sofacy DealersChoice) (Citation: Palo Alto Sofacy 06-2018) (Citation: Symantec APT28 Oct 2018)",
+        "type": "intrusion-set",
+        "created": "2017-05-31T21:31:48.664Z",
+        "modified": "2019-04-29T18:16:13.040Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/groups/G0007",
+                "source_name": "mitre-attack",
+                "external_id": "G0007"
+            },
+            {
+                "source_name": "APT28",
+                "description": "(Citation: FireEye APT28) (Citation: SecureWorks TG-4127) (Citation: Crowdstrike DNC June 2016) (Citation: Kaspersky Sofacy) (Citation: ESET Sednit Part 3) (Citation: Ars Technica GRU indictment Jul 2018)(Citation: Talos Seduploader Oct 2017)(Citation: Symantec APT28 Oct 2018)(Citation: Securelist Sofacy Feb 2018)"
+            },
+            {
+                "source_name": "SNAKEMACKEREL",
+                "description": "(Citation: Accenture SNAKEMACKEREL Nov 2019)"
+            },
+            {
+                "source_name": "Swallowtail",
+                "description": "(Citation: Symantec APT28 Oct 2018)"
+            },
+            {
+                "source_name": "Group 74",
+                "description": "(Citation: Talos Seduploader Oct 2017)"
+            },
+            {
+                "source_name": "Sednit",
+                "description": "This designation has been used in reporting both to refer to the threat group and its associated malware JHUHUGIT. (Citation: FireEye APT28 January 2017) (Citation: SecureWorks TG-4127) (Citation: Kaspersky Sofacy) (Citation: Ars Technica GRU indictment Jul 2018)"
+            },
+            {
+                "source_name": "Sofacy",
+                "description": "This designation has been used in reporting both to refer to the threat group and its associated malware. (Citation: FireEye APT28) (Citation: SecureWorks TG-4127) (Citation: Crowdstrike DNC June 2016) (Citation: ESET Sednit Part 3) (Citation: Ars Technica GRU indictment Jul 2018)(Citation: Talos Seduploader Oct 2017)"
+            },
+            {
+                "source_name": "Pawn Storm",
+                "description": "(Citation: SecureWorks TG-4127) (Citation: ESET Sednit Part 3)"
+            },
+            {
+                "source_name": "Fancy Bear",
+                "description": "(Citation: Crowdstrike DNC June 2016) (Citation: Kaspersky Sofacy) (Citation: ESET Sednit Part 3) (Citation: Ars Technica GRU indictment Jul 2018)(Citation: Talos Seduploader Oct 2017)(Citation: Symantec APT28 Oct 2018)(Citation: Securelist Sofacy Feb 2018)"
+            },
+            {
+                "source_name": "STRONTIUM",
+                "description": "(Citation: Kaspersky Sofacy) (Citation: ESET Sednit Part 3)"
+            },
+            {
+                "source_name": "Tsar Team",
+                "description": "(Citation: ESET Sednit Part 3)(Citation: Talos Seduploader Oct 2017)(Citation: Talos Seduploader Oct 2017)"
+            },
+            {
+                "source_name": "Threat Group-4127",
+                "description": "(Citation: SecureWorks TG-4127)"
+            },
+            {
+                "source_name": "TG-4127",
+                "description": "(Citation: SecureWorks TG-4127)"
+            },
+            {
+                "url": "https://www.justice.gov/file/1080281/download",
+                "source_name": "DOJ GRU Indictment Jul 2018",
+                "description": "Mueller, R. (2018, July 13). Indictment - United States of America vs. VIKTOR BORISOVICH NETYKSHO, et al. Retrieved September 13, 2018."
+            },
+            {
+                "url": "https://arstechnica.com/information-technology/2018/07/from-bitly-to-x-agent-how-gru-hackers-targeted-the-2016-presidential-election/",
+                "source_name": "Ars Technica GRU indictment Jul 2018",
+                "description": "Gallagher, S. (2018, July 27). How they did it (and will likely try again): GRU hackers vs. US elections. Retrieved September 13, 2018."
+            },
+            {
+                "url": "https://www.crowdstrike.com/blog/bears-midst-intrusion-democratic-national-committee/",
+                "source_name": "Crowdstrike DNC June 2016",
+                "description": "Alperovitch, D.. (2016, June 15). Bears in the Midst: Intrusion into the Democratic National Committee. Retrieved August 3, 2016."
+            },
+            {
+                "url": "https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/rpt-apt28.pdf",
+                "source_name": "FireEye APT28",
+                "description": "FireEye. (2015). APT28: A WINDOW INTO RUSSIA\u2019S CYBER ESPIONAGE OPERATIONS?. Retrieved August 19, 2015."
+            },
+            {
+                "url": "https://www.secureworks.com/research/threat-group-4127-targets-hillary-clinton-presidential-campaign",
+                "source_name": "SecureWorks TG-4127",
+                "description": "SecureWorks Counter Threat Unit Threat Intelligence. (2016, June 16). Threat Group-4127 Targets Hillary Clinton Presidential Campaign. Retrieved August 3, 2016."
+            },
+            {
+                "url": "https://www2.fireeye.com/rs/848-DID-242/images/APT28-Center-of-Storm-2017.pdf",
+                "source_name": "FireEye APT28 January 2017",
+                "description": "FireEye iSIGHT Intelligence. (2017, January 11). APT28: At the Center of the Storm. Retrieved January 11, 2017."
+            },
+            {
+                "url": "https://www.us-cert.gov/sites/default/files/publications/JAR_16-20296A_GRIZZLY%20STEPPE-2016-1229.pdf",
+                "source_name": "GRIZZLY STEPPE JAR",
+                "description": "Department of Homeland Security and Federal Bureau of Investigation. (2016, December 29). GRIZZLY STEPPE \u2013 Russian Malicious Cyber Activity. Retrieved January 11, 2017."
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2018/03/unit42-sofacy-uses-dealerschoice-target-european-government-agency/",
+                "source_name": "Sofacy DealersChoice",
+                "description": "Falcone, R. (2018, March 15). Sofacy Uses DealersChoice to Target European Government Agency. Retrieved June 4, 2018."
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2018/06/unit42-sofacy-groups-parallel-attacks/",
+                "source_name": "Palo Alto Sofacy 06-2018",
+                "description": "Lee, B., Falcone, R. (2018, June 06). Sofacy Group\u2019s Parallel Attacks. Retrieved June 18, 2018."
+            },
+            {
+                "url": "https://www.symantec.com/blogs/election-security/apt28-espionage-military-government",
+                "source_name": "Symantec APT28 Oct 2018",
+                "description": "Symantec Security Response. (2018, October 04). APT28: New Espionage Operations Target Military and Government Organizations. Retrieved November 14, 2018."
+            },
+            {
+                "url": "https://securelist.com/sofacy-apt-hits-high-profile-targets-with-updated-toolset/72924/",
+                "source_name": "Kaspersky Sofacy",
+                "description": "Kaspersky Lab's Global Research and Analysis Team. (2015, December 4). Sofacy APT hits high profile targets with updated toolset. Retrieved December 10, 2015."
+            },
+            {
+                "url": "http://www.welivesecurity.com/wp-content/uploads/2016/10/eset-sednit-part3.pdf",
+                "source_name": "ESET Sednit Part 3",
+                "description": "ESET. (2016, October). En Route with Sednit - Part 3: A Mysterious Downloader. Retrieved November 21, 2016."
+            },
+            {
+                "url": "https://blog.talosintelligence.com/2017/10/cyber-conflict-decoy-document.html",
+                "source_name": "Talos Seduploader Oct 2017",
+                "description": "Mercer, W., et al. (2017, October 22). \"Cyber Conflict\" Decoy Document Used in Real Cyber Conflict. Retrieved November 2, 2018."
+            },
+            {
+                "url": "https://securelist.com/a-slice-of-2017-sofacy-activity/83930/",
+                "source_name": "Securelist Sofacy Feb 2018",
+                "description": "Kaspersky Lab's Global Research & Analysis Team. (2018, February 20). A Slice of 2017 Sofacy Activity. Retrieved November 27, 2018."
+            },
+            {
+                "url": "https://www.accenture.com/t20181129T203820Z__w__/us-en/_acnmedia/PDF-90/Accenture-snakemackerel-delivers-zekapab-malware.pdf#zoom=50",
+                "source_name": "Accenture SNAKEMACKEREL Nov 2019",
+                "description": "Accenture Security. (2019, November 29). SNAKEMACKEREL. Retrieved April 15, 2019."
+            }
+        ]
+    },
+    {
+        "id": "malware--4bf6ba32-4165-42c1-b911-9c36165891c8",
+        "name": "ANDROIDOS_ANSERVER.A",
+        "description": "[ANDROIDOS_ANSERVER.A](https://attack.mitre.org/software/S0310) is Android malware that is unique because it uses encrypted content within a blog site for command and control. (Citation: TrendMicro-Anserver)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:47.965Z",
+        "modified": "2019-03-11T15:13:40.243Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0310",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0310"
+            },
+            {
+                "source_name": "ANDROIDOS_ANSERVER.A",
+                "description": "(Citation: TrendMicro-Anserver)"
+            },
+            {
+                "url": "http://blog.trendmicro.com/trendlabs-security-intelligence/android-malware-uses-blog-posts-as-cc/",
+                "source_name": "TrendMicro-Anserver",
+                "description": "Karl Dominguez. (2011, October 2). Android Malware Uses Blog Posts as C&C. Retrieved February 6, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--f6ac21b6-2592-400c-8472-10d0e2f1bfaf",
+        "name": "Adups",
+        "description": "[Adups](https://attack.mitre.org/software/S0309) is software that was pre-installed onto Android devices, including those made by BLU Products. The software was reportedly designed to help a Chinese phone manufacturer monitor user behavior, transferring sensitive data to a Chinese server. (Citation: NYTimes-BackDoor) (Citation: BankInfoSecurity-BackDoor)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:47.038Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0309",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0309"
+            },
+            {
+                "source_name": "Adups",
+                "description": "(Citation: NYTimes-BackDoor) (Citation: BankInfoSecurity-BackDoor)"
+            },
+            {
+                "url": "https://www.nytimes.com/2016/11/16/us/politics/china-phones-software-security.html",
+                "source_name": "NYTimes-BackDoor",
+                "description": "Matt Apuzzo and Michael S. Schmidt. (2016, November 15). Secret Back Door in Some U.S. Phones Sent Data to China, Analysts Say. Retrieved February 6, 2017."
+            },
+            {
+                "url": "http://www.bankinfosecurity.com/did-chinese-spyware-linger-in-us-phones-a-9534",
+                "source_name": "BankInfoSecurity-BackDoor",
+                "description": "Jeremy Kirk. (2016, November 16). Why Did Chinese Spyware Linger in U.S. Phones?. Retrieved February 6, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--08784a9d-09e9-4dce-a839-9612398214e8",
+        "name": "Allwinner",
+        "description": "[Allwinner](https://attack.mitre.org/software/S0319) is a company that supplies processors used in Android tablets and other devices. A Linux kernel distributed by [Allwinner](https://attack.mitre.org/software/S0319) for use on these devices reportedly contained a backdoor. (Citation: HackerNews-Allwinner)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0319",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0319"
+            },
+            {
+                "source_name": "Allwinner",
+                "description": "(Citation: HackerNews-Allwinner)"
+            },
+            {
+                "url": "https://thehackernews.com/2016/05/android-kernal-exploit.html",
+                "source_name": "HackerNews-Allwinner",
+                "description": "Mohit Kumar. (2016, May 11). Kernel Backdoor found in Gadgets Powered by Popular Chinese ARM Maker. Retrieved September 18, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--a3dad2be-ce62-4440-953b-00fbce7aba93",
+        "name": "AndroRAT",
+        "description": "[AndroRAT](https://attack.mitre.org/software/S0292) is malware that allows a third party to control the device and collect information. (Citation: Lookout-EnterpriseApps)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:47.363Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0292",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0292"
+            },
+            {
+                "source_name": "AndroRAT",
+                "description": "(Citation: Lookout-EnterpriseApps)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2016/05/25/spoofed-apps/",
+                "source_name": "Lookout-EnterpriseApps",
+                "description": "Lookout. (2016, May 25). 5 active mobile threats spoofing enterprise apps. Retrieved December 19, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--b6d3657a-2d6a-400f-8b7e-4d60391aa1f7",
+        "name": "Android Overlay Malware",
+        "description": "[Android Overlay Malware](https://attack.mitre.org/software/S0296) is malware that was used in a 2016 campaign targeting European countries. The malware attempted to trick users into providing banking credentials. (Citation: FireEye-AndroidOverlay)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:39.945Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0296",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0296"
+            },
+            {
+                "source_name": "Android Overlay Malware",
+                "description": "(Citation: FireEye-AndroidOverlay)"
+            },
+            {
+                "url": "https://www.fireeye.com/blog/threat-research/2016/06/latest-android-overlay-malware-spreading-in-europe.html",
+                "source_name": "FireEye-AndroidOverlay",
+                "description": "Wu Zhou et al. (2016, June 28). THE LATEST ANDROID OVERLAY MALWARE SPREADING VIA SMS PHISHING IN EUROPE. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--d05f7357-4cbe-47ea-bf83-b8604226d533",
+        "name": "Android/Chuli.A",
+        "description": "[Android/Chuli.A](https://attack.mitre.org/software/S0304) is Android malware that was delivered to activist groups via a spearphishing email with an attachment. (Citation: Kaspersky-WUC)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:45.482Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0304",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0304"
+            },
+            {
+                "source_name": "Android/Chuli.A",
+                "description": "(Citation: Kaspersky-WUC)"
+            },
+            {
+                "url": "https://securelist.com/android-trojan-found-in-targeted-attack-58/35552/",
+                "source_name": "Kaspersky-WUC",
+                "description": "Costin Raiu, Denis Maslennikov, Kurt Baumgartner. (2013, March 26). Android Trojan Found in Targeted Attack. Retrieved December 23, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--e13d084c-382f-40fd-aa9a-98d69e20301e",
+        "name": "BrainTest",
+        "description": "[BrainTest](https://attack.mitre.org/software/S0293) is a family of Android malware. (Citation: CheckPoint-BrainTest) (Citation: Lookout-BrainTest)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:47.674Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0293",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0293"
+            },
+            {
+                "source_name": "BrainTest",
+                "description": "(Citation: CheckPoint-BrainTest) (Citation: Lookout-BrainTest)"
+            },
+            {
+                "url": "http://blog.checkpoint.com/2015/09/21/braintest-a-new-level-of-sophistication-in-mobile-malware/",
+                "source_name": "CheckPoint-BrainTest",
+                "description": "Andrey Polkovnichenko and Alon Boxiner. (2015, September 21). BrainTest \u2013 A New Level of Sophistication in Mobile Malware. Retrieved December 21, 2016."
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2016/01/06/brain-test-re-emerges/",
+                "source_name": "Lookout-BrainTest",
+                "description": "Chris Dehghanpoor. (2016, January 6). Brain Test re-emerges: 13 apps found in Google Play  Read more: Brain Test re-emerges: 13 apps found in Google Play. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--d1c600f8-0fb6-4367-921b-85b71947d950",
+        "name": "Charger",
+        "description": "[Charger](https://attack.mitre.org/software/S0323) is Android malware that steals steals contacts and SMS messages from the user's device. It can also lock the device and demand ransom payment if it receives admin permissions. (Citation: CheckPoint-Charger)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:39.631Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0323",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0323"
+            },
+            {
+                "source_name": "Charger",
+                "description": "(Citation: CheckPoint-Charger)"
+            },
+            {
+                "url": "http://blog.checkpoint.com/2017/01/24/charger-malware/",
+                "source_name": "CheckPoint-Charger",
+                "description": "Oren Koriat and Andrey Polkovnichenko. (2017, January 24). Charger Malware Calls and Raises the Risk on Google Play. Retrieved January 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--317a2c10-d489-431e-b6b2-f0251fddc88e",
+        "name": "Dendroid",
+        "description": "[Dendroid](https://attack.mitre.org/software/S0301) is an Android malware family. (Citation: Lookout-Dendroid)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:37.438Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0301",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0301"
+            },
+            {
+                "source_name": "Dendroid",
+                "description": "(Citation: Lookout-Dendroid)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2014/03/06/dendroid/",
+                "source_name": "Lookout-Dendroid",
+                "description": "Marc Rogers. (2014, March 6). Dendroid malware can take over your camera, record audio, and sneak into Google Play. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--ff742eeb-1f90-4f5a-8b92-9d40fffd99ca",
+        "name": "DressCode",
+        "description": "[DressCode](https://attack.mitre.org/software/S0300) is an Android malware family. (Citation: TrendMicro-DressCode)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:37.856Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0300",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0300"
+            },
+            {
+                "source_name": "DressCode",
+                "description": "(Citation: TrendMicro-DressCode)"
+            },
+            {
+                "url": "http://blog.trendmicro.com/trendlabs-security-intelligence/dresscode-potential-impact-enterprises/",
+                "source_name": "TrendMicro-DressCode",
+                "description": "Echo Duan. (2016, September 29). DressCode and its Potential Impact for Enterprises. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--05c4f87c-be8f-46ea-8d9a-2a0aad8f52c1",
+        "name": "DroidJack",
+        "description": "[DroidJack](https://attack.mitre.org/software/S0320) is an Android remote access tool that has been observed posing as legitimate applications including the Super Mario Run and Pokemon GO games. (Citation: Zscaler-SuperMarioRun) (Citation: Proofpoint-Droidjack)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:40.571Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0320",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0320"
+            },
+            {
+                "source_name": "DroidJack",
+                "description": "(Citation: Zscaler-SuperMarioRun) (Citation: Proofpoint-Droidjack)"
+            },
+            {
+                "url": "https://www.zscaler.com/blogs/research/super-mario-run-malware-2-\u2013-droidjack-rat",
+                "source_name": "Zscaler-SuperMarioRun",
+                "description": "Viral Gandhi. (2017, January 12). Super Mario Run Malware #2 \u2013 DroidJack RAT. Retrieved January 20, 2017."
+            },
+            {
+                "url": "https://www.proofpoint.com/us/threat-insight/post/droidjack-uses-side-load-backdoored-pokemon-go-android-app",
+                "source_name": "Proofpoint-Droidjack",
+                "description": "Proofpoint. (2016, July 7). DroidJack Uses Side-Load\u2026It's Super Effective! Backdoored Pokemon GO Android App Found. Retrieved January 20, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--507fe748-5e4a-4b45-9e9f-8b1115f4e878",
+        "name": "DualToy",
+        "description": "[DualToy](https://attack.mitre.org/software/S0315) is Windows malware that installs malicious applications onto Android and iOS devices connected over USB. (Citation: PaloAlto-DualToy)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:41.721Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0315",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0315"
+            },
+            {
+                "source_name": "DualToy",
+                "description": "(Citation: PaloAlto-DualToy)"
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2016/09/dualtoy-new-windows-trojan-sideloads-risky-apps-to-android-and-ios-devices/",
+                "source_name": "PaloAlto-DualToy",
+                "description": "Claud Xiao. (2016, September 13). DualToy: New Windows Trojan Sideloads Risky Apps to Android and iOS Devices. Retrieved January 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--20d56cd6-8dff-4871-9889-d32d254816de",
+        "name": "Gooligan",
+        "description": "[Gooligan](https://attack.mitre.org/software/S0290) is a malware family that runs privilege escalation exploits on Android devices and then uses its escalated privileges to steal authentication tokens that can be used to access data from many Google applications. [Gooligan](https://attack.mitre.org/software/S0290) has been described as part of the Ghost Push Android malware family. (Citation: Gooligan Citation) (Citation: Ludwig-GhostPush) (Citation: Lookout-Gooligan)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:43.242Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0290",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0290"
+            },
+            {
+                "source_name": "Gooligan",
+                "description": "(Citation: Gooligan Citation) (Citation: Ludwig-GhostPush) (Citation: Lookout-Gooligan)"
+            },
+            {
+                "source_name": "Ghost Push",
+                "description": "Gooligan has been described as being part of the Ghost Push Android malware family. (Citation: Ludwig-GhostPush) (Citation: Lookout-Gooligan)"
+            },
+            {
+                "url": "http://blog.checkpoint.com/2016/11/30/1-million-google-accounts-breached-gooligan/",
+                "source_name": "Gooligan Citation",
+                "description": "Check Point Research Team. (2016, November 30). More Than 1 Million Google Accounts Breached by Gooligan. Retrieved December 12, 2016."
+            },
+            {
+                "url": "https://plus.google.com/+AdrianLudwig/posts/GXzJ8vaAFsi",
+                "source_name": "Ludwig-GhostPush",
+                "description": "Adrian Ludwig. (2016, November 29). The fight against Ghost Push continues. Retrieved December 12, 2016."
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2016/12/01/ghost-push-gooligan/",
+                "source_name": "Lookout-Gooligan",
+                "description": "Lookout. (2016, December 1). Ghost Push and Gooligan: One and the same. Retrieved December 12, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--c8770c81-c29f-40d2-a140-38544206b2b4",
+        "name": "HummingBad",
+        "description": "[HummingBad](https://attack.mitre.org/software/S0322) is a family of Android malware that generates fraudulent advertising revenue and has the ability to obtain root access on older, vulnerable versions of Android. (Citation: ArsTechnica-HummingBad)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:42.948Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0322",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0322"
+            },
+            {
+                "source_name": "HummingBad",
+                "description": "(Citation: ArsTechnica-HummingBad)"
+            },
+            {
+                "url": "http://arstechnica.com/security/2016/07/virulent-auto-rooting-malware-takes-control-of-10-million-android-devices/",
+                "source_name": "ArsTechnica-HummingBad",
+                "description": "Dan Goodin. (2016, July 7). 10 million Android phones infected by all-powerful auto-rooting apps. Retrieved January 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--6447e3a1-ef4d-44b1-99d5-6b1c4888674f",
+        "name": "HummingWhale",
+        "description": "[HummingWhale](https://attack.mitre.org/software/S0321) is an Android malware family that performs ad fraud. (Citation: ArsTechnica-HummingWhale)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:40.259Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0321",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0321"
+            },
+            {
+                "source_name": "HummingWhale",
+                "description": "(Citation: ArsTechnica-HummingWhale)"
+            },
+            {
+                "url": "http://arstechnica.com/security/2017/01/virulent-android-malware-returns-gets-2-million-downloads-on-google-play/",
+                "source_name": "ArsTechnica-HummingWhale",
+                "description": "Dan Goodin. (2017, January 23). Virulent Android malware returns, gets >2 million downloads on Google Play. Retrieved January 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--172444ab-97fc-4d94-b142-179452bfb760",
+        "name": "Judy",
+        "description": "[Judy](https://attack.mitre.org/software/S0325) is auto-clicking adware that was distributed through multiple apps in the Google Play Store. (Citation: CheckPoint-Judy)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0325",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0325"
+            },
+            {
+                "source_name": "Judy",
+                "description": "(Citation: CheckPoint-Judy)"
+            },
+            {
+                "url": "https://blog.checkpoint.com/2017/05/25/judy-malware-possibly-largest-malware-campaign-found-google-play/",
+                "source_name": "CheckPoint-Judy",
+                "description": "CheckPoint. (2017, May 25). The Judy Malware: Possibly the largest malware campaign found on Google Play. Retrieved September 18, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--3bc1f0ad-ef11-4afc-83c0-fcffe08d4e50",
+        "name": "KeyRaider",
+        "description": "[KeyRaider](https://attack.mitre.org/software/S0288) is malware that steals Apple account credentials and other data from jailbroken iOS devices. It also has ransomware functionality. (Citation: Xiao-KeyRaider)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:43.815Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0288",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0288"
+            },
+            {
+                "source_name": "KeyRaider",
+                "description": "(Citation: Xiao-KeyRaider)"
+            },
+            {
+                "url": "http://researchcenter.paloaltonetworks.com/2015/08/keyraider-ios-malware-steals-over-225000-apple-accounts-to-create-free-app-utopia/",
+                "source_name": "Xiao-KeyRaider",
+                "description": "Claud Xiao. (2015, August 30). KeyRaider: iOS Malware Steals Over 225,000 Apple Accounts to Create Free App Utopia. Retrieved December 12, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--f9854ba6-989d-43bf-828b-7240b8a65291",
+        "name": "Marcher",
+        "description": "[Marcher](https://attack.mitre.org/software/S0317) is Android malware that is used for financial fraud. (Citation: Proofpoint-Marcher)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0317",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0317"
+            },
+            {
+                "source_name": "Marcher",
+                "description": "(Citation: Proofpoint-Marcher)"
+            },
+            {
+                "url": "https://www.proofpoint.com/us/threat-insight/post/credential-phishing-and-android-banking-trojan-combine-austrian-mobile-attacks",
+                "source_name": "Proofpoint-Marcher",
+                "description": "Proofpoint. (2017, November 3). Credential phishing and an Android banking Trojan combine in Austrian mobile attacks. Retrieved July 6, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--5ddf81ea-2c06-497b-8c30-5f1ab89a40f9",
+        "name": "MazarBOT",
+        "description": "[MazarBOT](https://attack.mitre.org/software/S0303) is Android malware that was distributed via SMS in Denmark in 2016. (Citation: Tripwire-MazarBOT)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:40.875Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0303",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0303"
+            },
+            {
+                "source_name": "MazarBOT",
+                "description": "(Citation: Tripwire-MazarBOT)"
+            },
+            {
+                "url": "https://www.tripwire.com/state-of-security/security-data-protection/android-malware-sms/",
+                "source_name": "Tripwire-MazarBOT",
+                "description": "Graham Cluley. (2016, February 16). Android users warned of malware attack spreading via SMS. Retrieved December 23, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--23040c15-e7d8-47b5-8c16-8fd3e0e297fe",
+        "name": "NotCompatible",
+        "description": "[NotCompatible](https://attack.mitre.org/software/S0299) is an Android malware family that was used between at least 2014 and 2016. It has multiple variants that have become more sophisticated over time. (Citation: Lookout-NotCompatible)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:36.707Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0299",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0299"
+            },
+            {
+                "source_name": "NotCompatible",
+                "description": "(Citation: Lookout-NotCompatible)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2014/11/19/notcompatible/",
+                "source_name": "Lookout-NotCompatible",
+                "description": "Tim Strazzere. (2014, November 19). The new NotCompatible: Sophisticated and evasive threat harbors the potential to compromise enterprise networks. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--ca4f63b9-a358-4214-bb26-8c912318cfde",
+        "name": "OBAD",
+        "description": "OBAD is an Android malware family. (Citation: TrendMicro-Obad)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:44.540Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0286",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0286"
+            },
+            {
+                "source_name": "OBAD",
+                "description": "(Citation: TrendMicro-Obad)"
+            },
+            {
+                "url": "http://blog.trendmicro.com/trendlabs-security-intelligence/cybercriminals-improve-android-malware-stealth-routines-with-obad/",
+                "source_name": "TrendMicro-Obad",
+                "description": "Veo Zhang. (2013, June 13). Cybercriminals Improve Android Malware Stealth Routines with OBAD. Retrieved December 9, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--2074b2ad-612e-4758-adce-7901c1b49bbc",
+        "name": "OldBoot",
+        "description": "[OldBoot](https://attack.mitre.org/software/S0285) is an Android malware family. (Citation: HackerNews-OldBoot)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:45.155Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0285",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0285"
+            },
+            {
+                "source_name": "OldBoot",
+                "description": "(Citation: HackerNews-OldBoot)"
+            },
+            {
+                "url": "http://thehackernews.com/2014/01/first-widely-distributed-android.html",
+                "source_name": "HackerNews-OldBoot",
+                "description": "Sudhir K Bansal. (2014, January 28). First widely distributed Android bootkit Malware infects more than 350,000 Devices. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--c709da93-20c3-4d17-ab68-48cba76b2137",
+        "name": "PJApps",
+        "description": "[PJApps](https://attack.mitre.org/software/S0291) is an Android malware family. (Citation: Lookout-EnterpriseApps)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:43.527Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0291",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0291"
+            },
+            {
+                "source_name": "PJApps",
+                "description": "(Citation: Lookout-EnterpriseApps)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2016/05/25/spoofed-apps/",
+                "source_name": "Lookout-EnterpriseApps",
+                "description": "Lookout. (2016, May 25). 5 active mobile threats spoofing enterprise apps. Retrieved December 19, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--93799a9d-3537-43d8-b6f4-17215de1657c",
+        "name": "Pegasus for Android",
+        "description": "[Pegasus for Android](https://attack.mitre.org/software/S0316) is the Android version of malware that has reportedly been linked to the NSO Group. (Citation: Lookout-PegasusAndroid) (Citation: Google-Chrysaor) The iOS version is tracked separately under [Pegasus for iOS](https://attack.mitre.org/software/S0289).",
+        "type": "malware",
+        "created": "2017-10-25T14:48:41.202Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0316",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0316"
+            },
+            {
+                "source_name": "Pegasus for Android",
+                "description": "(Citation: Lookout-PegasusAndroid) (Citation: Google-Chrysaor)"
+            },
+            {
+                "source_name": "Chrysaor",
+                "description": "(Citation: Lookout-PegasusAndroid) (Citation: Google-Chrysaor)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2017/04/03/pegasus-android/",
+                "source_name": "Lookout-PegasusAndroid",
+                "description": "Mike Murray. (2017, April 3). Pegasus for Android: the other side of the story emerges. Retrieved April 16, 2017."
+            },
+            {
+                "url": "https://android-developers.googleblog.com/2017/04/an-investigation-of-chrysaor-malware-on.html",
+                "source_name": "Google-Chrysaor",
+                "description": "Rich Cannings et al.. (2017, April 3). An investigation of Chrysaor Malware on Android. Retrieved April 16, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--33d9d91d-aad9-49d5-a516-220ce101ac8a",
+        "name": "Pegasus for iOS",
+        "description": "[Pegasus for iOS](https://attack.mitre.org/software/S0289) is the iOS version of malware that has reportedly been linked to the NSO Group. It has been advertised and sold to target high-value victims. (Citation: Lookout-Pegasus) (Citation: PegasusCitizenLab) The Android version is tracked separately under [Pegasus for Android](https://attack.mitre.org/software/S0316).",
+        "type": "malware",
+        "created": "2017-10-25T14:48:44.238Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0289",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0289"
+            },
+            {
+                "source_name": "Pegasus for iOS",
+                "description": "(Citation: Lookout-Pegasus) (Citation: PegasusCitizenLab)"
+            },
+            {
+                "url": "https://info.lookout.com/rs/051-ESQ-475/images/lookout-pegasus-technical-analysis.pdf",
+                "source_name": "Lookout-Pegasus",
+                "description": "Lookout. (2016). Technical Analysis of Pegasus Spyware. Retrieved December 12, 2016."
+            },
+            {
+                "url": "https://citizenlab.org/2016/08/million-dollar-dissident-iphone-zero-day-nso-group-uae/",
+                "source_name": "PegasusCitizenLab",
+                "description": "Bill Marczak and John Scott-Railton. (2016, August 24). The Million Dollar Dissident: NSO Group\u2019s iPhone Zero-Days used against a UAE Human Rights Defender. Retrieved December 12, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--363bc05d-13cb-4e98-a5b7-e250f2bbdc2b",
+        "name": "RCSAndroid",
+        "description": "[RCSAndroid](https://attack.mitre.org/software/S0295) is Android malware. (Citation: TrendMicro-RCSAndroid)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:38.274Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0295",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0295"
+            },
+            {
+                "source_name": "RCSAndroid",
+                "description": "(Citation: TrendMicro-RCSAndroid)"
+            },
+            {
+                "url": "http://blog.trendmicro.com/trendlabs-security-intelligence/hacking-team-rcsandroid-spying-tool-listens-to-calls-roots-devices-to-get-in/",
+                "source_name": "TrendMicro-RCSAndroid",
+                "description": "Veo Zhang. (2015, July 21). Hacking Team RCSAndroid Spying Tool Listens to Calls; Roots Devices to Get In. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--9ed10b5a-ff20-467f-bf2f-d3fbf763e381",
+        "name": "RedDrop",
+        "description": "[RedDrop](https://attack.mitre.org/software/S0326) is an Android malware family that exfiltrates sensitive data from devices. (Citation: Wandera-RedDrop)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0326",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0326"
+            },
+            {
+                "source_name": "RedDrop",
+                "description": "(Citation: Wandera-RedDrop)"
+            },
+            {
+                "url": "https://www.wandera.com/reddrop-malware/",
+                "source_name": "Wandera-RedDrop",
+                "description": "Nell Campbell. (2018, February 27). RedDrop: the blackmailing mobile malware family lurking in app stores. Retrieved September 18, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--936be60d-90eb-4c36-9247-4b31128432c4",
+        "name": "RuMMS",
+        "description": "[RuMMS](https://attack.mitre.org/software/S0313) is an Android malware family. (Citation: FireEye-RuMMS)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:48.917Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0313",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0313"
+            },
+            {
+                "source_name": "RuMMS",
+                "description": "(Citation: FireEye-RuMMS)"
+            },
+            {
+                "url": "https://www.fireeye.com/blog/threat-research/2016/04/rumms-android-malware.html",
+                "source_name": "FireEye-RuMMS",
+                "description": "Wu Zhou, Deyu Hu, Jimmy Su, Yong Kang. (2016, April 26). RUMMS: THE LATEST FAMILY OF ANDROID MALWARE ATTACKING USERS IN RUSSIA VIA SMS PHISHING. Retrieved February 6, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--c80a6bef-b3ce-44d0-b113-946e93124898",
+        "name": "ShiftyBug",
+        "description": "[ShiftyBug](https://attack.mitre.org/software/S0294) is an auto-rooting adware family of malware for Android. The family is very similar to the other Android families known as Shedun, Shuanet, Kemoge, though it is not believed all the families were created by the same group. (Citation: Lookout-Adware)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:38.690Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0294",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0294"
+            },
+            {
+                "source_name": "ShiftyBug",
+                "description": "(Citation: Lookout-Adware)"
+            },
+            {
+                "url": "https://blog.lookout.com/blog/2015/11/04/trojanized-adware/",
+                "source_name": "Lookout-Adware",
+                "description": "Michael Bentley. (2015, November 4). Lookout discovers new trojanized adware; 20K popular apps caught in the crossfire. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--3a913bac-4fae-4d0e-bca8-cae452f1599b",
+        "name": "Skygofree",
+        "description": "[Skygofree](https://attack.mitre.org/software/S0327) is Android spyware that is believed to have been developed in 2014 and used through at least 2017. (Citation: Kaspersky-Skygofree)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0327",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0327"
+            },
+            {
+                "source_name": "Skygofree",
+                "description": "(Citation: Kaspersky-Skygofree)"
+            },
+            {
+                "url": "https://securelist.com/skygofree-following-in-the-footsteps-of-hackingteam/83603/",
+                "source_name": "Kaspersky-Skygofree",
+                "description": "Nikita Buchka and Alexey Firsh. (2018, January 16). Skygofree: Following in the footsteps of HackingTeam. Retrieved September 24, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--86fc6f0c-86d9-473e-89f3-f50f3cb9319b",
+        "name": "SpyDealer",
+        "description": "[SpyDealer](https://attack.mitre.org/software/S0324) is Android malware that exfiltrates sensitive data from Android devices. (Citation: PaloAlto-SpyDealer)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0324",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0324"
+            },
+            {
+                "source_name": "SpyDealer",
+                "description": "(Citation: PaloAlto-SpyDealer)"
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2017/07/unit42-spydealer-android-trojan-spying-40-apps/",
+                "source_name": "PaloAlto-SpyDealer",
+                "description": "Wenjun Hu, Cong Zheng and Zhi Xu. (2017, July 6). SpyDealer: Android Trojan Spying on More Than 40 Apps. Retrieved September 18, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--20dbaf05-59b8-4dc6-8777-0b17f4553a23",
+        "name": "SpyNote RAT",
+        "description": "[SpyNote RAT](https://attack.mitre.org/software/S0305) (Remote Access Trojan) is a family of malicious Android apps. The [SpyNote RAT](https://attack.mitre.org/software/S0305) builder tool can be used to develop malicious apps with the malware's functionality. (Citation: Zscaler-SpyNote)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:45.794Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0305",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0305"
+            },
+            {
+                "source_name": "SpyNote RAT",
+                "description": "(Citation: Zscaler-SpyNote)"
+            },
+            {
+                "url": "https://www.zscaler.com/blogs/research/spynote-rat-posing-netflix-app",
+                "source_name": "Zscaler-SpyNote",
+                "description": "Shivang Desai. (2017, January 23). SpyNote RAT posing as Netflix app. Retrieved January 26, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--085eb36d-697d-4d9a-bac3-96eb879fe73c",
+        "name": "Stealth Mango",
+        "description": "[Stealth Mango](https://attack.mitre.org/software/S0328) is Android malware that has reportedly been used to successfully compromise the mobile devices of government officials, members of the military, medical professionals, and civilians. The iOS malware known as [Tangelo](https://attack.mitre.org/software/S0329) is believed to be from the same developer. (Citation: Lookout-StealthMango)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0328",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0328"
+            },
+            {
+                "source_name": "Stealth Mango",
+                "description": "(Citation: Lookout-StealthMango)"
+            },
+            {
+                "url": "https://info.lookout.com/rs/051-ESQ-475/images/lookout-stealth-mango-srr-us.pdf",
+                "source_name": "Lookout-StealthMango",
+                "description": "Lookout. (n.d.). Stealth Mango & Tangelo. Retrieved September 27, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--35aae10a-97c5-471a-9c67-02c231a7a31a",
+        "name": "Tangelo",
+        "description": "[Tangelo](https://attack.mitre.org/software/S0329) is iOS malware that is believed to be from the same developers as the [Stealth Mango](https://attack.mitre.org/software/S0328) Android malware. It is not a mobile application, but rather a Debian package that can only run on jailbroken iOS devices. (Citation: Lookout-StealthMango)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0329",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0329"
+            },
+            {
+                "source_name": "Tangelo",
+                "description": "(Citation: Lookout-StealthMango)"
+            },
+            {
+                "url": "https://info.lookout.com/rs/051-ESQ-475/images/lookout-stealth-mango-srr-us.pdf",
+                "source_name": "Lookout-StealthMango",
+                "description": "Lookout. (n.d.). Stealth Mango & Tangelo. Retrieved September 27, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--a1867c56-8c86-455a-96ad-b0d5f7e2bc17",
+        "name": "Trojan-SMS.AndroidOS.Agent.ao",
+        "description": "[Trojan-SMS.AndroidOS.Agent.ao](https://attack.mitre.org/software/S0307) is Android malware. (Citation: Kaspersky-MobileMalware)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:46.411Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0307",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0307"
+            },
+            {
+                "source_name": "Trojan-SMS.AndroidOS.Agent.ao",
+                "description": "(Citation: Kaspersky-MobileMalware)"
+            },
+            {
+                "url": "https://securelist.com/mobile-malware-evolution-2013/58335/",
+                "source_name": "Kaspersky-MobileMalware",
+                "description": "Roman Unuchek and Victor Chebyshev. (2014, February 24). Mobile Malware Evolution: 2013. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--28e39395-91e7-4f02-b694-5e079c964da9",
+        "name": "Trojan-SMS.AndroidOS.FakeInst.a",
+        "description": "[Trojan-SMS.AndroidOS.FakeInst.a](https://attack.mitre.org/software/S0306) is Android malware. (Citation: Kaspersky-MobileMalware)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:46.107Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0306",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0306"
+            },
+            {
+                "source_name": "Trojan-SMS.AndroidOS.FakeInst.a",
+                "description": "(Citation: Kaspersky-MobileMalware)"
+            },
+            {
+                "url": "https://securelist.com/mobile-malware-evolution-2013/58335/",
+                "source_name": "Kaspersky-MobileMalware",
+                "description": "Roman Unuchek and Victor Chebyshev. (2014, February 24). Mobile Malware Evolution: 2013. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--d89c132d-7752-4c7f-9372-954a71522985",
+        "name": "Trojan-SMS.AndroidOS.OpFake.a",
+        "description": "[Trojan-SMS.AndroidOS.OpFake.a](https://attack.mitre.org/software/S0308) is Android malware. (Citation: Kaspersky-MobileMalware)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:46.734Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0308",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0308"
+            },
+            {
+                "source_name": "Trojan-SMS.AndroidOS.OpFake.a",
+                "description": "(Citation: Kaspersky-MobileMalware)"
+            },
+            {
+                "url": "https://securelist.com/mobile-malware-evolution-2013/58335/",
+                "source_name": "Kaspersky-MobileMalware",
+                "description": "Roman Unuchek and Victor Chebyshev. (2014, February 24). Mobile Malware Evolution: 2013. Retrieved December 22, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--326eaf7b-5784-4f08-8fc2-61fd5d5bc5fb",
+        "name": "WireLurker",
+        "description": "[WireLurker](https://attack.mitre.org/software/S0312) is a family of macOS malware that targets iOS devices connected over USB. (Citation: PaloAlto-WireLurker)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:37.020Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0312",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0312"
+            },
+            {
+                "source_name": "WireLurker",
+                "description": "(Citation: PaloAlto-WireLurker)"
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2014/11/wirelurker-new-era-os-x-ios-malware/",
+                "source_name": "PaloAlto-WireLurker",
+                "description": "Claud Xiao. (2014, November 5). WireLurker: A New Era in OS X and iOS Malware. Retrieved January 24, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--56660521-6db4-4e5a-a927-464f22954b7c",
+        "name": "X-Agent for Android",
+        "description": "[X-Agent for Android](https://attack.mitre.org/software/S0314) is Android malware that was placed in a repackaged version of a Ukrainian artillery targeting application. The malware reportedly retrieved general location data on where the victim device was used, and therefore could likely indicate the potential location of Ukrainian artillery. (Citation: CrowdStrike-Android) Is it tracked separately from the [CHOPSTICK](https://attack.mitre.org/software/S0023).",
+        "type": "malware",
+        "created": "2017-10-25T14:48:42.034Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0314",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0314"
+            },
+            {
+                "source_name": "X-Agent for Android",
+                "description": "(Citation: CrowdStrike-Android)"
+            },
+            {
+                "url": "https://www.crowdstrike.com/wp-content/brochures/FancyBearTracksUkrainianArtillery.pdf",
+                "source_name": "CrowdStrike-Android",
+                "description": "CrowdStrike Global Intelligence Team. (2016). Use of Fancy Bear Android Malware in Tracking of Ukrainian FIeld Artillery Units. Retrieved February 6, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--2740eaf6-2db2-4a40-a63f-f5b166c7059c",
+        "name": "XLoader",
+        "description": "[XLoader](https://attack.mitre.org/software/S0318) is a malicious Android app that was observed targeting Japan, Korea, China, Taiwan, and Hong Kong in 2018. (Citation: TrendMicro-XLoader)",
+        "type": "malware",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0318",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0318"
+            },
+            {
+                "source_name": "XLoader",
+                "description": "(Citation: TrendMicro-XLoader)"
+            },
+            {
+                "url": "https://blog.trendmicro.com/trendlabs-security-intelligence/xloader-android-spyware-and-banking-trojan-distributed-via-dns-spoofing/",
+                "source_name": "TrendMicro-XLoader",
+                "description": "Lorin Wu. (2018, April 19). XLoader Android Spyware and Banking Trojan Distributed via DNS Spoofing. Retrieved July 6, 2018."
+            }
+        ]
+    },
+    {
+        "id": "malware--d9e07aea-baad-4b68-bdca-90c77647d7f9",
+        "name": "XcodeGhost",
+        "description": "[XcodeGhost](https://attack.mitre.org/software/S0297) is iOS malware that infected at least 39 iOS apps in 2015 and potentially affected millions of users. (Citation: PaloAlto-XcodeGhost1) (Citation: PaloAlto-XcodeGhost)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:42.661Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0297",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0297"
+            },
+            {
+                "source_name": "XcodeGhost",
+                "description": "(Citation: PaloAlto-XcodeGhost1) (Citation: PaloAlto-XcodeGhost)"
+            },
+            {
+                "url": "http://researchcenter.paloaltonetworks.com/2015/09/novel-malware-xcodeghost-modifies-xcode-infects-apple-ios-apps-and-hits-app-store/",
+                "source_name": "PaloAlto-XcodeGhost1",
+                "description": "Claud Xiao. (2015, September 17). Novel Malware XcodeGhost Modifies Xcode, Infects Apple iOS Apps and Hits App Store. Retrieved December 21, 2016."
+            },
+            {
+                "url": "http://researchcenter.paloaltonetworks.com/2015/09/update-xcodeghost-attacker-can-phish-passwords-and-open-urls-though-infected-apps/",
+                "source_name": "PaloAlto-XcodeGhost",
+                "description": "Claud Xiao. (2015, September 18). Update: XcodeGhost Attacker Can Phish Passwords and Open URLs through Infected Apps. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "malware--a15c9357-2be0-4836-beec-594f28b9b4a9",
+        "name": "YiSpecter",
+        "description": "[YiSpecter](https://attack.mitre.org/software/S0311) iOS malware that affects both jailbroken and non-jailbroken iOS devices. It is also unique because it abuses private APIs in the iOS system to implement functionality. (Citation: PaloAlto-YiSpecter)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:48.301Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0311",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0311"
+            },
+            {
+                "source_name": "YiSpecter",
+                "description": "(Citation: PaloAlto-YiSpecter)"
+            },
+            {
+                "url": "https://researchcenter.paloaltonetworks.com/2015/10/yispecter-first-ios-malware-attacks-non-jailbroken-ios-devices-by-abusing-private-apis/",
+                "source_name": "PaloAlto-YiSpecter",
+                "description": "Claud Xiao. (2015, October 4). YiSpecter: First iOS Malware That Attacks Non-jailbroken Apple iOS Devices by Abusing Private APIs. Retrieved January 20, 2017."
+            }
+        ]
+    },
+    {
+        "id": "malware--3c3b55a6-c3e9-4043-8aae-283fe96220c0",
+        "name": "ZergHelper",
+        "description": "[ZergHelper](https://attack.mitre.org/software/S0287) is iOS riskware that was unique due to its apparent evasion of Apple's App Store review process. No malicious functionality was identified in the app, but it presents security risks. (Citation: Xiao-ZergHelper)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:44.853Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0287",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0287"
+            },
+            {
+                "source_name": "ZergHelper",
+                "description": "(Citation: Xiao-ZergHelper)"
+            },
+            {
+                "url": "http://researchcenter.paloaltonetworks.com/2016/02/pirated-ios-app-stores-client-successfully-evaded-apple-ios-code-review/",
+                "source_name": "Xiao-ZergHelper",
+                "description": "Claud Xiao. (2016, February 21). Pirated iOS App Store\u2019s Client Successfully Evaded Apple iOS Code Review. Retrieved December 12, 2016."
+            }
+        ]
+    },
+    {
+        "id": "tool--da21929e-40c0-443d-bdf4-6b60d15448b4",
+        "name": "Xbot",
+        "description": "[Xbot](https://attack.mitre.org/software/S0298) is an Android malware family that was observed in 2016 primarily targeting Android users in Russia and Australia. (Citation: PaloAlto-Xbot)",
+        "type": "tool",
+        "created": "2017-10-25T14:48:48.609Z",
+        "modified": "2018-12-11T20:40:31.461Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0298",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0298"
+            },
+            {
+                "source_name": "Xbot",
+                "description": "(Citation: PaloAlto-Xbot)"
+            },
+            {
+                "url": "http://researchcenter.paloaltonetworks.com/2016/02/new-android-trojan-xbot-phishes-credit-cards-and-bank-accounts-encrypts-devices-for-ransom/",
+                "source_name": "PaloAlto-Xbot",
+                "description": "Cong Zheng, Claud Xiao and Zhi Xu. (2016, February 18). New Android Trojan \u201cXbot\u201d Phishes Credit Cards and Bank Accounts, Encrypts Devices for Ransom. Retrieved December 21, 2016."
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--7a0d25d3-f0c0-40bf-bf90-c743871b19ba",
+        "name": "Collection",
+        "description": "Collection consists of techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration. This category also covers locations on a system or network where the adversary may look for information to exfiltrate.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0035",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0035"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--3f660805-fa2e-42e8-8851-57f9e9b653e3",
+        "name": "Command and Control",
+        "description": "The command and control tactic represents how adversaries communicate with systems under their control within a target network. There are many ways an adversary can establish command and control with various levels of covertness, depending on system configuration and network topology. Due to the wide degree of variation available to the adversary at the network level, only the most common factors were used to describe the differences in command and control. There are still a great many specific techniques within the documented methods, largely due to how easy it is to define new protocols and use existing, legitimate protocols and network services for communication. \n\nThe resulting breakdown should help convey the concept that detecting intrusion through command and control protocols without prior knowledge is a difficult proposition over the long term. Adversaries' main constraints in network-level defense avoidance are testing and deployment of tools to rapidly change their protocols, awareness of existing defensive technologies, and access to legitimate Web services that, when used appropriately, make their tools difficult to distinguish from benign traffic.\n\nAdditionally, in the mobile environment, mobile devices are frequently connected to networks outside enterprise control such as cellular networks or public Wi-Fi networks. Adversaries could attempt to evade detection by communicating on these networks, and potentially even by using non-Internet Protocol mechanisms such as Short Message Service (SMS). However, cellular networks often have data caps and/or extra data charges that could increase the potential for adversarial communication to be detected.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0037",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0037"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--6fcb36b8-3776-483b-8699-42215714fb10",
+        "name": "Credential Access",
+        "description": "Credential access represents techniques that can be used by adversaries to obtain access to or control over passwords, tokens, cryptographic keys, or other values that could be used by an adversary to gain unauthorized access to resources. Credential access allows the adversary to assume the identity of an account, with all of that account's permissions on the system and network, and makes it harder for defenders to detect the adversary. With sufficient access within a network, an adversary can create accounts for later use within the environment.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0031",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0031"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--987cda6d-eb77-406b-bf68-bcb5f3d2e1df",
+        "name": "Defense Evasion",
+        "description": "Defense evasion consists of techniques an adversary may use to evade detection or avoid other defenses. Sometimes these actions are the same as or variations of techniques in other categories that have the added benefit of subverting a particular defense or mitigation. Defense evasion may be considered a set of attributes the adversary applies to all other phases of the operation.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0030",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0030"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--d418cdeb-1b9f-4a6b-a15d-2f89f549f8c1",
+        "name": "Discovery",
+        "description": "Discovery consists of techniques that allow the adversary to gain knowledge about the characteristics of the mobile device and potentially other networked systems. When adversaries gain access to a new system, they must orient themselves to what they now have control of and what benefits operating from that system give to their current objective or overall goals during the intrusion. The operating system may provide capabilities that aid in this post-compromise information-gathering phase.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0032",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0032"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--6ebce653-294a-444a-bffb-14c04c8d137e",
+        "name": "Effects",
+        "description": "Effects consists of techniques used by the adversary to execute his or her mission objectives but that do not cleanly fit into another category such as Collection. Mission objectives vary based on each adversary's goals, but examples include toll fraud, destruction of device data, or locking the user out of his or her device until a ransom is paid.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0034",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0034"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--10fa8d8d-1b04-4176-917e-738724239981",
+        "name": "Exfiltration",
+        "description": "Exfiltration refers to techniques and attributes that result or aid in the adversary removing files and information from the targeted mobile device.\n\nIn the mobile environment, mobile devices are frequently connected to networks outside enterprise control such as cellular networks or public Wi-Fi networks. Adversaries could attempt to evade detection by communicating on these networks, and potentially even by using non-Internet Protocol mechanisms such as Short Message Service (SMS). However, cellular networks often have data caps and/or extra data charges that could increase the potential for adversarial communication to be detected.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0036",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0036"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--0a93fd8e-4a83-4c15-8203-db290e5f2ac6",
+        "name": "Initial Access",
+        "description": "The initial access tactic represents the vectors adversaries use to gain an initial foothold onto a mobile device.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0027",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0027"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--7be441c2-0095-4b1e-8125-fa8ffda29b0f",
+        "name": "Lateral Movement",
+        "description": "Lateral movement consists of techniques that enable an adversary to access and control remote systems on a network and could, but does not necessarily, include execution of tools on remote systems. The lateral movement techniques could allow an adversary to gather information from a system without needing additional tools, such as a remote access tool.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0033",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0033"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--9eb4c21e-4fa8-44c9-b167-dbfc455f9210",
+        "name": "Network Effects",
+        "description": "This category refers to network-based techniques that an adversary may be able to use to fulfill his or her objectives without access to the mobile device itself. These include techniques to intercept or manipulate network traffic to and from the mobile device.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0038",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0038"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--363bbeff-bb2a-4734-ac74-d6d37202fe54",
+        "name": "Persistence",
+        "description": "Persistence is any access, action, or configuration change to a mobile device that gives an attacker a persistent presence on the device. Attackers often will need to maintain access to mobile devices through interruptions such as device reboots and potentially even factory data resets.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0028",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0028"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--3e962de5-3280-43b7-bc10-334fbc1d6fa8",
+        "name": "Privilege Escalation",
+        "description": "Privilege escalation includes techniques that allow an attacker to obtain a higher level of permissions on the mobile device. Attackers may enter the mobile device with very limited privileges and may be required to take advantage of a device weakness to obtain higher privileges necessary to successfully carry out their mission objectives.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0029",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0029"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-tactic--e78d7d60-41b5-49b7-b0a9-5c5d4cbabe17",
+        "name": "Remote Service Effects",
+        "description": "This category refers to techniques involving remote services, such as vendor-provided cloud services (e.g. Google Drive, Google Find My Device, or Apple iCloud), or enterprise mobility management (EMM)/mobile device management (MDM) services that an adversary may be able to use to fulfill his or her objectives without access to the mobile device itself.",
+        "type": "x-mitre-tactic",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "TA0039",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/tactics/TA0039"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-matrix--a382db5e-d009-4135-b893-0e0ff021c95b",
+        "name": "Device Access",
+        "description": "The MITRE ATT&CK Matrix\u2122 provides a visual representation of the adversarial tactics and techniques described in the ATT&CK model. Tactic categories are listed on the top row, and individual techniques as cells underneath each tactic to denote that technique can be used to accomplish that particular tactic. Techniques can span multiple tactic categories signifying that they can be used for more than one purpose. Below are two ATT&CK Mobile Matrices, one for adversarial tactics and techniques involving device access, and one for adversarial tactics and techniques, and one for network-based effects that can be used by adversaries without device access.",
+        "type": "x-mitre-matrix",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "mobile-attack",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/matrices/mobile"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-matrix--5104d5f0-16b7-4aec-8ae3-0a90cd5494fc",
+        "name": "Network-Based Effects",
+        "description": "The MITRE ATT&CK Matrix\u2122 provides a visual representation of the adversarial tactics and techniques described in the ATT&CK model. Tactic categories are listed on the top row, and individual techniques as cells underneath each tactic to denote that technique can be used to accomplish that particular tactic. Techniques can span multiple tactic categories signifying that they can be used for more than one purpose. Below are two ATT&CK Mobile Matrices, one for adversarial tactics and techniques involving device access, and one for adversarial tactics and techniques, and one for network-based effects that can be used by adversaries without device access.",
+        "type": "x-mitre-matrix",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2018-10-17T00:14:20.652Z",
+        "external_references": [
+            {
+                "external_id": "mobile-attack",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/matrices/mobile"
+            }
+        ]
+    },
+    {
+        "id": "malware--41e3fd01-7b83-471f-835d-d2b1dc9a770c",
+        "name": "Twitoor",
+        "description": "[Twitoor](https://attack.mitre.org/software/S0302) is an Android malware family that likely spreads by SMS or via malicious URLs. (Citation: ESET-Twitoor)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:42.313Z",
+        "modified": "2019-02-01T17:38:05.973Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/software/S0302",
+                "source_name": "mitre-mobile-attack",
+                "external_id": "S0302"
+            },
+            {
+                "source_name": "Twitoor",
+                "description": "(Citation: ESET-Twitoor)"
+            },
+            {
+                "url": "http://www.welivesecurity.com/2016/08/24/first-twitter-controlled-android-botnet-discovered/",
+                "source_name": "ESET-Twitoor",
+                "description": "ESET. (2016, August 24). First Twitter-controlled Android botnet discovered. Retrieved December 22, 2016."
+            }
+        ]
+    }
+]
