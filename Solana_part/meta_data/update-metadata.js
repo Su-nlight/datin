@@ -4,28 +4,24 @@ import fs from 'fs';
 
 async function main() {
   try {
-    // Load your keypair from the default Solana CLI location
-    // This is typically located at ~/.config/solana/id.json
+  
     const keypairFile = fs.readFileSync(process.env.HOME + '/.config/solana/id.json', 'utf-8');
     const keypair = Keypair.fromSecretKey(new Uint8Array(JSON.parse(keypairFile)));
-
-    // Connect to devnet
+    
     const connection = new Connection(clusterApiUrl('devnet'));
     const metaplex = new Metaplex(connection);
     metaplex.use(keypairIdentity(keypair));
 
-    // Your token mint address - replace with your actual token address
     const mintAddress = new PublicKey('8KjhqrhweSshVkSswXmQ394wcPgMjf1Uc98W22CQhPNM');
-    
-    // Create metadata for your token
+
     const { nft } = await metaplex.nfts().create({
-      uri: 'https://your-metadata-uri.json', // URL to your metadata JSON
+      uri: 'https://your-metadata-uri.json', 
       name: 'Your Token Name',
       symbol: 'YTN',
-      sellerFeeBasisPoints: 0, // No royalties
+      sellerFeeBasisPoints: 0, 
       updateAuthority: keypair, 
       mintAuthority: keypair,
-      tokenStandard: 4, // This is for Fungible tokens
+      tokenStandard: 4,
       mint: mintAddress,
     });
 
