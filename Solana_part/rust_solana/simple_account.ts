@@ -4,21 +4,18 @@ import { SimpleAccount } from "../target/types/simple_account";
 import { expect } from "chai";
 
 describe("simple_account", () => {
-  // Configure the client to use the local cluster
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
   const program = anchor.workspace.SimpleAccount as Program<SimpleAccount>;
   const authority = anchor.web3.Keypair.generate();
   
-  // Test data
   const threatId = "CVE-2023-12345";
   const threatType = 2; // Vulnerability
   const initialSeverity = 4;
   const description = "Critical vulnerability in XYZ library";
   const source = "NIST Database";
 
-  // Get PDA for threat data
   const getThreatPDA = async () => {
     const [pda, _] = await anchor.web3.PublicKey.findProgramAddressSync(
       [
@@ -41,9 +38,7 @@ describe("simple_account", () => {
   });
 
   it("Initializes a threat intelligence record", async () => {
-    // Get PDA
     const threatPDA = await getThreatPDA();
-
     // Initialize the threat record
     await program.methods
       .initialize(
@@ -73,18 +68,17 @@ describe("simple_account", () => {
     expect(threatRecord.isActive).to.be.true;
     expect(threatRecord.authority.toString()).to.equal(authority.publicKey.toString());
     
-    // Verify timestamp exists
+    // Verify timestamp
     expect(threatRecord.timestamp.toNumber()).to.be.greaterThan(0);
   });
 
   it("Updates threat severity", async () => {
-    // Get PDA
     const threatPDA = await getThreatPDA();
     
     // New severity level
     const newSeverity = 5;
 
-    // Update the severity
+    // Update severity
     await program.methods
       .updateSeverity(newSeverity)
       .accounts({
@@ -97,13 +91,12 @@ describe("simple_account", () => {
     // Fetch the updated threat record
     const updatedThreat = await program.account.threatIntelligence.fetch(threatPDA);
     
-    // Verify the severity was updated
+    // Verify that severity is updated or not
     expect(updatedThreat.severity).to.equal(newSeverity);
     expect(updatedThreat.lastUpdated.toNumber()).to.be.greaterThan(0);
   });
 
   it("Deactivates a threat", async () => {
-    // Get PDA
     const threatPDA = await getThreatPDA();
 
     // Deactivate the threat
