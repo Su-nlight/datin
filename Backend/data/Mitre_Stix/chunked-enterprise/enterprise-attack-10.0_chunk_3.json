@@ -1,0 +1,1515 @@
+[
+    {
+        "id": "x-mitre-data-component--d2ff4b56-8351-4ed8-b0fb-d8605366005f",
+        "name": "Firewall Rule Modification",
+        "description": "Changes made to a firewall rule, typically to allow/block specific network traffic (ex: Windows EID 4950 or Write/Delete entries within Azure Firewall Rule Collection Activity Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273254Z",
+        "modified": "2021-10-20T15:05:19.273254Z"
+    },
+    {
+        "id": "x-mitre-data-component--bf91faa8-0049-4870-810a-4df55e0b77ee",
+        "name": "Firewall Enumeration",
+        "description": "An extracted list of available firewalls and/or their associated settings/rules (ex: Azure Network Firewall CLI Show commands)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273275Z",
+        "modified": "2021-10-20T15:05:19.273275Z"
+    },
+    {
+        "id": "x-mitre-data-source--d710099e-df94-4be4-bf85-cabd30e912bb",
+        "name": "Service",
+        "description": "A computer process that is configured to execute continuously in the background and perform system tasks, in some cases before any user has logged in(Citation: Microsoft Services)(Citation: Linux Services Run Levels)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273300Z",
+        "modified": "2021-10-20T15:05:19.273300Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0019",
+                "external_id": "DS0019"
+            },
+            {
+                "source_name": "Microsoft Services",
+                "description": "Microsoft. (2017, March 30). Introduction to Windows Service Applications. Retrieved September 28, 2021.",
+                "url": "https://docs.microsoft.com/en-us/dotnet/framework/windows-services/introduction-to-windows-service-applications"
+            },
+            {
+                "source_name": "Linux Services Run Levels",
+                "description": "The Linux Foundation. (2006, January 11). An introduction to services, runlevels, and rc.d scripts. Retrieved September 28, 2021.",
+                "url": "https://www.linux.com/news/introduction-services-runlevels-and-rcd-scripts/"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--74fa567d-bc90-425c-8a41-3c703abb221c",
+        "name": "Service Metadata",
+        "description": "Contextual data about a service/daemon, which may include information such as name, service executable, start type, etc.",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273397Z",
+        "modified": "2021-10-20T15:05:19.273397Z"
+    },
+    {
+        "id": "x-mitre-data-component--5297a638-1382-4f0c-8472-0d21830bf705",
+        "name": "Service Creation",
+        "description": "Initial construction of a new service/daemon (ex: Windows EID 4697 or /var/log daemon logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273425Z",
+        "modified": "2021-10-20T15:05:19.273425Z"
+    },
+    {
+        "id": "x-mitre-data-component--66531bc6-a509-4868-8314-4d599e91d222",
+        "name": "Service Modification",
+        "description": "Changes made to a service/daemon, such as changes to name, description, and/or start type (ex: Windows EID 7040 or /var/log daemon logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273447Z",
+        "modified": "2021-10-20T15:05:19.273447Z"
+    },
+    {
+        "id": "x-mitre-data-source--6d7de3b7-283d-48f9-909c-60d123d9d768",
+        "name": "Snapshot",
+        "description": "A point-in-time copy of cloud volumes (files, settings, etc.) that can be created and/or deployed in cloud environments(Citation: Microsoft Snapshot)(Citation: Amazon Snapshots)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273471Z",
+        "modified": "2021-10-20T15:05:19.273471Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0020",
+                "external_id": "DS0020"
+            },
+            {
+                "source_name": "Microsoft Snapshot",
+                "description": "Microsoft. (2021, September 16). Create a snapshot of a virtual hard disk. Retrieved October 13, 2021.",
+                "url": "https://docs.microsoft.com/en-us/azure/virtual-machines/linux/snapshot-copy-managed-disk"
+            },
+            {
+                "source_name": "Amazon Snapshots",
+                "description": "Amazon. (n.d.). Amazon EBS snapshots. Retrieved October 13, 2021.",
+                "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSSnapshots.html"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--3da222e6-53f3-451c-a239-0b405c009432",
+        "name": "Snapshot Creation",
+        "description": "Initial construction of a new snapshot (ex: AWS create-snapshot)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273503Z",
+        "modified": "2021-10-20T15:05:19.273503Z"
+    },
+    {
+        "id": "x-mitre-data-component--f1eb6ea9-f3ab-414f-af35-2d5427199984",
+        "name": "Snapshot Modification",
+        "description": "Changes made to a snapshop, such as metadata and control data (ex: AWS modify-snapshot-attribute)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273532Z",
+        "modified": "2021-10-20T15:05:19.273532Z"
+    },
+    {
+        "id": "x-mitre-data-component--16e07530-764b-4d83-bae0-cdbfc31bf21d",
+        "name": "Snapshot Deletion",
+        "description": "Removal of a snapshot (ex: AWS delete-snapshot)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273555Z",
+        "modified": "2021-10-20T15:05:19.273555Z"
+    },
+    {
+        "id": "x-mitre-data-component--8bc66f94-54a9-4be4-bdd1-fe90df643774",
+        "name": "Snapshot Metadata",
+        "description": "Contextual data about a snapshot, which may include information such as ID, type, and status",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273578Z",
+        "modified": "2021-10-20T15:05:19.273578Z"
+    },
+    {
+        "id": "x-mitre-data-component--ffd73905-2e51-4f2d-8549-e72fb0eb6c38",
+        "name": "Snapshot Enumeration",
+        "description": "An extracted list of snapshops within a cloud environment (ex: AWS describe-snapshots)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273600Z",
+        "modified": "2021-10-20T15:05:19.273600Z"
+    },
+    {
+        "id": "x-mitre-data-source--3bef4799-906c-409c-ac00-3fb7a1e352e6",
+        "name": "Persona",
+        "description": "A malicious online profile representing a user commonly used by adversaries to social engineer or otherwise target victims",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273623Z",
+        "modified": "2021-10-20T15:05:19.273623Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0021",
+                "external_id": "DS0021"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--8fb2f315-1aca-4cef-ae0d-8105e1f95985",
+        "name": "Social Media",
+        "description": "Established, compromised, or otherwise acquired social media personas",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273649Z",
+        "modified": "2021-10-20T15:05:19.273649Z"
+    },
+    {
+        "id": "x-mitre-data-source--509ed41e-ca42-461e-9058-24602256daf9",
+        "name": "File",
+        "description": "A computer resource object, managed by the I/O system, for storing data (such as images, text, videos, computer programs, or any wide variety of other media)(Citation: Microsoft File Mgmt)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273672Z",
+        "modified": "2021-10-20T15:05:19.273672Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0022",
+                "external_id": "DS0022"
+            },
+            {
+                "source_name": "Microsoft File Mgmt",
+                "description": "Microsoft. (2018, May 31). File Management (Local File Systems). Retrieved September 28, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows/win32/fileio/file-management"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--639e87f3-acb6-448a-9645-258f20da4bc5",
+        "name": "File Metadata",
+        "description": "Contextual data about a file, which may include information such as name, the content (ex: signature, headers, or data/media), user/ower, permissions, etc.",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273701Z",
+        "modified": "2021-10-20T15:05:19.273701Z"
+    },
+    {
+        "id": "x-mitre-data-component--2b3bfe19-d59a-460d-93bb-2f546adc2d2c",
+        "name": "File Creation",
+        "description": "Initial construction of a new file (ex: Sysmon EID 11)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273724Z",
+        "modified": "2021-10-20T15:05:19.273724Z"
+    },
+    {
+        "id": "x-mitre-data-component--e905dad2-00d6-477c-97e8-800427abd0e8",
+        "name": "File Deletion",
+        "description": "Removal of a file (ex: Sysmon EID 23)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273745Z",
+        "modified": "2021-10-20T15:05:19.273745Z"
+    },
+    {
+        "id": "x-mitre-data-component--235b7491-2d2b-4617-9a52-3c0783680f71",
+        "name": "File Access",
+        "description": "Opening a file, which makes the file contents available to the requestor (ex: Windows EID 4663)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273770Z",
+        "modified": "2021-10-20T15:05:19.273770Z"
+    },
+    {
+        "id": "x-mitre-data-component--84572de3-9583-4c73-aabd-06ea88123dd8",
+        "name": "File Modification",
+        "description": "Changes made to a file, or its access permissions and attributes, typically to alter the contents of the targeted file (ex: Windows EID 4670 or Sysmon EID 2)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273791Z",
+        "modified": "2021-10-20T15:05:19.273791Z"
+    },
+    {
+        "id": "x-mitre-data-source--221adcd5-cccf-44df-9be6-ef607a6e1c3c",
+        "name": "Named Pipe",
+        "description": "Mechanisms that allow inter-process communication locally or over the network. A named pipe is usually found as a file and processes attach to it(Citation: Microsoft Named Pipes)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273816Z",
+        "modified": "2021-10-20T15:05:19.273816Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0023",
+                "external_id": "DS0023"
+            },
+            {
+                "source_name": "Microsoft Named Pipes",
+                "description": "Microsoft. (2018, May 31). Named Pipes. Retrieved September 28, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows/win32/ipc/named-pipes"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--b9a1578e-8653-4103-be23-cb52e0b1816e",
+        "name": "Named Pipe Metadata",
+        "description": "Contextual data about a named pipe on a system, including pipe name and creating process (ex: Sysmon EIDs 17-18)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273848Z",
+        "modified": "2021-10-20T15:05:19.273848Z"
+    },
+    {
+        "id": "x-mitre-data-source--0f42a24c-e035-4f93-a91c-5f7076bd8da0",
+        "name": "Windows Registry",
+        "description": "A Windows OS hierarchical database that stores much of the information and settings for software programs, hardware devices, user preferences, and operating-system configurations(Citation: Microsoft Registry)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273872Z",
+        "modified": "2021-10-20T15:05:19.273872Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0024",
+                "external_id": "DS0024"
+            },
+            {
+                "source_name": "Microsoft Registry",
+                "description": "Microsoft. (2018, May 31). Registry. Retrieved September 29, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows/win32/sysinfo/registry"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--7f70fae7-a68d-4730-a83a-f260b9606129",
+        "name": "Windows Registry Key Creation",
+        "description": "Initial construction of a new Registry Key (ex: Windows EID 4656 or Sysmon EID 12)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273900Z",
+        "modified": "2021-10-20T15:05:19.273900Z"
+    },
+    {
+        "id": "x-mitre-data-component--1177a4c5-31c8-400c-8544-9071166afa0e",
+        "name": "Windows Registry Key Deletion",
+        "description": "Removal of a Registry Key (ex: Windows EID 4658 or Sysmon EID 12)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273923Z",
+        "modified": "2021-10-20T15:05:19.273923Z"
+    },
+    {
+        "id": "x-mitre-data-component--da85d358-741a-410d-9433-20d6269a6170",
+        "name": "Windows Registry Key Modification",
+        "description": "Changes made to a Registry Key and/or Key value (ex: Windows EID 4657 or Sysmon EID 13|14)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273944Z",
+        "modified": "2021-10-20T15:05:19.273944Z"
+    },
+    {
+        "id": "x-mitre-data-component--ed0dd8aa-1677-4551-bb7d-8da767617e1b",
+        "name": "Windows Registry Key Access",
+        "description": "Opening a Registry Key, typically to read the associated value (ex: Windows EID 4656)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.273968Z",
+        "modified": "2021-10-20T15:05:19.273968Z"
+    },
+    {
+        "id": "x-mitre-data-source--b1ddede4-cafe-4955-ac4c-14b33ac3f647",
+        "name": "Cloud Service",
+        "description": "Infrastructure, platforms, or software that are hosted on-premise or by third-party providers, made available to users through network connections and/or APIs(Citation: Amazon AWS)(Citation: Azure Products)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.273990Z",
+        "modified": "2021-10-20T15:05:19.273990Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0025",
+                "external_id": "DS0025"
+            },
+            {
+                "source_name": "Amazon AWS",
+                "description": "Amazon. (n.d.). Start Building on AWS Today. Retrieved October 13, 2021.",
+                "url": "https://aws.amazon.com"
+            },
+            {
+                "source_name": "Azure Products",
+                "description": "Microsoft. (n.d.). Azure products. Retrieved October 13, 2021.",
+                "url": "https://azure.microsoft.com/en-us/services/"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--b33d36e3-d7ea-4895-8eed-19a08a8f7c4f",
+        "name": "Cloud Service Metadata",
+        "description": "Contextual data about a cloud service and activity around it such as name, type, or purpose/function",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274019Z",
+        "modified": "2021-10-20T15:05:19.274019Z"
+    },
+    {
+        "id": "x-mitre-data-component--ec0612c5-2644-4c50-bcac-82586974fedd",
+        "name": "Cloud Service Disable",
+        "description": "Deactivation or stoppage of a cloud service (ex: AWS Cloudtrail StopLogging)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274044Z",
+        "modified": "2021-10-20T15:05:19.274044Z"
+    },
+    {
+        "id": "x-mitre-data-component--8c826308-2760-492f-9e36-4f0f7e23bcac",
+        "name": "Cloud Service Enumeration",
+        "description": "An extracted list of cloud services (ex: AWS ECS ListServices)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274066Z",
+        "modified": "2021-10-20T15:05:19.274066Z"
+    },
+    {
+        "id": "x-mitre-data-component--e52d89f9-1710-4708-88a5-cbef77c4cd5e",
+        "name": "Cloud Service Modification",
+        "description": "Changes made to a cloud service, including its settings and/or data (ex: AWS CloudTrail DeleteTrail or DeleteConfigRule)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274087Z",
+        "modified": "2021-10-20T15:05:19.274087Z"
+    },
+    {
+        "id": "x-mitre-data-source--d6188aac-17db-4861-845f-57c369f9b4c8",
+        "name": "Active Directory",
+        "description": "A database and set of services that allows administrators to manage permissions, access to network resources, and stored data objects (user, group, application, or devices)(Citation: Microsoft AD DS Getting Started)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274110Z",
+        "modified": "2021-10-20T15:05:19.274110Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0026",
+                "external_id": "DS0026"
+            },
+            {
+                "source_name": "Microsoft AD DS Getting Started",
+                "description": "Foulds, I. et al. (2018, August 7). AD DS Getting Started. Retrieved September 23, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/ad-ds-getting-started"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--18b236d8-7224-488f-9d2f-50076a0f653a",
+        "name": "Active Directory Object Creation",
+        "description": "Initial construction of a new active directory object (ex: Windows EID 5137)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274137Z",
+        "modified": "2021-10-20T15:05:19.274137Z"
+    },
+    {
+        "id": "x-mitre-data-component--9085a576-636a-455b-91d2-c2921bbe6d1d",
+        "name": "Active Directory Object Deletion",
+        "description": "Removal of an active directory object (ex: Windows EID 5141)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274159Z",
+        "modified": "2021-10-20T15:05:19.274159Z"
+    },
+    {
+        "id": "x-mitre-data-component--5b8b466b-2c81-4fe7-946f-d677a74ae3db",
+        "name": "Active Directory Object Modification",
+        "description": "Changes made to an active directory object (ex: Windows EID 5163 or 5136)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274183Z",
+        "modified": "2021-10-20T15:05:19.274183Z"
+    },
+    {
+        "id": "x-mitre-data-component--02d090b6-8157-48da-98a2-517f7edd49fc",
+        "name": "Active Directory Credential Request",
+        "description": "A user requested active directory credentials, such as a ticket or token (ex: Windows EID 4769)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274206Z",
+        "modified": "2021-10-20T15:05:19.274206Z"
+    },
+    {
+        "id": "x-mitre-data-component--5c6de881-bc70-4070-855a-7a9631a407f7",
+        "name": "Active Directory Object Access",
+        "description": "Opening of an active directory object, typically to collect/read its value (ex: Windows EID 4661)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274227Z",
+        "modified": "2021-10-20T15:05:19.274227Z"
+    },
+    {
+        "id": "x-mitre-data-source--9ec8c0d7-6137-456f-b829-c5f8b96ba054",
+        "name": "Driver",
+        "description": "A computer program that operates or controls a particular type of device that is attached to a computer. Provides a software interface to hardware devices, enabling operating systems and other computer programs to access hardware functions without needing to know precise details about the hardware being used(Citation: IOKit Fundamentals)(Citation: Windows Getting Started Drivers)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274252Z",
+        "modified": "2021-10-20T15:05:19.274252Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0027",
+                "external_id": "DS0027"
+            },
+            {
+                "source_name": "IOKit Fundamentals",
+                "description": "Apple. (2014, April 9). What Is the I/O Kit?. Retrieved September 24, 2021.",
+                "url": "https://developer.apple.com/library/archive/documentation/DeviceDrivers/Conceptual/IOKitFundamentals/Features/Features.html"
+            },
+            {
+                "source_name": "Windows Getting Started Drivers",
+                "description": "Viviano, A. (2021, August 17). Getting started with Windows drivers: User mode and kernel mode. Retrieved September 24, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--f5a9a1dd-82f9-41a3-85b8-13e5b9cd6c79",
+        "name": "Driver Metadata",
+        "description": "Contextual data about a driver and activity around it such as driver issues reporting or integrity (page hash, code) checking",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274285Z",
+        "modified": "2021-10-20T15:05:19.274285Z"
+    },
+    {
+        "id": "x-mitre-data-component--3551476e-14f5-4e48-a518-e82135329e03",
+        "name": "Driver Load",
+        "description": "Attaching a driver to either user or kernel-mode of a system (ex: Sysmon EID 6)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274308Z",
+        "modified": "2021-10-20T15:05:19.274308Z"
+    },
+    {
+        "id": "x-mitre-data-source--4358c631-e253-4557-86df-f687d0ef9891",
+        "name": "Logon Session",
+        "description": "Logon occurring on a system or resource (local, domain, or cloud) to which a user/device is gaining access after successful authentication and authorizaton(Citation: Microsoft Audit Logon Events)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274352Z",
+        "modified": "2021-10-20T15:05:19.274352Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0028",
+                "external_id": "DS0028"
+            },
+            {
+                "source_name": "Microsoft Audit Logon Events",
+                "description": "Microsoft. (2021, September 6). Audit logon events. Retrieved September 28, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/basic-audit-logon-events"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--39b9db72-8b48-4595-a18d-db5bbba3091b",
+        "name": "Logon Session Metadata",
+        "description": "Contextual data about a logon session, such as username, logon type, access tokens (security context, user SIDs, logon identifiers, and logon SID), and any activity associated within it",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274381Z",
+        "modified": "2021-10-20T15:05:19.274381Z"
+    },
+    {
+        "id": "x-mitre-data-component--9ce98c86-8d30-4043-ba54-0784d478d0b5",
+        "name": "Logon Session Creation",
+        "description": "Initial construction of a new user logon session (ex: Windows EID 4624, /var/log/utmp, or /var/log/wmtp)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274403Z",
+        "modified": "2021-10-20T15:05:19.274403Z"
+    },
+    {
+        "id": "x-mitre-data-source--c000cd5c-bbb3-4606-af6f-6c6d9de0bbe3",
+        "name": "Network Traffic",
+        "description": "Data transmitted across a network (ex: Web, DNS, Mail, File, etc.), that is either summarized (ex: Netflow) and/or captured as raw data in an analyzable format (ex: PCAP)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274446Z",
+        "modified": "2021-10-20T15:05:19.274446Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0029",
+                "external_id": "DS0029"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--a7f22107-02e5-4982-9067-6625d4a1765a",
+        "name": "Network Traffic Flow",
+        "description": "Summarized network packet data, with metrics, such as protocol headers and volume (ex: Netflow or Zeek http.log)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274471Z",
+        "modified": "2021-10-20T15:05:19.274471Z"
+    },
+    {
+        "id": "x-mitre-data-component--3772e279-27d6-477a-9fe3-c6beb363594c",
+        "name": "Network Traffic Content",
+        "description": "Logged network traffic data showing both protocol header and body values (ex: PCAP)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274493Z",
+        "modified": "2021-10-20T15:05:19.274493Z"
+    },
+    {
+        "id": "x-mitre-data-component--181a9f8c-c780-4f1f-91a8-edb770e904ba",
+        "name": "Network Connection Creation",
+        "description": "Initial construction of a network connection, such as capturing socket information with a source/destination IP and port(s) (ex: Windows EID 5156, Sysmon EID 3, or Zeek conn.log)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274515Z",
+        "modified": "2021-10-20T15:05:19.274515Z"
+    },
+    {
+        "id": "x-mitre-data-source--45232bc0-e858-440d-aa93-d48c6cf167f0",
+        "name": "Instance",
+        "description": "A virtual server environment which runs workloads, hosted on-premise or by third-party cloud providers(Citation: Amazon VM)(Citation: Google VM)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274538Z",
+        "modified": "2021-10-20T15:05:19.274538Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0030",
+                "external_id": "DS0030"
+            },
+            {
+                "source_name": "Amazon VM",
+                "description": "Microsoft. (n.d.). What is a virtual machine (VM)?. Retrieved October 13, 2021.",
+                "url": "https://azure.microsoft.com/en-us/overview/what-is-a-virtual-machine/"
+            },
+            {
+                "source_name": "Google VM",
+                "description": "Google. (n.d.). Virtual machine instances. Retrieved October 13, 2021.",
+                "url": "https://cloud.google.com/compute/docs/instances"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--b5b0e8ae-7436-4951-950a-7b83c4dd3f2c",
+        "name": "Instance Creation",
+        "description": "Initial construction of a new instance (ex: instance.insert within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274569Z",
+        "modified": "2021-10-20T15:05:19.274569Z"
+    },
+    {
+        "id": "x-mitre-data-component--45d0ff14-b9c4-41f5-8603-156657c20b75",
+        "name": "Instance Modification",
+        "description": "Changes made to an instance, including its settings and/or control data (ex: instance.addResourcePolicies or instances.setMetadata within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274591Z",
+        "modified": "2021-10-20T15:05:19.274591Z"
+    },
+    {
+        "id": "x-mitre-data-component--7561ed50-16cb-4826-82c7-c1ddca61785e",
+        "name": "Instance Deletion",
+        "description": "Removal of an instance (ex: instance.delete within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274612Z",
+        "modified": "2021-10-20T15:05:19.274612Z"
+    },
+    {
+        "id": "x-mitre-data-component--45fd904d-6eb0-4b50-8478-a961f09f898b",
+        "name": "Instance Metadata",
+        "description": "Contextual data about an instance and activity around it such as name, type, or status",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274633Z",
+        "modified": "2021-10-20T15:05:19.274633Z"
+    },
+    {
+        "id": "x-mitre-data-component--2a80d95f-08c4-48e3-833e-151ef19d90f5",
+        "name": "Instance Enumeration",
+        "description": "An extracted list of instances within a cloud environment (ex: instance.list within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274654Z",
+        "modified": "2021-10-20T15:05:19.274654Z"
+    },
+    {
+        "id": "x-mitre-data-component--f8213cde-6b3a-420d-9ab7-41c9af1a919f",
+        "name": "Instance Start",
+        "description": "Activation or invocation of an instance (ex: instance.start within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274676Z",
+        "modified": "2021-10-20T15:05:19.274676Z"
+    },
+    {
+        "id": "x-mitre-data-component--1361e324-b594-4c0e-a517-20cee32b8d7f",
+        "name": "Instance Stop",
+        "description": "Deactivation or stoppage of an instance (ex: instance.stop within GCP Audit Logs)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274698Z",
+        "modified": "2021-10-20T15:05:19.274698Z"
+    },
+    {
+        "id": "x-mitre-data-source--c3af32ff-65c5-4ea8-912a-fb4a85197239",
+        "name": "Cluster",
+        "description": "A set of containerized computing resources that are managed together but have separate nodes to execute various tasks and/or applications(Citation: Kube Cluster Admin)(Citation: Kube Cluster Info)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274720Z",
+        "modified": "2021-10-20T15:05:19.274720Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0031",
+                "external_id": "DS0031"
+            },
+            {
+                "source_name": "Kube Cluster Admin",
+                "description": "kubernetes. (2021, January 16). Cluster Administration. Retrieved October 13, 2021.",
+                "url": "https://kubernetes.io/docs/concepts/cluster-administration/"
+            },
+            {
+                "source_name": "Kube Cluster Info",
+                "description": "kubernetes. (n.d.). cluster-info. Retrieved October 13, 2021.",
+                "url": "https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cluster-info"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--fafaa705-ec08-4405-ac62-288c252e520d",
+        "name": "Cluster Metadata",
+        "description": "Contextual data about a cluster and activity around it such as name, namespace, age, or status",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274804Z",
+        "modified": "2021-10-20T15:05:19.274804Z"
+    },
+    {
+        "id": "x-mitre-data-source--072ec5a7-00ba-466f-9057-69751a22a967",
+        "name": "Container",
+        "description": "A standard unit of virtualized software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another(Citation: Docker Docs Container)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274834Z",
+        "modified": "2021-10-20T15:05:19.274834Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0032",
+                "external_id": "DS0032"
+            },
+            {
+                "source_name": "Docker Docs Container",
+                "description": "docker docs. (n.d.). Containers. Retrieved October 13, 2021.",
+                "url": "https://docs.docker.com/engine/api/v1.41/#tag/Container"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--a5ae90ca-0c4b-481c-959f-0eb18a7ff953",
+        "name": "Container Creation",
+        "description": "Initial construction of a new container (ex: docker create <container_name>)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274861Z",
+        "modified": "2021-10-20T15:05:19.274861Z"
+    },
+    {
+        "id": "x-mitre-data-component--df508a43-65f5-453f-8b8f-4b5d64e60a21",
+        "name": "Container Metadata",
+        "description": "Contextual data about a container and activity around it such as name, ID, image, or status",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274884Z",
+        "modified": "2021-10-20T15:05:19.274884Z"
+    },
+    {
+        "id": "x-mitre-data-component--91b3ed33-d1b5-4c4b-a896-76c55eb3cfd8",
+        "name": "Container Enumeration",
+        "description": "An extracted list of containers (ex: docker ps)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274904Z",
+        "modified": "2021-10-20T15:05:19.274904Z"
+    },
+    {
+        "id": "x-mitre-data-component--5fe82895-28e5-4aac-845e-dc886b63be2e",
+        "name": "Container Start",
+        "description": "Activation or invocation of a container (ex: docker start or docker restart)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.274928Z",
+        "modified": "2021-10-20T15:05:19.274928Z"
+    },
+    {
+        "id": "x-mitre-data-source--ba27545a-9c32-47ea-ba6a-cce50f1b326e",
+        "name": "Network Share",
+        "description": "A storage resource (typically a folder or drive) made available from one host to others using network protocols, such as Server Message Block (SMB) or Network File System (NFS)(Citation: Microsoft NFS Overview)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.274950Z",
+        "modified": "2021-10-20T15:05:19.274950Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0033",
+                "external_id": "DS0033"
+            },
+            {
+                "source_name": "Microsoft NFS Overview",
+                "description": "Microsoft. (2018, July 9). Network File System overview. Retrieved September 28, 2021.",
+                "url": "https://docs.microsoft.com/en-us/windows-server/storage/nfs/nfs-overview"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--f5468e67-51c7-4756-9b4f-65707708e7fa",
+        "name": "Network Share Access",
+        "description": "Opening a network share, which makes the contents available to the requestor (ex: Windows EID 5140 or 5145)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275043Z",
+        "modified": "2021-10-20T15:05:19.275043Z"
+    },
+    {
+        "id": "x-mitre-data-source--b0b6d26f-3747-4444-ac7a-239a6ff80cb5",
+        "name": "Volume",
+        "description": "Block object storage hosted on-premise or by third-party providers, typically made available to resources as virtualized hard drives(Citation: Amazon S3)(Citation: Azure Blob Storage)(Citation: Google Cloud Storage)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.275065Z",
+        "modified": "2021-10-20T15:05:19.275065Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0034",
+                "external_id": "DS0034"
+            },
+            {
+                "source_name": "Amazon S3",
+                "description": "Amazon. (n.d.). Amazon S3. Retrieved October 13, 2021.",
+                "url": "https://aws.amazon.com/s3/"
+            },
+            {
+                "source_name": "Azure Blob Storage",
+                "description": "Microsoft. (n.d.). Azure Blob Storage. Retrieved October 13, 2021.",
+                "url": "https://azure.microsoft.com/en-us/services/storage/blobs/"
+            },
+            {
+                "source_name": "Google Cloud Storage",
+                "description": "Google. (n.d.). Cloud Storage. Retrieved October 13, 2021.",
+                "url": "https://cloud.google.com/storage"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--dad75cc7-5bae-4175-adb4-ca1962d8650e",
+        "name": "Volume Creation",
+        "description": "Initial construction of a cloud volume (ex: AWS create-volume)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275094Z",
+        "modified": "2021-10-20T15:05:19.275094Z"
+    },
+    {
+        "id": "x-mitre-data-component--d46272ce-a0fe-4256-855e-738de7bb63ee",
+        "name": "Volume Modification",
+        "description": "Changes made to a cloud volume, including its settings and control data (ex: AWS modify-volume)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275118Z",
+        "modified": "2021-10-20T15:05:19.275118Z"
+    },
+    {
+        "id": "x-mitre-data-component--3acecdde-c327-4498-9bb8-33a2e63c6c57",
+        "name": "Volume Deletion",
+        "description": "Removal of a a cloud volume (ex: AWS delete-volume)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275140Z",
+        "modified": "2021-10-20T15:05:19.275140Z"
+    },
+    {
+        "id": "x-mitre-data-component--0f72bf50-35b3-419d-ab95-70f9b6a818dd",
+        "name": "Volume Metadata",
+        "description": "Contextual data about a cloud volume and activity around it, such as id, type, state, and size",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275161Z",
+        "modified": "2021-10-20T15:05:19.275161Z"
+    },
+    {
+        "id": "x-mitre-data-component--ec225357-8197-47a4-a9cd-57741d592877",
+        "name": "Volume Enumeration",
+        "description": "An extracted list of available volumes within a cloud environment (ex: AWS describe-volumes)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275181Z",
+        "modified": "2021-10-20T15:05:19.275181Z"
+    },
+    {
+        "id": "x-mitre-data-source--38fe306c-bdec-4f3d-8521-b72dd32dbd17",
+        "name": "Internet Scan",
+        "description": "Information obtained (commonly via active network traffic probes or web crawling) regarding various types of resources and servers connected to the public Internet",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.275202Z",
+        "modified": "2021-10-20T15:05:19.275202Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0035",
+                "external_id": "DS0035"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--1067aa74-5796-4d9b-b4f1-a4c9eb6fd9da",
+        "name": "Response Metadata",
+        "description": "Contextual data about an Internet-facing resource gathered from a scan, such as running services or ports",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275230Z",
+        "modified": "2021-10-20T15:05:19.275230Z"
+    },
+    {
+        "id": "x-mitre-data-component--0dcbbf4f-929c-489a-b66b-9b820d3f7f0e",
+        "name": "Response Content",
+        "description": "Logged network traffic in response to a scan showing both protocol header and body values",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275251Z",
+        "modified": "2021-10-20T15:05:19.275251Z"
+    },
+    {
+        "id": "x-mitre-data-source--3c07684f-3794-4536-8f70-21efe700c0ec",
+        "name": "Group",
+        "description": "A collection of multiple user accounts that share the same access rights to the computer and/or network resources and have common security rights(Citation: Amazon IAM Groups)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.275275Z",
+        "modified": "2021-10-20T15:05:19.275275Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0036",
+                "external_id": "DS0036"
+            },
+            {
+                "source_name": "Amazon IAM Groups",
+                "description": "Amazon. (n.d.). IAM user groups. Retrieved October 13, 2021.",
+                "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--8d8c7cac-94cf-4726-8989-cab33851168c",
+        "name": "Group Metadata",
+        "description": "Contextual data about a group which describes group and activity around it, such as name, permissions, or user accounts within the group",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275303Z",
+        "modified": "2021-10-20T15:05:19.275303Z"
+    },
+    {
+        "id": "x-mitre-data-component--8e44412e-3238-4d64-8878-4f11e27784fe",
+        "name": "Group Enumeration",
+        "description": "An extracted list of available groups and/or their associated settings (ex: AWS list-groups)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275365Z",
+        "modified": "2021-10-20T15:05:19.275365Z"
+    },
+    {
+        "id": "x-mitre-data-component--05d5b5b4-ef93-4807-b05f-33d8c5a35bc5",
+        "name": "Group Modification",
+        "description": "Changes made to a group, such as membership, name, or permissions (ex: Windows EID 4728 or 4732, AWS IAM UpdateGroup)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275385Z",
+        "modified": "2021-10-20T15:05:19.275385Z"
+    },
+    {
+        "id": "x-mitre-data-source--29aa4e0e-4a26-4f79-a9bc-1ae66df1c923",
+        "name": "Certificate",
+        "description": "A digital document, which highlights information such as the owner's identity, used to instill trust in public keys used while encrypting network communications",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.275410Z",
+        "modified": "2021-10-20T15:05:19.275410Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0037",
+                "external_id": "DS0037"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--1dad5aa4-4bb5-45e4-9e42-55d40003cfa6",
+        "name": "Certificate Registration",
+        "description": "Queried or logged information highlighting current and expired digital certificates (ex: Certificate transparency)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275437Z",
+        "modified": "2021-10-20T15:05:19.275437Z"
+    },
+    {
+        "id": "x-mitre-data-source--dd75f457-8dc0-4a24-9ae5-4b61c33af866",
+        "name": "Domain Name",
+        "description": "Information obtained (commonly through registration or activity logs) regarding one or more IP addresses registered with human readable names (ex: mitre.org)",
+        "type": "x-mitre-data-source",
+        "created": "2021-10-20T15:05:19.275460Z",
+        "modified": "2021-10-20T15:05:19.275460Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/datasources/DS0038",
+                "external_id": "DS0038"
+            }
+        ]
+    },
+    {
+        "id": "x-mitre-data-component--cc150ad8-ecfa-4340-9aaa-d21165873bd4",
+        "name": "Passive DNS",
+        "description": "Logged domain name system (DNS) data highlighting timelines of domain to IP address resolutions (ex: passive DNS)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275489Z",
+        "modified": "2021-10-20T15:05:19.275489Z"
+    },
+    {
+        "id": "x-mitre-data-component--2e521444-7295-4dec-96c1-7595b2df7811",
+        "name": "Active DNS",
+        "description": "Queried domain name system (DNS) registry data highlighting current domain to IP address resolutions (ex: dig/nslookup queries)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275511Z",
+        "modified": "2021-10-20T15:05:19.275511Z"
+    },
+    {
+        "id": "x-mitre-data-component--ff9b665a-598b-4bcb-8b2a-a87566aa1256",
+        "name": "Domain Registration",
+        "description": "Information about domain name assignments and other domain metadata (ex: WHOIS)",
+        "type": "x-mitre-data-component",
+        "created": "2021-10-20T15:05:19.275531Z",
+        "modified": "2021-10-20T15:05:19.275531Z"
+    },
+    {
+        "id": "intrusion-set--92d5b3fd-3b39-438e-af68-770e447beada",
+        "name": "Charming Kitten",
+        "description": "[Charming Kitten](https://attack.mitre.org/groups/G0058) is an Iranian cyber espionage group that has been active since approximately 2014. They appear to focus on targeting individuals of interest to Iran who work in academic research, human rights, and media, with most victims having been located in Iran, the US, Israel, and the UK. [[Charming Kitten](https://attack.mitre.org/groups/G0058) often tries to access private email and Facebook accounts, and sometimes establishes a foothold on victim computers as a secondary objective. The group's TTPs overlap extensively with another group, [Magic Hound](https://attack.mitre.org/groups/G0059), resulting in reporting that may not distinguish between the two groups' activities.(Citation: ClearSky Charming Kitten Dec 2017)",
+        "type": "intrusion-set",
+        "created": "2018-01-16T00:14:20.562Z",
+        "modified": "2021-04-29T14:49:39.188Z",
+        "external_references": [
+            {
+                "external_id": "G0058",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/groups/G0058"
+            },
+            {
+                "source_name": "Charming Kitten",
+                "description": "(Citation: ClearSky Charming Kitten Dec 2017)"
+            },
+            {
+                "source_name": "ClearSky Charming Kitten Dec 2017",
+                "description": "ClearSky Cyber Security. (2017, December). Charming Kitten. Retrieved December 27, 2017.",
+                "url": "http://www.clearskysec.com/wp-content/uploads/2017/12/Charming_Kitten_2017.pdf"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--2108b914-eee1-45cc-8840-36272b19596a",
+        "name": "Group Policy Modification Mitigation",
+        "description": "Identify and correct GPO permissions abuse opportunities (ex: GPO modification privileges) using auditing tools such as Bloodhound (version 1.5.1 and later)(Citation: GitHub Bloodhound).\n\nConsider implementing WMI and security filtering to further tailor which users and computers a GPO will apply to.(Citation: Wald0 Guide to GPOs)(Citation: Microsoft WMI Filters)(Citation: Microsoft GPO Security Filtering)",
+        "type": "course-of-action",
+        "created": "2019-04-24T16:57:19.391Z",
+        "modified": "2019-07-24T19:34:09.544Z",
+        "external_references": [
+            {
+                "external_id": "T1484",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1484"
+            },
+            {
+                "description": "Robbins, A., Vazarkar, R., and Schroeder, W. (2016, April 17). Bloodhound: Six Degrees of Domain Admin. Retrieved March 5, 2019.",
+                "url": "https://github.com/BloodHoundAD/BloodHound",
+                "source_name": "GitHub Bloodhound"
+            },
+            {
+                "description": "Robbins, A. (2018, April 2). A Red Teamer\u2019s Guide to GPOs and OUs. Retrieved March 5, 2019.",
+                "url": "https://wald0.com/?p=179",
+                "source_name": "Wald0 Guide to GPOs"
+            },
+            {
+                "description": "Microsoft. (2008, September 11). Fun with WMI Filters in Group Policy. Retrieved March 13, 2019.",
+                "url": "https://blogs.technet.microsoft.com/askds/2008/09/11/fun-with-wmi-filters-in-group-policy/",
+                "source_name": "Microsoft WMI Filters"
+            },
+            {
+                "description": "Microsoft. (2018, May 30). Filtering the Scope of a GPO. Retrieved March 13, 2019.",
+                "url": "https://docs.microsoft.com/en-us/previous-versions/windows/desktop/Policy/filtering-the-scope-of-a-gpo",
+                "source_name": "Microsoft GPO Security Filtering"
+            }
+        ]
+    },
+    {
+        "id": "tool--aafea02e-ece5-4bb2-91a6-3bf8c7f38a39",
+        "name": "Cobalt Strike",
+        "description": "[Cobalt Strike](https://attack.mitre.org/software/S0154) is a commercial, full-featured, penetration testing tool which bills itself as \u201cadversary simulation software designed to execute targeted attacks and emulate the post-exploitation actions of advanced threat actors\u201d. Cobalt Strike\u2019s interactive post-exploit capabilities cover the full range of ATT&CK tactics, all executed within a single, integrated system. (Citation: cobaltstrike manual)\n\nIn addition to its own capabilities, [Cobalt Strike](https://attack.mitre.org/software/S0154) leverages the capabilities of other well-known tools such as Metasploit and [Mimikatz](https://attack.mitre.org/software/S0002). (Citation: cobaltstrike manual)",
+        "type": "tool",
+        "created": "2017-12-14T16:46:06.044Z",
+        "modified": "2020-11-12T14:49:39.188Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/software/S0154",
+                "external_id": "S0154"
+            },
+            {
+                "url": "https://cobaltstrike.com/downloads/csmanual38.pdf",
+                "description": "Strategic Cyber LLC. (2017, March 14). Cobalt Strike Manual. Retrieved May 24, 2017.",
+                "source_name": "cobaltstrike manual"
+            }
+        ]
+    },
+    {
+        "id": "malware--41e3fd01-7b83-471f-835d-d2b1dc9a770c",
+        "name": "Twitoor",
+        "description": "[Twitoor](https://attack.mitre.org/software/S0302) is a dropper application capable of receiving commands from social media.(Citation: ESET-Twitoor)",
+        "type": "malware",
+        "created": "2017-10-25T14:48:42.313Z",
+        "modified": "2020-09-30T13:19:59.692Z",
+        "external_references": [
+            {
+                "source_name": "mitre-mobile-attack",
+                "url": "https://attack.mitre.org/software/S0302",
+                "external_id": "S0302"
+            },
+            {
+                "source_name": "Twitoor",
+                "description": "(Citation: ESET-Twitoor)"
+            },
+            {
+                "url": "http://www.welivesecurity.com/2016/08/24/first-twitter-controlled-android-botnet-discovered/",
+                "description": "ESET. (2016, August 24). First Twitter-controlled Android botnet discovered. Retrieved December 22, 2016.",
+                "source_name": "ESET-Twitoor"
+            }
+        ]
+    },
+    {
+        "id": "intrusion-set--049cef3b-22d5-4be6-b50c-9839c7a34fdd",
+        "name": "Bouncing Golf",
+        "description": "[Bouncing Golf](https://attack.mitre.org/groups/G0097) is a cyberespionage campaign targeting Middle Eastern countries.(Citation: Trend Micro Bouncing Golf 2019)",
+        "type": "intrusion-set",
+        "created": "2020-01-27T16:55:39.688Z",
+        "modified": "2020-03-26T20:58:44.722Z",
+        "external_references": [
+            {
+                "external_id": "G0097",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/groups/G0097"
+            },
+            {
+                "source_name": "Trend Micro Bouncing Golf 2019",
+                "url": "https://blog.trendmicro.com/trendlabs-security-intelligence/mobile-cyberespionage-campaign-bouncing-golf-affects-middle-east/",
+                "description": "E. Xu, G. Guo. (2019, June 28).  Mobile Cyberespionage Campaign \u2018Bouncing Golf\u2019 Affects Middle East. Retrieved January 27, 2020."
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--fdb1ae84-7b00-4d3d-b7dc-c774beef6425",
+        "name": "Account Manipulation Mitigation",
+        "description": "Use multifactor authentication. Follow guidelines to prevent or limit adversary access to [Valid Accounts](https://attack.mitre.org/techniques/T1078).\n\nProtect domain controllers by ensuring proper security configuration for critical servers. Configure access controls and firewalls to limit access to these systems. Do not allow domain administrator accounts to be used for day-to-day operations that may expose them to potential adversaries on unprivileged systems.",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T14:04:18.461Z",
+        "external_references": [
+            {
+                "external_id": "T1098",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1098"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--f28a20fd-d173-4603-807e-2cb3f51bdf04",
+        "name": "Command-Line Interface Mitigation",
+        "description": "Audit and/or block command-line interpreters by using whitelisting (Citation: Beechey 2010) tools, like AppLocker, (Citation: Windows Commands JPCERT) (Citation: NSA MS AppLocker) or Software Restriction Policies (Citation: Corio 2008) where appropriate. (Citation: TechNet Applocker vs SRP)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T18:09:00.664Z",
+        "external_references": [
+            {
+                "external_id": "T1059",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1059"
+            },
+            {
+                "source_name": "Beechey 2010",
+                "description": "Beechey, J. (2010, December). Application Whitelisting: Panacea or Propaganda?. Retrieved November 18, 2014.",
+                "url": "http://www.sans.org/reading-room/whitepapers/application/application-whitelisting-panacea-propaganda-33599"
+            },
+            {
+                "description": "Tomonaga, S. (2016, January 26). Windows Commands Abused by Attackers. Retrieved February 2, 2016.",
+                "source_name": "Windows Commands JPCERT",
+                "url": "http://blog.jpcert.or.jp/2016/01/windows-commands-abused-by-attackers.html"
+            },
+            {
+                "source_name": "NSA MS AppLocker",
+                "description": "NSA Information Assurance Directorate. (2014, August). Application Whitelisting Using Microsoft AppLocker. Retrieved March 31, 2016.",
+                "url": "https://www.iad.gov/iad/library/ia-guidance/tech-briefs/application-whitelisting-using-microsoft-applocker.cfm"
+            },
+            {
+                "source_name": "Corio 2008",
+                "description": "Corio, C., & Sayana, D. P. (2008, June). Application Lockdown with Software Restriction Policies. Retrieved November 18, 2014.",
+                "url": "http://technet.microsoft.com/en-us/magazine/2008.06.srp.aspx"
+            },
+            {
+                "source_name": "TechNet Applocker vs SRP",
+                "description": "Microsoft. (2012, June 27). Using Software Restriction Policies and AppLocker Policies. Retrieved April 7, 2016.",
+                "url": "https://technet.microsoft.com/en-us/library/ee791851.aspx"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--d75a3d1b-b536-4f15-a23c-f4bcc17837b8",
+        "name": "Connection Proxy Mitigation",
+        "description": "Network intrusion detection and prevention systems that use network signatures to identify traffic for specific adversary malware can be used to mitigate activity at the network level. Signatures are often for unique indicators within protocols and may be based on the specific C2 protocol used by a particular adversary or tool, and will likely be different across various malware families and versions. Adversaries will likely change tool C2 signatures over time or construct protocols in such a way as to avoid detection by common defensive tools. (Citation: University of Birmingham C2)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T18:10:46.757Z",
+        "external_references": [
+            {
+                "external_id": "T1090",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1090"
+            },
+            {
+                "description": "Gardiner, J.,  Cova, M., Nagaraja, S. (2014, February). Command & Control Understanding, Denying and Detecting. Retrieved April 20, 2016.",
+                "source_name": "University of Birmingham C2",
+                "url": "https://arxiv.org/ftp/arxiv/papers/1408/1408.1136.pdf"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--56db6ccc-433d-4411-8383-c3fd7053e2c8",
+        "name": "Execution through API Mitigation",
+        "description": "Mitigating specific API calls will likely have unintended side effects, such as preventing legitimate software from operating properly. Efforts should be focused on preventing adversary tools from running earlier in the chain of activity and on identifying subsequent malicious behavior. Audit and/or block potentially malicious software by using whitelisting (Citation: Beechey 2010) tools, like AppLocker, (Citation: Windows Commands JPCERT) (Citation: NSA MS AppLocker) or Software Restriction Policies (Citation: Corio 2008) where appropriate. (Citation: TechNet Applocker vs SRP)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T19:17:59.534Z",
+        "external_references": [
+            {
+                "external_id": "T1106",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1106"
+            },
+            {
+                "source_name": "Beechey 2010",
+                "description": "Beechey, J. (2010, December). Application Whitelisting: Panacea or Propaganda?. Retrieved November 18, 2014.",
+                "url": "http://www.sans.org/reading-room/whitepapers/application/application-whitelisting-panacea-propaganda-33599"
+            },
+            {
+                "description": "Tomonaga, S. (2016, January 26). Windows Commands Abused by Attackers. Retrieved February 2, 2016.",
+                "source_name": "Windows Commands JPCERT",
+                "url": "http://blog.jpcert.or.jp/2016/01/windows-commands-abused-by-attackers.html"
+            },
+            {
+                "source_name": "NSA MS AppLocker",
+                "description": "NSA Information Assurance Directorate. (2014, August). Application Whitelisting Using Microsoft AppLocker. Retrieved March 31, 2016.",
+                "url": "https://www.iad.gov/iad/library/ia-guidance/tech-briefs/application-whitelisting-using-microsoft-applocker.cfm"
+            },
+            {
+                "source_name": "Corio 2008",
+                "description": "Corio, C., & Sayana, D. P. (2008, June). Application Lockdown with Software Restriction Policies. Retrieved November 18, 2014.",
+                "url": "http://technet.microsoft.com/en-us/magazine/2008.06.srp.aspx"
+            },
+            {
+                "source_name": "TechNet Applocker vs SRP",
+                "description": "Microsoft. (2012, June 27). Using Software Restriction Policies and AppLocker Policies. Retrieved April 7, 2016.",
+                "url": "https://technet.microsoft.com/en-us/library/ee791851.aspx"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--0e5bdf42-a7f7-4d16-a074-4915bd262f80",
+        "name": "Exfiltration Over Alternative Protocol Mitigation",
+        "description": "Follow best practices for network firewall configurations to allow only necessary ports and traffic to enter and exit the network. For example, if services like FTP are not required for sending information outside of a network, then block FTP-related ports at the network perimeter. Enforce proxies and use dedicated servers for services such as DNS and only allow those systems to communicate over respective ports/protocols, instead of all systems within a network. (Citation: TechNet Firewall Design) These actions will help reduce command and control and exfiltration path opportunities.\n\nNetwork intrusion detection and prevention systems that use network signatures to identify traffic for specific adversary command and control infrastructure and malware can be used to mitigate activity at the network level. Signatures are often for unique indicators within protocols and may be based on the specific obfuscation technique used by a particular adversary or tool, and will likely be different across various malware families and versions. Adversaries will likely change tool command and control signatures over time or construct protocols in such a way to avoid detection by common defensive tools. (Citation: University of Birmingham C2)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T19:19:07.585Z",
+        "external_references": [
+            {
+                "external_id": "T1048",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1048"
+            },
+            {
+                "source_name": "TechNet Firewall Design",
+                "description": "Microsoft. (2004, February 6). Perimeter Firewall Design. Retrieved April 25, 2016.",
+                "url": "https://technet.microsoft.com/en-us/library/cc700828.aspx"
+            },
+            {
+                "description": "Gardiner, J.,  Cova, M., Nagaraja, S. (2014, February). Command & Control Understanding, Denying and Detecting. Retrieved April 20, 2016.",
+                "source_name": "University of Birmingham C2",
+                "url": "https://arxiv.org/ftp/arxiv/papers/1408/1408.1136.pdf"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--a222db25-cafb-44b1-a64a-20eab050514c",
+        "name": "File Permissions Modification Mitigation",
+        "description": "This type of technique cannot be easily mitigated with preventive controls since it is based on the abuse of operating system design features. Efforts should be focused on preventing adversary tools from running earlier in the chain of activity and on identification of subsequent malicious behavior.",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T19:29:26.435Z",
+        "external_references": [
+            {
+                "external_id": "T1222",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1222"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--da8a87d2-946d-4c34-9a30-709058b98996",
+        "name": "Input Capture Mitigation",
+        "description": "Identify and block potentially malicious software that may be used to acquire credentials or information from the user by using whitelisting (Citation: Beechey 2010) tools, like AppLocker, (Citation: Windows Commands JPCERT) (Citation: NSA MS AppLocker) or Software Restriction Policies (Citation: Corio 2008) where appropriate. (Citation: TechNet Applocker vs SRP)\n\nIn cases where this behavior is difficult to detect or mitigate, efforts can be made to lessen some of the impact that might result from an adversary acquiring credential information. It is also good practice to follow mitigation recommendations for adversary use of [Valid Accounts](https://attack.mitre.org/techniques/T1078).",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-24T19:42:17.622Z",
+        "external_references": [
+            {
+                "external_id": "T1056",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1056"
+            },
+            {
+                "source_name": "Beechey 2010",
+                "description": "Beechey, J. (2010, December). Application Whitelisting: Panacea or Propaganda?. Retrieved November 18, 2014.",
+                "url": "http://www.sans.org/reading-room/whitepapers/application/application-whitelisting-panacea-propaganda-33599"
+            },
+            {
+                "description": "Tomonaga, S. (2016, January 26). Windows Commands Abused by Attackers. Retrieved February 2, 2016.",
+                "source_name": "Windows Commands JPCERT",
+                "url": "http://blog.jpcert.or.jp/2016/01/windows-commands-abused-by-attackers.html"
+            },
+            {
+                "source_name": "NSA MS AppLocker",
+                "description": "NSA Information Assurance Directorate. (2014, August). Application Whitelisting Using Microsoft AppLocker. Retrieved March 31, 2016.",
+                "url": "https://www.iad.gov/iad/library/ia-guidance/tech-briefs/application-whitelisting-using-microsoft-applocker.cfm"
+            },
+            {
+                "source_name": "Corio 2008",
+                "description": "Corio, C., & Sayana, D. P. (2008, June). Application Lockdown with Software Restriction Policies. Retrieved November 18, 2014.",
+                "url": "http://technet.microsoft.com/en-us/magazine/2008.06.srp.aspx"
+            },
+            {
+                "source_name": "TechNet Applocker vs SRP",
+                "description": "Microsoft. (2012, June 27). Using Software Restriction Policies and AppLocker Policies. Retrieved April 7, 2016.",
+                "url": "https://technet.microsoft.com/en-us/library/ee791851.aspx"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--a09375e5-63d2-4b65-8b0d-1cfe3e6304ca",
+        "name": "Obfuscated Files or Information Mitigation",
+        "description": "Ensure logging and detection mechanisms analyze commands after being processed/interpreted, rather than the raw input. Consider utilizing the Antimalware Scan Interface (AMSI) on Windows 10 for this functionality. (Citation: Microsoft AMSI June 2015)\n\nMitigation of compressed and encrypted files sent over the network and through email may not be advised since it may impact normal operations.",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T11:20:10.427Z",
+        "external_references": [
+            {
+                "external_id": "T1027",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1027"
+            },
+            {
+                "source_name": "Microsoft AMSI June 2015",
+                "description": "Microsoft. (2015, June 9). Windows 10 to offer application developers new malware defenses. Retrieved February 12, 2018.",
+                "url": "https://cloudblogs.microsoft.com/microsoftsecure/2015/06/09/windows-10-to-offer-application-developers-new-malware-defenses/?source=mmpc"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--8ca6a5e0-aae5-49bc-8d07-f888c7dba9ea",
+        "name": "Office Application Startup Mitigation",
+        "description": "Follow Office macro security best practices suitable for your environment. Disable Office VBA macros from executing. Even setting to disable with notification could enable unsuspecting users to execute potentially malicious macros. (Citation: TechNet Office Macro Security)\n\nFor the Office Test method, create the Registry key used to execute it and set the permissions to \"Read Control\" to prevent easy access to the key without administrator permissions or requiring Privilege Escalation. (Citation: Palo Alto Office Test Sofacy)\n\nDisable Office add-ins. If they are required, follow best practices for securing them by requiring them to be signed and disabling user notification for allowing add-ins. For some add-ins types (WLL, VBA) additional mitigation is likely required as disabling add-ins in the Office Trust Center does not disable WLL nor does it prevent VBA code from executing. (Citation: MRWLabs Office Persistence Add-ins)\n\nFor the Outlook methods, blocking macros may be ineffective as the Visual Basic engine used for these features is separate from the macro scripting engine.(Citation: SensePost Outlook Forms) Microsoft has released patches to try to address each issue. Ensure KB3191938 which blocks Outlook Visual Basic and displays a malicious code warning, KB4011091 which disables custom forms by default, and KB4011162 which removes the legacy Home Page feature, are applied to systems.(Citation: SensePost Outlook Home Page)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T11:20:31.203Z",
+        "external_references": [
+            {
+                "external_id": "T1137",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1137"
+            },
+            {
+                "description": "Microsoft Malware Protection Center. (2016, March 22). New feature in Office 2016 can block macros and help prevent infection. Retrieved July 3, 2017.",
+                "source_name": "TechNet Office Macro Security",
+                "url": "https://blogs.technet.microsoft.com/mmpc/2016/03/22/new-feature-in-office-2016-can-block-macros-and-help-prevent-infection/"
+            },
+            {
+                "description": "Falcone, R. (2016, July 20). Technical Walkthrough: Office Test Persistence Method Used In Recent Sofacy Attacks. Retrieved July 3, 2017.",
+                "source_name": "Palo Alto Office Test Sofacy",
+                "url": "https://researchcenter.paloaltonetworks.com/2016/07/unit42-technical-walkthrough-office-test-persistence-method-used-in-recent-sofacy-attacks/"
+            },
+            {
+                "description": "Knowles, W. (2017, April 21). Add-In Opportunities for Office Persistence. Retrieved July 3, 2017.",
+                "source_name": "MRWLabs Office Persistence Add-ins",
+                "url": "https://labs.mwrinfosecurity.com/blog/add-in-opportunities-for-office-persistence/"
+            },
+            {
+                "source_name": "SensePost Outlook Forms",
+                "description": "Stalmans, E. (2017, April 28). Outlook Forms and Shells. Retrieved February 4, 2019.",
+                "url": "https://sensepost.com/blog/2017/outlook-forms-and-shells/"
+            },
+            {
+                "source_name": "SensePost Outlook Home Page",
+                "description": "Stalmans, E. (2017, October 11). Outlook Home Page \u2013 Another Ruler Vector. Retrieved February 4, 2019.",
+                "url": "https://sensepost.com/blog/2017/outlook-home-page-another-ruler-vector/"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--74febc44-8955-4e4d-aca0-d4dad2f967d7",
+        "name": "Process Injection Mitigation",
+        "description": "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of operating system design features. For example, mitigating specific Windows API calls will likely have unintended side effects, such as preventing legitimate software (i.e., security products) from operating properly. Efforts should be focused on preventing adversary tools from running earlier in the chain of activity and on identification of subsequent malicious behavior. (Citation: GDSecurity Linux injection)\n\nIdentify or block potentially malicious software that may contain process injection functionality by using whitelisting (Citation: Beechey 2010) tools, like AppLocker, (Citation: Windows Commands JPCERT) (Citation: NSA MS AppLocker) or Software Restriction Policies (Citation: Corio 2008) where appropriate. (Citation: TechNet Applocker vs SRP)\n\nUtilize Yama  (Citation: Linux kernel Yama) to mitigate ptrace based process injection by restricting the use of ptrace to privileged users only. Other mitigation controls involve the deployment of security kernel modules that provide advanced access control and process restrictions such as SELinux  (Citation: SELinux official), grsecurity  (Citation: grsecurity official), and AppArmor  (Citation: AppArmor official).",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2020-03-09T14:49:39.188Z",
+        "external_references": [
+            {
+                "external_id": "T1055",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1055"
+            },
+            {
+                "source_name": "GDSecurity Linux injection",
+                "description": "McNamara, R. (2017, September 5). Linux Based Inter-Process Code Injection Without Ptrace(2). Retrieved December 20, 2017.",
+                "url": "https://blog.gdssecurity.com/labs/2017/9/5/linux-based-inter-process-code-injection-without-ptrace2.html"
+            },
+            {
+                "source_name": "Beechey 2010",
+                "description": "Beechey, J. (2010, December). Application Whitelisting: Panacea or Propaganda?. Retrieved November 18, 2014.",
+                "url": "http://www.sans.org/reading-room/whitepapers/application/application-whitelisting-panacea-propaganda-33599"
+            },
+            {
+                "description": "Tomonaga, S. (2016, January 26). Windows Commands Abused by Attackers. Retrieved February 2, 2016.",
+                "source_name": "Windows Commands JPCERT",
+                "url": "http://blog.jpcert.or.jp/2016/01/windows-commands-abused-by-attackers.html"
+            },
+            {
+                "source_name": "NSA MS AppLocker",
+                "description": "NSA Information Assurance Directorate. (2014, August). Application Whitelisting Using Microsoft AppLocker. Retrieved March 31, 2016.",
+                "url": "https://www.iad.gov/iad/library/ia-guidance/tech-briefs/application-whitelisting-using-microsoft-applocker.cfm"
+            },
+            {
+                "source_name": "Corio 2008",
+                "description": "Corio, C., & Sayana, D. P. (2008, June). Application Lockdown with Software Restriction Policies. Retrieved November 18, 2014.",
+                "url": "http://technet.microsoft.com/en-us/magazine/2008.06.srp.aspx"
+            },
+            {
+                "source_name": "TechNet Applocker vs SRP",
+                "description": "Microsoft. (2012, June 27). Using Software Restriction Policies and AppLocker Policies. Retrieved April 7, 2016.",
+                "url": "https://technet.microsoft.com/en-us/library/ee791851.aspx"
+            },
+            {
+                "source_name": "Linux kernel Yama",
+                "description": "Linux Kernel Archives. (n.d.). Yama Documentation - ptrace_scope. Retrieved December 20, 2017.",
+                "url": "https://www.kernel.org/doc/Documentation/security/Yama.txt"
+            },
+            {
+                "source_name": "SELinux official",
+                "description": "SELinux Project. (2017, November 30). SELinux Project Wiki. Retrieved December 20, 2017.",
+                "url": "https://selinuxproject.org/page/Main_Page"
+            },
+            {
+                "source_name": "grsecurity official",
+                "description": "grsecurity. (2017, December 12). What is grsecurity?. Retrieved December 20, 2017.",
+                "url": "https://grsecurity.net/"
+            },
+            {
+                "source_name": "AppArmor official",
+                "description": "AppArmor. (2017, October 19). AppArmor Security Project Wiki. Retrieved December 20, 2017.",
+                "url": "http://wiki.apparmor.net/index.php/Main_Page"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--979e6485-7a2f-42bd-ae96-4e622c3cd173",
+        "name": "Remote Services Mitigation",
+        "description": "Limit the number of accounts that may use remote services. Use multifactor authentication where possible. Limit the permissions for accounts that are at higher risk of compromise; for example, configure SSH so users can only run specific programs. Prevent Credential Access techniques that may allow an adversary to acquire [Valid Accounts](https://attack.mitre.org/techniques/T1078) that can be used by existing services.",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T11:34:25.376Z",
+        "external_references": [
+            {
+                "external_id": "T1021",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1021"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--28c0f30c-32c3-4c6c-a474-74820e55854f",
+        "name": "Signed Binary Proxy Execution Mitigation",
+        "description": "Certain signed binaries that can be used to execute other programs may not be necessary within a given environment. Use application whitelisting configured to block execution of these binaries if they are not required for a given system or network to prevent potential misuse by adversaries. If these binaries are required for use, then restrict execution of them to privileged accounts or groups that need to use them to lessen the opportunities for malicious use.",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T11:44:39.451Z",
+        "external_references": [
+            {
+                "external_id": "T1218",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1218"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--addb3703-5a59-4461-9bcd-7e2b5d4e92a0",
+        "name": "Standard Application Layer Protocol Mitigation",
+        "description": "Network intrusion detection and prevention systems that use network signatures to identify traffic for specific adversary malware can be used to mitigate activity at the network level. Signatures are often for unique indicators within protocols and will be different across various malware families and versions. Adversaries will likely change tool signatures over time or construct protocols in such a way to avoid detection by common defensive tools. (Citation: University of Birmingham C2)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T12:00:42.159Z",
+        "external_references": [
+            {
+                "external_id": "T1071",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1071"
+            },
+            {
+                "description": "Gardiner, J.,  Cova, M., Nagaraja, S. (2014, February). Command & Control Understanding, Denying and Detecting. Retrieved April 20, 2016.",
+                "source_name": "University of Birmingham C2",
+                "url": "https://arxiv.org/ftp/arxiv/papers/1408/1408.1136.pdf"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--823fbfe9-b015-4bf3-9e67-d340c7373ca0",
+        "name": "Trusted Developer Utilities Mitigation",
+        "description": "MSBuild.exe, dnx.exe, rcsi.exe, WinDbg.exe, cdb.exe, and tracker.exe may not be necessary within a given environment and should be removed if not used.\n\nUse application whitelisting configured to block execution of MSBuild.exe, dnx.exe, rcsi.exe, WinDbg.exe, and cdb.exe if they are not required for a given system or network to prevent potential misuse by adversaries. (Citation: Microsoft GitHub Device Guard CI Policies) (Citation: Exploit Monday Mitigate Device Guard Bypases) (Citation: GitHub mattifestation DeviceGuardBypass) (Citation: SubTee MSBuild)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T12:29:49.454Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "external_id": "T1127",
+                "url": "https://attack.mitre.org/mitigations/T1127"
+            },
+            {
+                "description": "Microsoft. (2017, June 16). Deploy code integrity policies: steps. Retrieved June 28, 2017.",
+                "source_name": "Microsoft GitHub Device Guard CI Policies",
+                "url": "https://github.com/Microsoft/windows-itpro-docs/blob/master/windows/device-security/device-guard/deploy-code-integrity-policies-steps.md"
+            },
+            {
+                "description": "Graeber, M. (2016, September 8). Using Device Guard to Mitigate Against Device Guard Bypasses. Retrieved September 13, 2016.",
+                "source_name": "Exploit Monday Mitigate Device Guard Bypases",
+                "url": "http://www.exploit-monday.com/2016/09/using-device-guard-to-mitigate-against.html"
+            },
+            {
+                "description": "Graeber, M. (2016, November 13). DeviceGuardBypassMitigationRules. Retrieved November 30, 2016.",
+                "source_name": "GitHub mattifestation DeviceGuardBypass",
+                "url": "https://github.com/mattifestation/DeviceGuardBypassMitigationRules"
+            },
+            {
+                "description": "Smith, C. (2016, September 13). Bypassing Application Whitelisting using MSBuild.exe - Device Guard Example and Mitigations. Retrieved September 13, 2016.",
+                "source_name": "SubTee MSBuild"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--c4585911-6ecf-47b6-aa6b-a2bae30fd3f7",
+        "name": "Virtualization/Sandbox Evasion Mitigation",
+        "description": "Mitigation of this technique with preventative controls may impact the adversary's decision process depending on what they're looking for, how they use the information, and what their objectives are. Since it may be difficult to mitigate all aspects of information that could be gathered, efforts should be focused on preventing adversary tools from running earlier in the chain of activity and on identifying subsequent malicious behavior if compromised.",
+        "type": "course-of-action",
+        "created": "2019-04-19T15:44:59.302Z",
+        "modified": "2019-07-25T12:33:35.694Z",
+        "external_references": [
+            {
+                "source_name": "mitre-attack",
+                "external_id": "T1497",
+                "url": "https://attack.mitre.org/mitigations/T1497"
+            }
+        ]
+    },
+    {
+        "id": "course-of-action--ba2ec548-fb75-4b8c-88d6-d91a77a943cf",
+        "name": "Windows Management Instrumentation Mitigation",
+        "description": "Disabling WMI or RPCS may cause system instability and should be evaluated to assess the impact to a network. By default, only administrators are allowed to connect remotely using WMI. Restrict other users who are allowed to connect, or disallow all users to connect remotely to WMI. Prevent credential overlap across systems of administrator and privileged accounts. (Citation: FireEye WMI 2015)",
+        "type": "course-of-action",
+        "created": "2018-10-17T00:14:20.652Z",
+        "modified": "2019-07-25T12:35:34.895Z",
+        "external_references": [
+            {
+                "external_id": "T1047",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/mitigations/T1047"
+            },
+            {
+                "description": "Ballenthin, W., et al. (2015). Windows Management Instrumentation (WMI) Offense, Defense, and Forensics. Retrieved March 30, 2016.",
+                "source_name": "FireEye WMI 2015",
+                "url": "https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/wp-windows-management-instrumentation.pdf"
+            }
+        ]
+    },
+    {
+        "id": "intrusion-set--7636484c-adc5-45d4-9bfe-c3e062fbc4a0",
+        "name": "Charming Kitten",
+        "description": "[Charming Kitten](https://attack.mitre.org/groups/G0058) is an Iranian cyber espionage group that has been active since approximately 2014. They appear to focus on targeting individuals of interest to Iran who work in academic research, human rights, and media, with most victims having been located in Iran, the US, Israel, and the UK. [Charming Kitten](https://attack.mitre.org/groups/G0058) usually tries to access private email and Facebook accounts, and sometimes establishes a foothold on victim computers as a secondary objective. The group's TTPs overlap extensively with another group, [Magic Hound](https://attack.mitre.org/groups/G0059), resulting in reporting that may not distinguish between the two groups' activities. (Citation: ClearSky Charming Kitten Dec 2017)",
+        "type": "intrusion-set",
+        "created": "2018-01-16T16:13:52.465Z",
+        "modified": "2020-03-31T14:49:39.188Z",
+        "external_references": [
+            {
+                "external_id": "G0058",
+                "source_name": "mitre-attack",
+                "url": "https://attack.mitre.org/groups/G0058"
+            },
+            {
+                "description": "(Citation: ClearSky Charming Kitten Dec 2017)",
+                "source_name": "Charming Kitten"
+            },
+            {
+                "source_name": "ClearSky Charming Kitten Dec 2017",
+                "description": "ClearSky Cyber Security. (2017, December). Charming Kitten. Retrieved December 27, 2017.",
+                "url": "http://www.clearskysec.com/wp-content/uploads/2017/12/Charming_Kitten_2017.pdf"
+            }
+        ]
+    }
+]

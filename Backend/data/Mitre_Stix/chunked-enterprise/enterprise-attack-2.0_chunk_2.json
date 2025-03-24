@@ -1,0 +1,142 @@
+[
+    {
+        "id": "malware--800bdfba-6d66-480f-9f45-15845c05cb5d",
+        "name": "pngdowner",
+        "description": "pngdowner is malware used by Putter Panda. It is a simple tool with limited functionality and no persistence mechanism, suggesting it is used only as a simple \"download-and-\nexecute\" utility. (Citation: CrowdStrike Putter Panda)\n\nAliases: pngdowner",
+        "type": "malware",
+        "created": "2017-05-31T21:32:44.700Z",
+        "modified": "2018-01-17T12:56:55.080Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0067",
+                "source_name": "mitre-attack",
+                "external_id": "S0067"
+            },
+            {
+                "description": "Crowdstrike Global Intelligence Team. (2014, June 9). CrowdStrike Intelligence Report: Putter Panda. Retrieved January 22, 2016.",
+                "source_name": "CrowdStrike Putter Panda",
+                "url": "http://cdn0.vox-cdn.com/assets/4589853/crowdstrike-intelligence-report-putter-panda.original.pdf"
+            }
+        ]
+    },
+    {
+        "id": "tool--9de2308e-7bed-43a3-8e58-f194b3586700",
+        "name": "pwdump",
+        "description": "pwdump is a credential dumper. (Citation: Wikipedia pwdump)\n\nAliases: pwdump",
+        "type": "tool",
+        "created": "2017-05-31T21:32:13.051Z",
+        "modified": "2018-01-17T12:56:55.080Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0006",
+                "source_name": "mitre-attack",
+                "external_id": "S0006"
+            },
+            {
+                "description": "Wikipedia. (1985, June 22). pwdump. Retrieved June 22, 2016.",
+                "source_name": "Wikipedia pwdump",
+                "url": "https://en.wikipedia.org/wiki/Pwdump"
+            }
+        ]
+    },
+    {
+        "id": "tool--c11ac61d-50f4-444f-85d8-6f006067f0de",
+        "name": "route",
+        "description": "route can be used to find or change information within the local system IP routing table. (Citation: TechNet Route)\n\nAliases: route, route.exe",
+        "type": "tool",
+        "created": "2017-05-31T21:33:04.151Z",
+        "modified": "2018-01-17T12:56:55.080Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0103",
+                "source_name": "mitre-attack",
+                "external_id": "S0103"
+            },
+            {
+                "description": "Microsoft. (n.d.). Route. Retrieved April 17, 2016.",
+                "source_name": "TechNet Route",
+                "url": "https://technet.microsoft.com/en-us/library/bb490991.aspx"
+            }
+        ]
+    },
+    {
+        "id": "tool--c9703cd3-141c-43a0-a926-380082be5d04",
+        "name": "schtasks",
+        "description": "schtasks is used to schedule execution of programs or scripts on a Windows system to run at a specific date and time. (Citation: TechNet Schtasks)\n\nAliases: schtasks, schtasks.exe",
+        "type": "tool",
+        "created": "2017-05-31T21:33:07.218Z",
+        "modified": "2018-01-17T12:56:55.080Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0111",
+                "source_name": "mitre-attack",
+                "external_id": "S0111"
+            },
+            {
+                "description": "Microsoft. (n.d.). Schtasks. Retrieved April 28, 2016.",
+                "source_name": "TechNet Schtasks",
+                "url": "https://technet.microsoft.com/en-us/library/bb490996.aspx"
+            }
+        ]
+    },
+    {
+        "id": "tool--33b9e38f-103c-412d-bdcf-904a91fff1e4",
+        "name": "spwebmember",
+        "description": "spwebmember is a Microsoft SharePoint enumeration and data dumping tool written in .NET. (Citation: NCC Group APT15 Alive and Strong)\n\nAliases: spwebmember",
+        "type": "tool",
+        "created": "2018-04-18T17:59:24.739Z",
+        "modified": "2018-04-18T17:59:24.739Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0227",
+                "source_name": "mitre-attack",
+                "external_id": "S0227"
+            },
+            {
+                "description": "Smallridge, R. (2018, March 10). APT15 is alive and strong: An analysis of RoyalCli and RoyalDNS. Retrieved April 4, 2018.",
+                "source_name": "NCC Group APT15 Alive and Strong",
+                "url": "https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2018/march/apt15-is-alive-and-strong-an-analysis-of-royalcli-and-royaldns/"
+            }
+        ]
+    },
+    {
+        "id": "tool--9a2640c2-9f43-46fe-b13f-bde881e55555",
+        "name": "sqlmap",
+        "description": "sqlmap is an open source penetration testing tool that can be used to automate the process of detecting and exploiting SQL injection flaws. (Citation: sqlmap Introduction)\n\nAliases: sqlmap",
+        "type": "tool",
+        "created": "2018-04-18T17:59:24.739Z",
+        "modified": "2018-04-18T17:59:24.739Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0225",
+                "source_name": "mitre-attack",
+                "external_id": "S0225"
+            },
+            {
+                "description": "Damele, B., Stampar, M. (n.d.). sqlmap. Retrieved March 19, 2018.",
+                "source_name": "sqlmap Introduction",
+                "url": "http://sqlmap.org/"
+            }
+        ]
+    },
+    {
+        "id": "tool--4fa49fc0-9162-4bdb-a37e-7aa3dcb6d38b",
+        "name": "xCmd",
+        "description": " (Citation: xCmd) is an open source tool that is similar to PsExec and allows the user to execute applications on remote systems. (Citation: xCmd)\n\nAliases:  (Citation: xCmd)",
+        "type": "tool",
+        "created": "2017-05-31T21:33:11.941Z",
+        "modified": "2018-01-17T12:56:55.080Z",
+        "external_references": [
+            {
+                "url": "https://attack.mitre.org/wiki/Software/S0123",
+                "source_name": "mitre-attack",
+                "external_id": "S0123"
+            },
+            {
+                "description": "Rayaprolu, A.. (2011, April 12). xCmd an Alternative to PsExec. Retrieved August 10, 2016.",
+                "source_name": "xCmd",
+                "url": "https://ashwinrayaprolu.wordpress.com/2011/04/12/xcmd-an-alternative-to-psexec/"
+            }
+        ]
+    }
+]
