@@ -38,3 +38,6 @@ class TokenData(BaseModel):
 
 class GoogleAuthRequest(BaseModel):
     code: str
+
+class RagResponse(BaseModel):
+    query_resp : str

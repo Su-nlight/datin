@@ -1,10 +1,24 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from starlette import status
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 import auth
+from models import RagQuery, RagResponse
+from ragroute import RagModel
 
 app = FastAPI()
 app.include_router(auth.router)
+load_dotenv("API.env")
+INDEX_NAME = os.getenv("INDEX_NAME")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+
+namespaces = os.getenv("NAMESPACES","")
+namespaces = [item.strip() for item in namespaces.split(',') if item]
+Rag_Model = RagModel(PINECONE_API_KEY, GENAI_API_KEY, NameSpaces=namespaces, Index_Name=INDEX_NAME, min_score=0.75)
+
+
 
 @app.get('/', status_code = status.HTTP_200_OK)
 async def root():
@@ -13,3 +27,10 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+@app.post("/query")
+async def rag_query(query: str):
+    Rag_Resp = Rag_Model.Rag_Generator_caller(user_query=query)
+    return {"message": RagResponse(query_resp=Rag_Resp)}
+        
+         
