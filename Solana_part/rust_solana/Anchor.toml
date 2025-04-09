@@ -1,19 +1,23 @@
-[toolchain]
-package_manager = "yarn"
-
 [features]
-resolution = true
+seeds = false
 skip-lint = false
 
 [programs.localnet]
-simple_account = "7qeWxi89kUaK2McEWNHBdVAGtp3JXQCwd88Wxwg1hQGd"
+datin = "GzEFpeM1T1gG5msS1GdjxABtpRR1S2Qu8QeLd9WW95wT"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
+[programs.devnet]
+datin = "HowULwzSpJdzsW2Mnn3RLipG3q1i13hxiQB9xFUBJ7x5"
+
 [scripts]
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.ts' --exclude 'tests/utils/**/*.ts'"
+
+[test]
+startup_wait = 10000
+skip_balance_check = true
