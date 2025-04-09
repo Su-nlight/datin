@@ -1,118 +1,396 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { SimpleAccount } from "../target/types/simple_account";
+import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
+import { Datin } from '../target/types/datin';
+import { 
+    TOKEN_PROGRAM_ID,
+    getOrCreateAssociatedTokenAccount,
+    createMint,
+    mintTo,
+    getAccount
+} from "@solana/spl-token";
 import { expect } from "chai";
+import { ensureMinimumBalance } from './utils/test-helpers';
 
-describe("simple_account", () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
+const VerificationStatus = {
+  Staked: { staked: {} },
+  Verified: { verified: {} },
+  Disputed: { disputed: {} },
+  Slashed: { slashed: {} }
+};
 
-  const program = anchor.workspace.SimpleAccount as Program<SimpleAccount>;
-  const authority = anchor.web3.Keypair.generate();
-  
-  const threatId = "CVE-2023-12345";
-  const threatType = 2; // Vulnerability
-  const initialSeverity = 4;
-  const description = "Critical vulnerability in XYZ library";
-  const source = "NIST Database";
+const DisputeStatus = {
+  Pending: { pending: {} },
+  Resolved: { resolved: {} },
+  Rejected: { rejected: {} }
+};
 
-  const getThreatPDA = async () => {
-    const [pda, _] = await anchor.web3.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from("threat-intel"),
-        authority.publicKey.toBuffer(),
-        Buffer.from(threatId)
-      ],
-      program.programId
-    );
-    return pda;
-  };
+async function getTokenBalance(connection: anchor.web3.Connection, account: anchor.web3.PublicKey): Promise<number> {
+    const balance = await connection.getTokenAccountBalance(account);
+    return Number(balance.value.amount);
+}
 
-  before(async () => {
-    // Airdrop SOL to the authority for transaction fees
-    const signature = await provider.connection.requestAirdrop(
-      authority.publicKey,
-      2 * anchor.web3.LAMPORTS_PER_SOL
-    );
-    await provider.connection.confirmTransaction(signature);
-  });
+describe("Verification Process", () => {
+    const provider = anchor.AnchorProvider.env();
+    anchor.setProvider(provider);
 
-  it("Initializes a threat intelligence record", async () => {
-    const threatPDA = await getThreatPDA();
-    // Initialize the threat record
-    await program.methods
-      .initialize(
-        threatId,
-        threatType,
-        initialSeverity,
-        description,
-        source
-      )
-      .accounts({
-        threatData: threatPDA,
-        authority: authority.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
-      })
-      .signers([authority])
-      .rpc();
+    const program = anchor.workspace.Datin as Program<Datin>;
+    let tokenMint: anchor.web3.PublicKey;
+    let ownerTokenAccount: any;
+    let stakeVault: any;
+    let verifierTokenAccount: any;
+    let penaltyVault: any;
+    let mintAuthority: anchor.web3.Keypair;
+    let journalEntry: anchor.web3.Keypair;
+    let verificationStake: anchor.web3.Keypair;
 
-    // Fetch the created threat record
-    const threatRecord = await program.account.threatIntelligence.fetch(threatPDA);
-    
-    // Verify data fields
-    expect(threatRecord.threatId).to.equal(threatId);
-    expect(threatRecord.threatType).to.equal(threatType);
-    expect(threatRecord.severity).to.equal(initialSeverity);
-    expect(threatRecord.description).to.equal(description);
-    expect(threatRecord.source).to.equal(source);
-    expect(threatRecord.isActive).to.be.true;
-    expect(threatRecord.authority.toString()).to.equal(authority.publicKey.toString());
-    
-    // Verify timestamp
-    expect(threatRecord.timestamp.toNumber()).to.be.greaterThan(0);
-  });
+    before(async function() {
+        this.timeout(120000);
 
-  it("Updates threat severity", async () => {
-    const threatPDA = await getThreatPDA();
-    
-    // New severity level
-    const newSeverity = 5;
+        try {
+            await ensureMinimumBalance(
+                provider.connection,
+                provider.wallet.publicKey
+            );
 
-    // Update severity
-    await program.methods
-      .updateSeverity(newSeverity)
-      .accounts({
-        threatData: threatPDA,
-        authority: authority.publicKey,
-      })
-      .signers([authority])
-      .rpc();
+            mintAuthority = anchor.web3.Keypair.generate();
+            await ensureMinimumBalance(
+                provider.connection,
+                mintAuthority.publicKey
+            );
 
-    // Fetch the updated threat record
-    const updatedThreat = await program.account.threatIntelligence.fetch(threatPDA);
-    
-    // Verify that severity is updated or not
-    expect(updatedThreat.severity).to.equal(newSeverity);
-    expect(updatedThreat.lastUpdated.toNumber()).to.be.greaterThan(0);
-  });
+            tokenMint = await createMint(
+                provider.connection,
+                provider.wallet.payer,
+                mintAuthority.publicKey,
+                mintAuthority.publicKey,
+                9
+            );
 
-  it("Deactivates a threat", async () => {
-    const threatPDA = await getThreatPDA();
+            ownerTokenAccount = await getOrCreateAssociatedTokenAccount(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                provider.wallet.publicKey
+            );
 
-    // Deactivate the threat
-    await program.methods
-      .deactivate()
-      .accounts({
-        threatData: threatPDA,
-        authority: authority.publicKey,
-      })
-      .signers([authority])
-      .rpc();
+            stakeVault = await getOrCreateAssociatedTokenAccount(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                program.programId
+            );
 
-    // Fetch the updated threat record
-    const updatedThreat = await program.account.threatIntelligence.fetch(threatPDA);
-    
-    // Verify the threat was deactivated
-    expect(updatedThreat.isActive).to.be.false;
-  });
+            penaltyVault = await getOrCreateAssociatedTokenAccount(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                program.programId
+            );
+
+            verifierTokenAccount = await getOrCreateAssociatedTokenAccount(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                provider.wallet.publicKey
+            );
+
+            await mintTo(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                ownerTokenAccount.address,
+                mintAuthority,
+                1_000_000_000_000
+            );
+
+            await mintTo(
+                provider.connection,
+                provider.wallet.payer,
+                tokenMint,
+                verifierTokenAccount.address,
+                mintAuthority,
+                1_000_000_000_000
+            );
+
+            journalEntry = anchor.web3.Keypair.generate();
+            verificationStake = anchor.web3.Keypair.generate();
+
+        } catch (error) {
+            console.error('Setup failed:', error);
+            throw error;
+        }
+    });
+
+    it("Verifies journal entry with stake", async () => {
+        const journalEntry = anchor.web3.Keypair.generate();
+        const verificationStake = anchor.web3.Keypair.generate();
+
+        await program.methods
+            .createJournalEntry(
+                "Test Entry",
+                3, // required_verifier_count
+                new anchor.BN(100) // reward_per_verifier
+            )
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                owner: provider.wallet.publicKey,
+                tokenMint,
+                ownerTokenAccount: ownerTokenAccount.address,
+                systemProgram: anchor.web3.SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .signers([journalEntry])
+            .rpc();
+
+        await program.methods
+            .verifyEntry(new anchor.BN(100))
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                verifier: provider.wallet.publicKey,
+                verifierTokenAccount: verifierTokenAccount.address,
+                stakeVault: stakeVault.address,
+                verificationStake: verificationStake.publicKey,
+                tokenProgram: TOKEN_PROGRAM_ID,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            })
+            .signers([verificationStake])
+            .rpc();
+
+        const journalAccountData = await program.account.journalEntry.fetch(journalEntry.publicKey);
+        expect(journalAccountData.currentVerifierCount).to.equal(1);
+    });
+
+    it("Handles verification disputes", async () => {
+        const journalEntry = anchor.web3.Keypair.generate();
+        const verificationStake = anchor.web3.Keypair.generate();
+        const disputeRecord = anchor.web3.Keypair.generate();
+
+        await program.methods
+            .createJournalEntry(
+                "Test Entry for Dispute",
+                3, // required_verifier_count
+                new anchor.BN(100) // reward_per_verifier
+            )
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                owner: provider.wallet.publicKey,
+                tokenMint,
+                ownerTokenAccount: ownerTokenAccount.address,
+                systemProgram: anchor.web3.SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .signers([journalEntry])
+            .rpc();
+
+        await program.methods
+            .verifyEntry(new anchor.BN(100))
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                verifier: provider.wallet.publicKey,
+                verifierTokenAccount: verifierTokenAccount.address,
+                stakeVault: stakeVault.address,
+                verificationStake: verificationStake.publicKey,
+                tokenProgram: TOKEN_PROGRAM_ID,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            })
+            .signers([verificationStake])
+            .rpc();
+
+        await program.methods
+            .createDispute()
+            .accounts({
+                verificationStake: verificationStake.publicKey,
+                journalEntry: journalEntry.publicKey,
+                disputer: provider.wallet.publicKey,
+            })
+            .rpc();
+
+        const verificationStakeData = await program.account.verificationStake.fetch(
+            verificationStake.publicKey
+        );
+        expect(verificationStakeData.status).to.deep.equal(VerificationStatus.Disputed);
+    });
+
+    it("Handles complete dispute resolution process", async () => {
+        const journalEntry = anchor.web3.Keypair.generate();
+        const verificationStake = anchor.web3.Keypair.generate();
+        const disputeRecord = anchor.web3.Keypair.generate();
+
+        const initialStakeVaultBalance = await getTokenBalance(
+            provider.connection,
+            stakeVault.address
+        );
+
+        await program.methods
+            .createJournalEntry(
+                "Test content for dispute",
+                3, // required verifiers
+                new anchor.BN(1000000) // 1 token reward per verifier
+            )
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                owner: provider.wallet.publicKey,
+                tokenMint: tokenMint,
+                ownerTokenAccount: ownerTokenAccount.address,
+                systemProgram: anchor.web3.SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .signers([journalEntry])
+            .rpc();
+
+        try {
+            const stakeAmount = new anchor.BN(5000000);
+            await program.methods
+                .verifyEntry(stakeAmount)
+                .accounts({
+                    journalEntry: journalEntry.publicKey,
+                    verifier: provider.wallet.publicKey,
+                    verifierTokenAccount: verifierTokenAccount.address,
+                    stakeVault: stakeVault.address,
+                    verificationStake: verificationStake.publicKey,
+                    tokenProgram: TOKEN_PROGRAM_ID,
+                    systemProgram: anchor.web3.SystemProgram.programId,
+                })
+                .signers([verificationStake])
+                .rpc();
+
+            const stakeVaultBalance = await getTokenBalance(
+                provider.connection,
+                stakeVault.address
+            );
+            expect(stakeVaultBalance - initialStakeVaultBalance).to.equal(5000000);
+        } catch (error) {
+            console.error("Staking failed:", error);
+            throw error;
+        }
+
+        try {
+            await program.methods
+                .createDispute()
+                .accounts({
+                    verificationStake: verificationStake.publicKey,
+                    journalEntry: journalEntry.publicKey,
+                    disputer: provider.wallet.publicKey,
+                })
+                .rpc();
+
+            const verificationStakeData = await program.account.verificationStake.fetch(
+                verificationStake.publicKey
+            );
+            expect(verificationStakeData.status).to.deep.equal(VerificationStatus.Disputed);
+        } catch (error) {
+            console.error("Dispute creation failed:", error);
+            throw error;
+        }
+
+        // TODO: Add dispute resolution test here once DisputeRecord is implemented
+        console.log("Skipping resolution test - needs DisputeRecord implementation");
+    });
+
+    it("Prevents duplicate disputes", async () => {
+        const journalEntry = anchor.web3.Keypair.generate();
+        const verificationStake = anchor.web3.Keypair.generate();
+
+        await program.methods
+            .createJournalEntry(
+                "Test Entry for Duplicate Dispute",
+                3, // required_verifier_count
+                new anchor.BN(100) // reward_per_verifier
+            )
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                owner: provider.wallet.publicKey,
+                tokenMint,
+                ownerTokenAccount: ownerTokenAccount.address,
+                systemProgram: anchor.web3.SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .signers([journalEntry])
+            .rpc();
+
+        await program.methods
+            .verifyEntry(new anchor.BN(100))
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                verifier: provider.wallet.publicKey,
+                verifierTokenAccount: verifierTokenAccount.address,
+                stakeVault: stakeVault.address,
+                verificationStake: verificationStake.publicKey,
+                tokenProgram: TOKEN_PROGRAM_ID,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            })
+            .signers([verificationStake])
+            .rpc();
+        
+        await program.methods
+            .createDispute()
+            .accounts({
+                verificationStake: verificationStake.publicKey,
+                journalEntry: journalEntry.publicKey,
+                disputer: provider.wallet.publicKey,
+            })
+            .rpc();
+
+        try {
+            await program.methods
+                .createDispute()
+                .accounts({
+                    verificationStake: verificationStake.publicKey,
+                    journalEntry: journalEntry.publicKey,
+                    disputer: provider.wallet.publicKey,
+                })
+                .rpc();
+            expect.fail("Should not allow duplicate disputes");
+        } catch (error) {
+            expect(error.message).to.include("Error");
+        }
+    });
+
+    it("Stakes for verification", async () => {
+        const journalEntry = anchor.web3.Keypair.generate();
+        const verificationStake = anchor.web3.Keypair.generate();
+        const stakeAmount = new anchor.BN(100);
+        
+        await program.methods
+            .createJournalEntry(
+                "Test Entry for Staking",
+                3, // required_verifier_count
+                new anchor.BN(100) // reward_per_verifier
+            )
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                owner: provider.wallet.publicKey,
+                tokenMint,
+                ownerTokenAccount: ownerTokenAccount.address,
+                systemProgram: anchor.web3.SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .signers([journalEntry])
+            .rpc();
+        
+        await program.methods
+            .verifyEntry(stakeAmount)
+            .accounts({
+                journalEntry: journalEntry.publicKey,
+                verifier: provider.wallet.publicKey,
+                verifierTokenAccount: verifierTokenAccount.address,
+                stakeVault: stakeVault.address,
+                verificationStake: verificationStake.publicKey,
+                tokenProgram: TOKEN_PROGRAM_ID,
+                systemProgram: anchor.web3.SystemProgram.programId,
+            })
+            .signers([verificationStake])
+            .rpc();
+
+        const stakeVaultBalance = await provider.connection.getTokenAccountBalance(stakeVault.address);
+        console.log("Stake vault balance:", stakeVaultBalance.value.uiAmount);
+        
+        const verificationStakeData = await program.account.verificationStake.fetch(
+            verificationStake.publicKey
+        );
+        expect(verificationStakeData.verifier.toString()).to.equal(provider.wallet.publicKey.toString());
+        expect(verificationStakeData.journalEntry.toString()).to.equal(journalEntry.publicKey.toString());
+        expect(verificationStakeData.stakeAmount.toNumber()).to.equal(stakeAmount.toNumber());
+        expect(verificationStakeData.status).to.deep.equal(VerificationStatus.Staked);
+    });
 });
