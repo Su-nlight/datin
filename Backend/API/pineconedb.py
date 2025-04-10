@@ -29,7 +29,7 @@ class PineconeDB:
         self.index = self._create_index(index_name)  # Connect to the index
         # Initialize embedding model
         self.model = SentenceTransformer(embedding_model, device='cpu') 
-        # change device field to 'gpu' for activating gpu acceleration in production
+        # change device field to 'cuda' for activating gpu acceleration in production
         self.fields = embedding_fields
         self.batch_size = batch_size
 

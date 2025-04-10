@@ -41,3 +41,8 @@ class GoogleAuthRequest(BaseModel):
 
 class RagResponse(BaseModel):
     query_resp : str
+
+class ReportLog(BaseModel):
+    title: str
+    severity: int = Field(..., ge=1, le=5, description="Severity level between 1 to 5")
+    

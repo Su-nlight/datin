@@ -1,10 +1,11 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from starlette import status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 import os
 import auth
-from models import RagQuery, RagResponse
+from models import RagResponse
 from ragroute import RagModel
 
 app = FastAPI()
@@ -33,4 +34,11 @@ async def rag_query(query: str):
     Rag_Resp = Rag_Model.Rag_Generator_caller(user_query=query)
     return {"message": RagResponse(query_resp=Rag_Resp)}
         
-         
+@app.post("/query-stream")
+async def stream_rag_query(query: str):
+    Rag_resp = Rag_Model.Rag_Generator_stream_caller
+    return StreamingResponse(Rag_resp(user_query=query), media_type="text/plain")
+
+@app.post("/submit-logreport")
+async def create_log_entry():
+    pass
