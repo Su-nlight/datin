@@ -1,0 +1,284 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.chat-app {
+  background-color: #0a0a0a;
+  color: #ffffff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #222;
+  background-color: #0e0e0e;
+  height: 70px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* Make sure we have the correct animation name */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #00ffcc, #00ccff, #00ffcc);
+  background-size: 200% auto;
+  animation: gradientFlow 3s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  font-family: 'Orbitron', sans-serif; 
+}
+
+.chat-container {
+  display: flex;
+  height: calc(100vh - 70px);
+}
+
+.sidebar {
+  width: 280px;
+  background-color: #111111;
+  border-right: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-history {
+  flex: 1;
+  padding: 20px;
+  background-color: #111111;
+  overflow-y: auto;
+  height: 70%;
+  border-bottom: 1px solid #222;
+}
+
+.threat-report {
+  flex: 1;
+  padding: 20px;
+  background-color: #111111;
+  overflow-y: auto;
+}
+
+.section-title {
+  color: #00ffcc;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.chat-item {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-item:hover {
+  background-color: #1a1a1a;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0e0e0e;
+}
+
+.chat-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.chat-actions {
+  display: flex;
+  align-items: center;
+}
+
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #0a0a0a;
+}
+
+.message {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-user {
+  align-items: flex-end;
+}
+
+.message-ai {
+  align-items: flex-start;
+}
+
+.message-content {
+  padding: 12px 15px;
+  border-radius: 18px;
+  max-width: 80%;
+}
+
+.message-user .message-content {
+  background-color: #00ffcc;
+  color: #000;
+}
+
+.message-ai .message-content {
+  background-color: #1a1a1a;
+}
+
+.message-info {
+  font-size: 12px;
+  color: #777;
+  margin-top: 5px;
+}
+
+.input-area {
+  padding: 15px 20px;
+  border-top: 1px solid #222;
+  display: flex;
+  background-color: #0e0e0e;
+}
+
+.message-input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 24px;
+  border: none;
+  background-color: #1a1a1a;
+  color: #fff;
+  outline: none;
+  margin-right: 10px;
+}
+
+.send-btn {
+  background-color: #00ffcc;
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Profile icon and dropdown menu styles */
+.profile-container {
+  position: relative;
+}
+
+.profile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #00ffcc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 160px;
+  background-color: #1a1a1a;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.dropdown-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  color: #eee;
+}
+
+.dropdown-item:hover {
+  background-color: #00ffcc;
+  color: #000;
+}
+
+/* Animated text gradient effect for logo */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #00ffcc, #00ccff, #00ffcc);
+  background-size: 200% auto;
+  animation: gradientFlow 3s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.history-item:hover {
+  background-color: #1a1a1a;
+}
+
+.history-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00ffcc;
+}
+
+.history-text {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
