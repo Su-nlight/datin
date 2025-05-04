@@ -19,7 +19,13 @@ namespaces = os.getenv("NAMESPACES","")
 namespaces = [item.strip() for item in namespaces.split(',') if item]
 Rag_Model = RagModel(PINECONE_API_KEY, GENAI_API_KEY, NameSpaces=namespaces, Index_Name=INDEX_NAME, min_score=0.75)
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all methods
+    allow_headers=["*"], # Allows all headers
+)
 
 @app.get('/', status_code = status.HTTP_200_OK)
 async def root():

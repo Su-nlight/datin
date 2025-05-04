@@ -2,6 +2,7 @@ import json
 import requests
 import os
 from google import genai
+from google.genai import types
 from pineconedb import PineconeDB
 
 class RagModel:
@@ -86,8 +87,7 @@ class RagModel:
     def _vector_query_generator(self, raw_query):
         new_query = self.GenAI_Client.models.generate_content(
         model="gemini-2.0-flash",
-        contents=f"""
-        Convert the following question to a text query for vector searcher & keep only its keywords and avoid unnecessary words:
+        contents=f"""Convert the following question to a text query for vector searcher & keep only its keywords and avoid unnecessary words:
         '{raw_query}'.\nRephrase whole to a very refined query avoid writing that we need info """).text
         return new_query
 
@@ -105,37 +105,41 @@ class RagModel:
             else:
                 cnxt += self._unpack_dict_list_default(query_results.get(name))
             full_context_data += cnxt
-        with open('query1.txt', 'w') as f1:
-            f1.write(full_context_data) # debug2
+        #with open('query1.txt', 'w') as f1:
+            #f1.write(full_context_data) # debug2
         return full_context_data
     
     
     def Rag_Generator_caller(self, user_query):
         full_context = self._vector_data_retriever(query=user_query)
-        template = f"""
-        You are A CYBERSECURITY EXPERT AI ASSISTANT. Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. 
-        Do not answer any question which is not your DOMAIN.\n
+        template = f"""\n
         following is the context:\n
         ---\n{full_context}\n
         Now answer the following user query by giving a DETAILED DESCRIPTION : \n "{user_query}".
         """
         rag_response = self.GenAI_Client.models.generate_content(
             model = "gemini-2.0-flash",
+            config=types.GenerateContentConfig(
+                system_instruction="Your name is Neko Chan. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
+                temperature=0.8
+            ),
             contents = template
         ).text
         return rag_response
     
     def  Rag_Generator_stream_caller(self, user_query):
         full_context = self._vector_data_retriever(query=user_query)
-        template = f"""
-        You are A CYBERSECURITY EXPERT AI ASSISTANT. Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. 
-        Do not answer any question which is not your DOMAIN.\n
+        template = f"""\n
         following is the context:\n
         ---\n{full_context}\n
         Now answer the following user query by giving a DETAILED DESCRIPTION : \n "{user_query}".
         """
         response = self.GenAI_Client.models.generate_content_stream(
             model = "gemini-2.0-flash",
+            config=types.GenerateContentConfig(
+                system_instruction="Your name is Neko Chan. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
+                temperature=0.8
+            ),
             contents = template
         )
         for chunk in response : 
