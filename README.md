@@ -1,2 +1,2 @@
 # datin-notfinal
-test repo for UIP project 
+Repo for Datin Project which is threat intel based
