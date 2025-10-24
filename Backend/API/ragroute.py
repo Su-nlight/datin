@@ -120,7 +120,7 @@ class RagModel:
         rag_response = self.GenAI_Client.models.generate_content(
             model = "gemini-2.0-flash",
             config=types.GenerateContentConfig(
-                system_instruction="Your name is Neko Chan. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
+                system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not of your DOMAIN.",
                 temperature=0.8
             ),
             contents = template
@@ -137,7 +137,7 @@ class RagModel:
         response = self.GenAI_Client.models.generate_content_stream(
             model = "gemini-2.0-flash",
             config=types.GenerateContentConfig(
-                system_instruction="Your name is Neko Chan. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
+                system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
                 temperature=0.8
             ),
             contents = template
