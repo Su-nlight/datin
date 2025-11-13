@@ -18,7 +18,7 @@ class GeminiLLM(LLM):
     """
     Langchain wrapper for the Gemini LLM.
     """
-    model_name: str = "gemini-1.5-flash"
+    model_name: str = "gemini-2.0-flash-lite-001"
     api_key: str
     client: Any = None
 

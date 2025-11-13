@@ -4,6 +4,7 @@ import os
 from google import genai
 from google.genai import types
 from pineconedb import PineconeDB
+from evaluator import evaluate_rag_parameters, GeminiLLM, eval_reflection
 
 class RagModel:
     def __init__(self, PineconeAPIKey, GenAIKey, NameSpaces: list, Index_Name, min_score):
@@ -86,7 +87,7 @@ class RagModel:
     
     def _vector_query_generator(self, raw_query):
         new_query = self.GenAI_Client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         contents=f"""Convert the following question to a text query for vector searcher & keep only its keywords and avoid unnecessary words:
         '{raw_query}'.\nRephrase whole to a very refined query avoid writing that we need info """).text
         return new_query
@@ -118,13 +119,30 @@ class RagModel:
         Now answer the following user query by giving a DETAILED DESCRIPTION : \n "{user_query}".
         """
         rag_response = self.GenAI_Client.models.generate_content(
-            model = "gemini-2.0-flash",
+            model = "gemini-2.5-flash",
             config=types.GenerateContentConfig(
-                system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not of your DOMAIN.",
+                system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT. Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not of your DOMAIN.",
                 temperature=0.8
             ),
             contents = template
         ).text
+        healing = eval_reflection(evaluate_rag_parameters(llm=GeminiLLM(api_key=os.getenv('GENAI_API_KEY')),
+                                                      inputs={'question': user_query},
+                                                      outputs={'answer': rag_response},
+                                                      context= {"documents": [i.strip() for i in full_context.split('---')]}))
+        print(healing) #debug
+        if healing["Healing_required"] == True:
+            rag_response = self.GenAI_Client.models.generate_content(
+            model = "gemini-2.5-flash",
+            config=types.GenerateContentConfig(
+                system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT. Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not of your DOMAIN.",
+                temperature=0.8
+            ),
+            contents = f"""For the AI generated response, "{rag_response}".\n {healing['Healing_Prompt']}
+                            correct the answer as per the healing required and return the response accurately.
+                        """
+            ).text
+
         return rag_response
     
     def  Rag_Generator_stream_caller(self, user_query):
@@ -135,7 +153,7 @@ class RagModel:
         Now answer the following user query by giving a DETAILED DESCRIPTION : \n "{user_query}".
         """
         response = self.GenAI_Client.models.generate_content_stream(
-            model = "gemini-2.0-flash",
+            model = "gemini-2.5-flash",
             config=types.GenerateContentConfig(
                 system_instruction="Your name is Airi. You are A CYBERSECURITY EXPERT AI ASSISTANT.Directly ANSWER THE QUERY WITHOUT MENTIONING ANYTHING ABOUT YOURSELF. Do not answer any question which is not your DOMAIN.",
                 temperature=0.8

@@ -2,6 +2,7 @@ import json
 import csv
 import os
 import uuid
+import torch
 from pinecone import Pinecone, ServerlessSpec
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
@@ -28,7 +29,10 @@ class PineconeDB:
         self.user_namespace = user_namespace
         self.index = self._create_index(index_name)  # Connect to the index
         # Initialize embedding model
-        self.model = SentenceTransformer(embedding_model, device='cpu') 
+        # --- Check GPU ---
+        print("GPU available:", torch.cuda.is_available())
+        print("Device count:", torch.cuda.device_count())
+        self.model = SentenceTransformer(embedding_model, device='cuda' if torch.cuda.is_available() else 'cpu') 
         # change device field to 'cuda' for activating gpu acceleration in production
         self.fields = embedding_fields
         self.batch_size = batch_size

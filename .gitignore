@@ -3,3 +3,6 @@ myenv/
 .env
 Backend/API/__pycache__
 Backend/API/API.env
+.myenv_linx/
+edge-impulse*/*
+Backend/API/.dockerignore

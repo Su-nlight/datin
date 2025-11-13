@@ -1,0 +1,9 @@
+dotenv==0.9.9
+fastapi==0.115.12
+langchain==0.3.25
+openevals==0.0.20
+passlib==1.7.4
+pinecone==6.0.2
+pydantic==2.11.1
+requests==2.32.3
+starlette==0.46.1

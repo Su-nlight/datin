@@ -1,0 +1,7 @@
+services:
+  datin-backend-service:
+    build: .
+    ports:
+      - 5353:80
+    container_name: Datin-backend
+    restart: unless-stopped
