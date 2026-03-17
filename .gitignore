@@ -1,8 +1,12 @@
 # Ignore virtual environment
 myenv/
-.env
+*.env
 Backend/API/__pycache__
 Backend/API/API.env
 .myenv_linx/
 edge-impulse*/*
-Backend/API/.dockerignore
+.dockerignore
+node_*
+__pycache__
+
+Zynd*
