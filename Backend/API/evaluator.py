@@ -12,42 +12,8 @@ import os  # For environment variables
 from dotenv import load_dotenv
 from typing import Optional, List, Any # Import Optional and List
 load_dotenv("API.env")
+from llm_provider import GeminiLLM
 
-
-class GeminiLLM(LLM):
-    """
-    Langchain wrapper for the Gemini LLM.
-    """
-    model_name: str = "gemini-2.0-flash-lite-001"
-    api_key: str
-    client: Any = None
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        #genai.configure(api_key=self.api_key)
-        self.client = genai.Client(api_key=self.api_key)
-
-    def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
-        """
-        Calls the Gemini LLM with the given prompt.
-        """
-        response = self.client.models.generate_content(
-            model = self.model_name,
-            contents = prompt,
-            config = types.GenerateContentConfig(
-                system_instruction="You are a JUDGE for Evaluating LLM responses. Provide SCORE (True or False) and Single line COMMENT",
-                temperature=0.70,
-                stop_sequences=stop
-            )
-        )        
-        return response.text
-
-    @property
-    def _llm_type(self) -> str:
-        """
-        Returns the type of LLM.
-        """
-        return "gemini"
 
 def parse_gemini_judgment(text: str) -> dict:
     """

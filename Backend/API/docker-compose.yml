@@ -1,12 +1,162 @@
 services:
+
+  # ---------------------------------------------------------------------------
+  # Redis — chat session memory
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: datin-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data        # persist chat history across container restarts
+    ports:
+      - "6379:6379"             # remove this in production — only expose internally
+    networks:
+      - datin-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # Ollama — local LLM server (llama3.1)
+  # ---------------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: datin-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama   # persist pulled models — prevents re-download on restart
+    ports:
+      - "11434:11434"                 # remove in production — only expose internally
+    networks:
+      - datin-network
+    # GPU support — remove the 'deploy' block entirely if no GPU available
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # Ollama model initializer — one-shot container that pulls llama3.1
+  # Runs after ollama is healthy, then exits. Safe to re-run (ollama pull is idempotent).
+  # ---------------------------------------------------------------------------
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: datin-ollama-init
+    restart: "no"                     # run once and exit
+    entrypoint: >
+      /bin/sh -c "
+        echo 'Waiting for Ollama to be ready...' &&
+        until curl -sf http://ollama:11434/; do
+          echo 'Ollama not ready yet, retrying in 5s...' && sleep 5;
+        done &&
+        echo 'Pulling llama3.1...' &&
+        ollama pull llama3.1 &&
+        echo 'llama3.1 ready.'
+      "
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    networks:
+      - datin-network
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # DATIN Backend — FastAPI application
+  # ---------------------------------------------------------------------------
+  datin-backend-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: datin-backend
+    restart: unless-stopped
+    ports:
+      - "5353:80"
+    networks:
+      - datin-network
+    environment:
+      # LLM provider — switch to 'gemini' and set GENAI_API_KEY to use Gemini instead
+      - LLM_PROVIDER=ollama
+      - OLLAMA_BASE_URL=http://ollama:11434   # service name resolution via Docker DNS
+
+      # Redis — service name as host
+      - REDIS_URL=redis://redis:6379
+      - CHAT_SESSION_TTL=86400
+      - CHAT_MAX_TURNS=8
+
+      # These override API.env values — set secrets here or via .env file
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - GENAI_API_KEY=${GENAI_API_KEY}
+      - INDEX_NAME=${INDEX_NAME}
+      - NAMESPACES=${NAMESPACES}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - MIN_SCORE=${MIN_SCORE:-0.75}
+
+    depends_on:
+      redis:
+        condition: service_healthy       # won't start until Redis passes healthcheck
+      ollama:
+        condition: service_healthy       # won't start until Ollama passes healthcheck
+      ollama-init:
+        condition: service_completed_successfully  # won't start until llama3.1 is pulled
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s              # give the app time to initialize RAG model on startup
+
+  # ---------------------------------------------------------------------------
+  # Cloudflare tunnel — exposes backend externally
+  # ---------------------------------------------------------------------------
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: cloudflared
+    container_name: datin-cloudflared
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token <YOUR_TUNNEL_TOKEN>
-  datin-backend-service:
-    build: .
-    ports:
-      - 5353:80
-    container_name: Datin-backend
-    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - datin-network
+    depends_on:
+      datin-backend-service:
+        condition: service_healthy     # only expose once backend is confirmed healthy
+
+# ---------------------------------------------------------------------------
+# Volumes — named volumes persist data outside container lifecycle
+# ---------------------------------------------------------------------------
+volumes:
+  redis_data:
+    driver: local
+  ollama_models:
+    driver: local
+
+# ---------------------------------------------------------------------------
+# Network — isolated bridge network; containers resolve each other by name
+# ---------------------------------------------------------------------------
+networks:
+  datin-network:
+    driver: bridge

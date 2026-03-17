@@ -24,7 +24,7 @@ class CreateUserDatabase(BaseModel):
     email: EmailStr
     username: str
     hashed_password: str
-    wallet_address: str
+    wallet_address: str =""
     name: str
 
 class UserResponse(BaseModel):
@@ -40,7 +40,12 @@ class UserResponse(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
+
+class RefreshRequest(BaseModel):
+    """Request body for /authenticate/refresh."""
+    refresh_token: str = Field(..., min_length=1)
 
 class TokenData(BaseModel):
     username: Optional[str] = None

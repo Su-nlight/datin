@@ -1,170 +1,209 @@
 import os
-from fastapi import HTTPException  # Import HTTPException to handle API errors
-from starlette import status  # Import HTTP status codes for consistent error handling
-from dotenv import load_dotenv  # Import to load environment variables from .env file
-from mysql.connector import pooling, Error  # Import MySQL pooling and error handling
-from models import CreateUserDatabase  # Import a model for user data
+import logging
+from fastapi import HTTPException
+from starlette import status
+from dotenv import load_dotenv
+from mysql.connector import pooling, Error
+from models import CreateUserDatabase
+from typing import Optional
 
-# Load environment variables from the .env file
 load_dotenv(dotenv_path='API.env')
+logger = logging.getLogger(__name__)
 
-# Create a connection pool for MySQL to efficiently manage multiple connections
 connection_pool = pooling.MySQLConnectionPool(
-    pool_name="mypool",  # Name for the connection pool, can be customized
-    pool_size=5,  # Number of connections in the pool, can be adjusted based on load
-    pool_reset_session=True,  # Resets the session state when a connection is reused
-    host=os.getenv('MYSQL_HOST'),  # Hostname of the MySQL database from .env file
-    database=os.getenv('MYSQL_DATABASE'),  # Database name from .env file
-    user=os.getenv('MYSQL_USER'),  # MySQL user from .env file
-    password=os.getenv('MYSQL_PASSWORD')  # MySQL password from .env file
+    pool_name="mypool",
+    pool_size=10,                  # increased — 5 is tight under concurrent load
+    pool_reset_session=True,
+    host=os.getenv('MYSQL_HOST'),
+    database=os.getenv('MYSQL_DATABASE'),
+    user=os.getenv('MYSQL_USER'),
+    password=os.getenv('MYSQL_PASSWORD'),
+    connection_timeout=10,
 )
 
 
 class Database:
 
     @staticmethod
-    def check_user(username: str, usr_email: str):
-        """
-        Check if a user exists in the database by username or email.
-
-        Args:
-            username (str): Username to check in the database.
-            usr_email (str): Email to check in the database.
-
-        Returns:
-            tuple or None: Returns a tuple if the user is found, otherwise None.
-        """
+    def _get_connection():
+        """Centralized connection acquisition with error context."""
         try:
-            # Get a connection from the pool
-            connection = connection_pool.get_connection()
-
-            # Check if the connection is successfully established
-            if connection.is_connected():
-                cursor = connection.cursor(buffered=True)  # Create a buffered cursor to handle results efficiently
-                # Execute SQL query to check if the username or email exists
-                cursor.execute(f"SELECT username FROM Users WHERE username = '{username}' or email='{usr_email}'")
-                value = cursor.fetchone()  # Fetch one result from the query
-                return value
-
+            return connection_pool.get_connection()
         except Error as e:
-            # Raise a runtime error if any database error occurs
-            raise RuntimeError(f"Database error: {e}")
-        finally:
-            # Always close the cursor and connection to prevent resource leaks
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
+            logger.error(f"Connection pool exhausted or unreachable: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Database unavailable. Try again later."
+            )
 
     @staticmethod
-    def create_user(user_data: CreateUserDatabase):
+    def check_user(username: str, usr_email: str) -> Optional[tuple]:
         """
-        Create a new user in the database.
-
-        Args:
-            user_data (CreateUserDatabase): User data for creating a new entry in the database.
-
-        Raises:
-            HTTPException: If the username or email already exists.
-            RuntimeError: If a database error occurs.
-
-        Returns:
-            int: Number of rows affected (should be 1 if user is successfully created).
+        Check existence by username OR email.
+        Uses parameterized query — no injection surface.
         """
-        # Check if the user already exists based on username or email
-        user_exists = Database.check_user(user_data.username, user_data.email)
-
-        if user_exists:
-            # Raise an HTTP exception if the username or email is already taken
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Username already exists')
-
-        # Convert user data into a dictionary format for query parameters
-        user_data = user_data.model_dump()
-
-        # Create SQL query to insert user data into the Users table
-        query = f"INSERT INTO Users ({', '.join(user_data.keys())}) values (%s, %s, %s, %s, %s)"
-        params = tuple(user_data.values())  # Convert user data values into a tuple
-
+        connection = Database._get_connection()
         try:
-            # Get a connection from the pool
-            connection = connection_pool.get_connection()
-
-            # Check if the connection is successfully established
-            if connection.is_connected():
-                cursor = connection.cursor(buffered=True)  # Create a buffered cursor to handle the query
-
-                # Execute the insert query with parameters
-                cursor.execute(query, params)
-
-                # If exactly one row was affected, commit the transaction
-                if cursor.rowcount == 1:
-                    connection.commit()
-                else:
-                    raise Exception("Database error")
-
-                # Return the number of rows affected
-                return cursor.rowcount
-
+            cursor = connection.cursor(buffered=True)
+            cursor.execute(
+                "SELECT username FROM Users WHERE username = %s OR email = %s",
+                (username, usr_email)
+            )
+            return cursor.fetchone()
         except Error as e:
-            # Raise a runtime error if any database error occurs
+            logger.error(f"check_user error: {e}")
             raise RuntimeError(f"Database error: {e}")
-
         finally:
-            # Always close the cursor and connection to prevent resource leaks
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
+            cursor.close()
+            connection.close()
 
     @staticmethod
-    def get_user_pass(username: str):
+    def create_user(user_data: CreateUserDatabase) -> int:
         """
-        Retrieve the hashed password of a user from the database based on the username.
-
-        Args:
-            username (str): Username whose password is to be retrieved.
-
-        Returns:
-            str: Returns the hashed password if the user is found.
-
-        Raises:
-            RuntimeError: If a database error occurs.
+        Insert new user. Raises 409 if username/email already taken.
+        Separation of concern: HTTP exception lives here because
+        this is the canonical uniqueness check point.
         """
+        if Database.check_user(user_data.username, user_data.email):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or email already registered."
+            )
+
+        connection = Database._get_connection()
         try:
-            # Get a connection from the pool
-            connection = connection_pool.get_connection()
-
-            # Check if the connection is successfully established
-            if connection.is_connected():
-                cursor = connection.cursor()  # Create a cursor to execute the query
-                # Execute SQL query to retrieve the hashed password for the given username
-                cursor.execute(f"SELECT hashed_password FROM Users WHERE username = '{username}'")
-                value = cursor.fetchone()[0]  # Fetch one result from the query and get the first column value
-                return value
-
+            cursor = connection.cursor(buffered=True)
+            cursor.execute(
+                """
+                INSERT INTO Users (username, hashed_password, email, name, wallet_address)
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    user_data.username,
+                    user_data.hashed_password,
+                    user_data.email,
+                    user_data.name,
+                    user_data.wallet_address,
+                )
+            )
+            if cursor.rowcount != 1:
+                connection.rollback()
+                raise RuntimeError("Insert affected unexpected row count.")
+            connection.commit()
+            return cursor.rowcount
         except Error as e:
-            # Raise a runtime error if any database error occurs
+            connection.rollback()
+            logger.error(f"create_user error: {e}")
             raise RuntimeError(f"Database error: {e}")
-
         finally:
-            # Always close the cursor and connection to prevent resource leaks
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
-    
+            cursor.close()
+            connection.close()
+
     @staticmethod
-    def del_user(username:str, user_email:str):
+    def get_user_pass(username: str) -> Optional[str]:
+        """
+        Returns hashed password or None if user not found.
+        Caller is responsible for handling None — avoids masking 404 as 500.
+        """
+        connection = Database._get_connection()
         try:
-            # Get a connection from the pool
-            connection = connection_pool.get_connection()
-
-            # Check if the connection is successfully established
-            if connection.is_connected():
-                cursor = connection.cursor()  # Create a cursor to execute the query
-                cursor.execute(f"DELETE FROM Users WHERE username = '{username}' AND email='{user_email}'")
+            cursor = connection.cursor()
+            cursor.execute(
+                "SELECT hashed_password FROM Users WHERE username = %s",
+                (username,)
+            )
+            row = cursor.fetchone()
+            return row[0] if row else None  # explicit None — no more TypeError
         except Error as e:
-            # Raise a runtime error if any database error occurs
+            logger.error(f"get_user_pass error: {e}")
             raise RuntimeError(f"Database error: {e}")
         finally:
-            # Always close the cursor and connection to prevent resource leaks
-            if connection.is_connected():
-                cursor.close()
-                connection.close()
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def del_user(username: str, user_email: str) -> bool:
+        """
+        Delete user by username AND email (dual-field guard against accidental deletion).
+        Returns True if a row was deleted, False if no match found.
+        """
+        connection = Database._get_connection()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                "DELETE FROM Users WHERE username = %s AND email = %s",
+                (username, user_email)
+            )
+            connection.commit()          # was missing in original — silent no-op fixed
+            return cursor.rowcount == 1
+        except Error as e:
+            connection.rollback()
+            logger.error(f"del_user error: {e}")
+            raise RuntimeError(f"Database error: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def store_refresh_token(username: str, token_hash: str, expires_at) -> None:
+        """
+        Persist a hashed refresh token.
+        Requires a RefreshTokens table — schema below.
+        """
+        connection = Database._get_connection()
+        try:
+            cursor = connection.cursor()
+            # Revoke any existing token for this user before issuing a new one
+            cursor.execute(
+                "DELETE FROM RefreshTokens WHERE username = %s",
+                (username,)
+            )
+            cursor.execute(
+                "INSERT INTO RefreshTokens (username, token_hash, expires_at) VALUES (%s, %s, %s)",
+                (username, token_hash, expires_at)
+            )
+            connection.commit()
+        except Error as e:
+            connection.rollback()
+            logger.error(f"store_refresh_token error: {e}")
+            raise RuntimeError(f"Database error: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def get_refresh_token(username: str) -> Optional[dict]:
+        """Returns stored token_hash and expires_at for validation."""
+        connection = Database._get_connection()
+        try:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT token_hash, expires_at FROM RefreshTokens WHERE username = %s",
+                (username,)
+            )
+            return cursor.fetchone()
+        except Error as e:
+            logger.error(f"get_refresh_token error: {e}")
+            raise RuntimeError(f"Database error: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+    @staticmethod
+    def revoke_refresh_token(username: str) -> None:
+        """Explicit revocation — used on logout."""
+        connection = Database._get_connection()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                "DELETE FROM RefreshTokens WHERE username = %s",
+                (username,)
+            )
+            connection.commit()
+        except Error as e:
+            connection.rollback()
+            logger.error(f"revoke_refresh_token error: {e}")
+            raise RuntimeError(f"Database error: {e}")
+        finally:
+            cursor.close()
+            connection.close()
