@@ -48,7 +48,7 @@ services:
               count: all
               capabilities: [gpu]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      test: ["CMD", "ollama", "list"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -62,16 +62,7 @@ services:
     image: ollama/ollama:latest
     container_name: datin-ollama-init
     restart: "no"                     # run once and exit
-    entrypoint: >
-      /bin/sh -c "
-        echo 'Waiting for Ollama to be ready...' &&
-        until curl -sf http://ollama:11434/; do
-          echo 'Ollama not ready yet, retrying in 5s...' && sleep 5;
-        done &&
-        echo 'Pulling llama3.1...' &&
-        ollama pull llama3.1 &&
-        echo 'llama3.1 ready.'
-      "
+    entrypoint: ["ollama" , "pull", "llama3.1"]
     environment:
       - OLLAMA_HOST=http://ollama:11434
     networks:
@@ -123,7 +114,14 @@ services:
       ollama:
         condition: service_healthy       # won't start until Ollama passes healthcheck
       ollama-init:
-        condition: service_completed_successfully  # won't start until llama3.1 is pulled
+        condition: service_completed_successfully  # won't start until llama3.1 is pulled 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80/"]
       interval: 30s

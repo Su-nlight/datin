@@ -15,7 +15,7 @@ from auth import token_verifier
 from models import RagResponse, ChatRequest
 from ragroute import RagModel
 from memory import get_session_history, get_trimmed_history
-from llm_providers import get_llm
+from llm_provider import get_llm
 
 load_dotenv("API.env")
 

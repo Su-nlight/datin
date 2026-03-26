@@ -65,3 +65,6 @@ class LogReport(BaseModel):
     content: str
     tokenAddress: str
     reward: str
+
+class ChatRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=3000)

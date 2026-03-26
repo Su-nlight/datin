@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime
+FROM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu22.04
 
 WORKDIR /app
 
@@ -7,12 +7,18 @@ RUN apt-get update && apt-get install -y \
     curl \
     gcc \
     g++ \
+    python3.10 \
+    python3-pip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN ln -s /usr/bin/python3.10 /usr/bin/python
 # Copy requirements first — leverages Docker layer cache.
 # If requirements.txt hasn't changed, pip install is skipped on rebuild.
 COPY requirements.txt /app/requirements.txt
+
+RUN pip install --no-cache-dir torch==2.6.0 torchvision==0.21.0 \
+    --index-url https://download.pytorch.org/whl/cu128
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt \

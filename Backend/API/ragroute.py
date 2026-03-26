@@ -25,12 +25,7 @@ class RagModel:
 
         # Dedicated lightweight Gemini client only for query refinement pre-processing.
         # TODO: migrate to self.llm once a cheap/fast routing strategy is in place.
-        self._query_refiner = GeminiLLM(
-            api_key=os.getenv("GENAI_API_KEY"),
-            model_name="gemini-2.0-flash-lite",
-            temperature=0.3,
-            system_instruction="You are a search query optimizer."
-        )
+        self._query_refiner = self.llm
 
     # -------------------------------------------------------------------------
     # Static / private helpers (unchanged from original)
