@@ -1,4 +1,7 @@
 import logging
+from code_analyzer import SecurityCodeAnalyzer
+from code_evaluator import CodeSecurityEvaluator
+from code_analysis_router import router as code_analysis_router
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,6 +51,11 @@ async def lifespan(app: FastAPI):
         llm=llm
     )
     logger.info(f"RAG model ready. Provider: {os.getenv('LLM_PROVIDER', 'gemini')}")
+
+    app.state.code_analyzer = SecurityCodeAnalyzer(llm=llm, rag_model=app.state.rag_model)
+    app.state.code_evaluator = CodeSecurityEvaluator(llm=llm)
+    logger.info("Code analyzer and evaluator initialized.")
+
     yield
     logger.info("Shutdown complete.")
 
@@ -67,6 +75,9 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Auth router — all routes prefixed /authenticate
 app.include_router(auth.router)
+
+# Code analysis router — all routes prefixed /code-analysis
+app.include_router(code_analysis_router)
 
 app.add_middleware(
     CORSMiddleware,
