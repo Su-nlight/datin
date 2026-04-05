@@ -96,9 +96,8 @@ DATIN introduces a **hybrid decentralized architecture** that enables:
 ---
 
 ## 🏗️ System Architecture
-User → Frontend → API → AI (RAG) → Vector DB
-↓
-Blockchain Layer
+User → Frontend → Blockchain Layer → API → AI (RAG) → Vector DB
+
 ---
 
 ## 🔄 Workflow
