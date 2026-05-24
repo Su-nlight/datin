@@ -19,14 +19,7 @@ from models import RagResponse, ChatRequest
 from ragroute import RagModel
 from memory import get_session_history, get_trimmed_history
 from llm_provider import get_llm
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
 from voice_router import router as voice_router
->>>>>>> Stashed changes
-=======
-import voice_router
->>>>>>> Stashed changes
 
 load_dotenv("API.env")
 
@@ -97,18 +90,13 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Auth router — all routes prefixed /authenticate
 app.include_router(auth.router)
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
 # Voice router — all routes prefixed /voice
 app.include_router(voice_router.router)
 
->>>>>>> Stashed changes
+
 # Code analysis router — all routes prefixed /code-analysis
 app.include_router(code_analysis_router)
-=======
-app.include_router(voice_router)
->>>>>>> Stashed changes
+
 
 app.add_middleware(
     CORSMiddleware,
