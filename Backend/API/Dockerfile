@@ -17,7 +17,11 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python
 # If requirements.txt hasn't changed, pip install is skipped on rebuild.
 COPY requirements.txt /app/requirements.txt
 
+<<<<<<< Updated upstream
 RUN pip install --no-cache-dir torch==2.6.0 torchvision==0.21.0 \
+=======
+RUN pip install --no-cache-dir torch==2.7.1+cu128 torchvision \
+>>>>>>> Stashed changes
     --index-url https://download.pytorch.org/whl/cu128
 
 RUN pip install --no-cache-dir --upgrade pip && \

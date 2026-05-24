@@ -26,7 +26,10 @@ class RagModel:
         # Dedicated lightweight Gemini client only for query refinement pre-processing.
         # TODO: migrate to self.llm once a cheap/fast routing strategy is in place.
         self._query_refiner = self.llm
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     # -------------------------------------------------------------------------
     # Static / private helpers (unchanged from original)
     # -------------------------------------------------------------------------
