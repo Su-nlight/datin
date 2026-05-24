@@ -95,18 +95,19 @@ services:
       - CHAT_MAX_TURNS=8
 
       # These override API.env values — set secrets here or via .env file
-      - PINECONE_API_KEY=${PINECONE_API_KEY}
-      - GENAI_API_KEY=${GENAI_API_KEY}
-      - INDEX_NAME=${INDEX_NAME}
-      - NAMESPACES=${NAMESPACES}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
-      - MIN_SCORE=${MIN_SCORE:-0.75}
+      - PINECONE_API_KEY={}
+      - GENAI_API_KEY={}
+      - INDEX_NAME={}
+      - NAMESPACES={}
+      - JWT_SECRET_KEY={}
+      - JWT_REFRESH_SECRET_KEY={}
+      - MYSQL_HOST={}
+      - MYSQL_DATABASE={}
+      - MYSQL_USER={}
+      - MYSQL_PASSWORD={}
+      - ALLOWED_ORIGINS={}
+      - MIN_SCORE={}
+      - MODEL={}
 
     depends_on:
       redis:
@@ -136,7 +137,7 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: datin-cloudflared
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel --no-autoupdate run --token {token}
     networks:
       - datin-network
     depends_on:

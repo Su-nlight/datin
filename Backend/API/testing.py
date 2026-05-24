@@ -9,7 +9,7 @@ import json
 from typing import Dict, List
 
 # API Configuration
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:5353"
 HEADERS = {"Content-Type": "application/json"}
 
 
@@ -365,7 +365,7 @@ def run_all_examples():
     try:
         # Check if API is running
         response = requests.get(f"{BASE_URL}/")
-        print(f"✓ API is running: {response.json()['Status']}")
+        print(f"✓ API is running: {response.json()}")
     except requests.ConnectionError:
         print("✗ Error: Cannot connect to API at", BASE_URL)
         print("  Please ensure the API is running: python -m uvicorn main:app --reload")

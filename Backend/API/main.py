@@ -20,8 +20,12 @@ from ragroute import RagModel
 from memory import get_session_history, get_trimmed_history
 from llm_provider import get_llm
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 from voice_router import router as voice_router
+>>>>>>> Stashed changes
+=======
+import voice_router
 >>>>>>> Stashed changes
 
 load_dotenv("API.env")
@@ -44,22 +48,35 @@ limiter = Limiter(key_func=get_remote_address)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize heavy resources once at startup, clean up on shutdown."""
-    logger.info("Initializing LLM and RAG model...")
-
+    
+    logger.info("Initializing LLM and models...")
+    
+    # 1️⃣ Create LLM
     llm = get_llm(provider=os.getenv("LLM_PROVIDER", "gemini"))
-    app.state.rag_model = RagModel(
+    
+    # 2️⃣ Create RAG Model
+    rag_model = RagModel(
         PineconeAPIKey=os.getenv("PINECONE_API_KEY"),
+        # GenAIKey=os.getenv("GENAI_API_KEY"),  # ← ADD THIS
         NameSpaces=[s.strip() for s in os.getenv("NAMESPACES", "").split(",") if s],
         Index_Name=os.getenv("INDEX_NAME"),
         min_score=float(os.getenv("MIN_SCORE", 0.75)),
         llm=llm
     )
-    logger.info(f"RAG model ready. Provider: {os.getenv('LLM_PROVIDER', 'gemini')}")
-
-    app.state.code_analyzer = SecurityCodeAnalyzer(llm=llm, rag_model=app.state.rag_model)
-    app.state.code_evaluator = CodeSecurityEvaluator(llm=llm)
-    logger.info("Code analyzer and evaluator initialized.")
-
+    
+    # 3️⃣ Create Code Analyzer
+    code_analyzer = SecurityCodeAnalyzer(llm=llm, rag_model=rag_model)
+    
+    # 4️⃣ Create Code Evaluator
+    code_evaluator = CodeSecurityEvaluator(llm=llm)
+    
+    # 5️⃣ STORE ALL in app.state (in any order now)
+    app.state.llm = llm
+    app.state.rag_model = rag_model
+    app.state.code_analyzer = code_analyzer
+    app.state.code_evaluator = code_evaluator
+    
+    logger.info("✓ All models initialized")
     yield
     logger.info("Shutdown complete.")
 
@@ -81,6 +98,12 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(auth.router)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+# Voice router — all routes prefixed /voice
+app.include_router(voice_router.router)
+
+>>>>>>> Stashed changes
 # Code analysis router — all routes prefixed /code-analysis
 app.include_router(code_analysis_router)
 =======

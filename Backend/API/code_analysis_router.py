@@ -150,42 +150,38 @@ async def analyze_code_stream(
     code_request: CodeAnalysisRequest,
     token_payload: dict = Depends(token_verifier)
 ):
-    """
-    Stream code security analysis results in real-time.
-    
-    Streams: Language detection → Static findings → RAG analysis
-    Good for large files and real-time feedback.
-    
-    **Rate limit**: 15 requests per minute per IP
-    """
     try:
         if len(code_request.code) > 500000:
             raise HTTPException(
                 status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
                 detail="Code size exceeds 500KB limit"
             )
-        
+
         analyzer: SecurityCodeAnalyzer = request.app.state.code_analyzer
         logger.info(f"User {token_payload['username']} streaming analysis")
-        
+
         # Detect or validate language
-        language = None
         if code_request.language:
             try:
                 language = Language[code_request.language.upper()]
             except KeyError:
-                yield f"Error: Unsupported language {code_request.language}\n"
-                return
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Unsupported language {code_request.language}"
+                )
         else:
             language = analyzer.detect_language(code_request.code)
-        
+
         # Stream analysis results
         async def stream_generator():
-            for chunk in analyzer.analyze_stream(code_request.code, language):
-                yield chunk
-        
+            try:
+                for chunk in analyzer.analyze_stream(code_request.code, language):
+                    yield chunk
+            except Exception as e:
+                yield f"Error: {str(e)}\n"
+
         return StreamingResponse(stream_generator(), media_type="text/plain")
-    
+
     except HTTPException:
         raise
     except Exception as e:
@@ -194,7 +190,6 @@ async def analyze_code_stream(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error during streaming: {str(e)}"
         )
-
 
 @router.post("/analyze-with-eval", response_model=CodeAnalysisResponse)
 @limiter.limit("10/minute")
