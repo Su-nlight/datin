@@ -21,6 +21,9 @@ from memory import get_session_history, get_trimmed_history
 from llm_provider import get_llm
 from voice_router import router as voice_router
 
+# both A/B and benchmark routers from testing_folder
+from testing_folder import ab_router, benchmark_router
+
 load_dotenv("API.env")
 
 logging.basicConfig(
@@ -93,9 +96,12 @@ app.include_router(auth.router)
 # Voice router — all routes prefixed /voice
 app.include_router(voice_router.router)
 
-
 # Code analysis router — all routes prefixed /code-analysis
 app.include_router(code_analysis_router)
+
+# Testing / research routers — mounted 
+app.include_router(ab_router)          # /ab-test/*   (A/B testing)
+app.include_router(benchmark_router)   # /benchmark/* (research benchmarks)
 
 
 app.add_middleware(
