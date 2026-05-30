@@ -67,7 +67,6 @@ class LogReport(BaseModel):
     reward: str
 
 class ChatRequest(BaseModel):
-<<<<<<< Updated upstream
     query: str = Field(..., min_length=1, max_length=3000)
 
 # ==================== Code analysis agent ====================
@@ -230,6 +229,3 @@ class CodeSecurityReport(BaseModel):
                 "overall_risk_score": 8.5
             }
         }
-=======
-    query: str = Field(..., min_length=1, max_length=3000)
->>>>>>> Stashed changes

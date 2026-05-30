@@ -35,7 +35,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
-from .benchmark_suite import BenchmarkStore
+from testing_folder.benchmark_suite import BenchmarkStore
 
 try:
     from scipy import stats as _scipy_stats

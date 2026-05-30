@@ -44,12 +44,12 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 
-from ..evaluator     import evaluate_rag_parameters, eval_reflection
-from ..llm_provider  import GeminiLLM, OllamaLLM, get_llm
-from ..ragroute      import RagModel
-from ..code_analyzer import SecurityCodeAnalyzer, Language
-from ..code_evaluator import CodeSecurityEvaluator
-from .ab_testing     import (InstrumentedRagModel, QualityScores,
+from evaluator      import evaluate_rag_parameters, eval_reflection
+from llm_provider   import GeminiLLM, OllamaLLM, get_llm
+from ragroute       import RagModel
+from code_analyzer  import SecurityCodeAnalyzer, Language
+from code_evaluator import CodeSecurityEvaluator
+from testing_folder.ab_testing     import (InstrumentedRagModel, QualityScores,
                               TimingBreakdown, _build_evaluator_llm)
 
 load_dotenv("API.env")

@@ -39,9 +39,9 @@ from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from langchain.llms.base import LLM
 
-from ..evaluator    import evaluate_rag_parameters, eval_reflection
-from ..llm_provider import GeminiLLM                # ← was in evaluator.py
-from ..ragroute     import RagModel
+from evaluator    import evaluate_rag_parameters, eval_reflection
+from llm_provider import GeminiLLM                # ← was in evaluator.py
+from ragroute     import RagModel
 
 load_dotenv("API.env")
 

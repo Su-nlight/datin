@@ -36,12 +36,12 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from starlette import status
 
-from ..auth import token_verifier
-from .benchmark_suite import (
+from auth import token_verifier
+from testing_folder.benchmark_suite import (
     BenchmarkRunner, BenchmarkStore, TestScenario,
     BENCHMARK_QUERY_BANK, CODE_BENCHMARK_BANK,
 )
-from .metrics_analyzer import BenchmarkAnalyzer
+from testing_folder.metrics_analyzer import BenchmarkAnalyzer
 
 router = APIRouter(
     prefix="/benchmark",

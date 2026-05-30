@@ -31,7 +31,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from pydantic import BaseModel, Field
 from starlette import status
 
-from ab_testing import ABTestResult, ABTestStore, InstrumentedRagModel
+from testing_folder.ab_testing import ABTestResult, ABTestStore, InstrumentedRagModel
 
 load_dotenv("API.env")
 
