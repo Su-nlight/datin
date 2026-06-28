@@ -218,18 +218,86 @@ User → Frontend → Blockchain Layer → API → AI (RAG) → Vector DB
 
 ---
 
-
----
-
 ## 🛠️ Installation Guide
+
+### Prerequisites
+
+Before setting up the project, ensure the following dependencies are installed:
+
+* **Git**
+* **Docker** (with Docker Compose support)
+* **Python 3.13**
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Su-nlight/datin.git
+cd datin
+```
 
-cd backend
-pip install -r requirements.txt
+### 2. Navigate to the Backend
 
-cd frontend
+Move to the Backend API directory:
+
+```bash
+cd Backend/API
+```
+
+### 3. Build and Launch the Backend Services
+
+Build the Docker images and start all backend services:
+
+```bash
+docker-compose build
+docker-compose up
+```
+
+> **Note**
+>
+> * During startup, Docker will initialize all required services and dependencies.
+> * If any configuration or runtime issues are encountered, they will be displayed in the terminal logs.
+> * Once the services start successfully, the Backend API endpoints will be available for use.
+
+
+### 4. Start the Frontend
+
+After confirming that the backend is running successfully, open a new terminal and navigate to the frontend directory:
+
+```bash
+cd ../../frontend
+
 npm install
 npm start
+```
 
+The frontend development server will connect to the running backend services and the application will be ready for use.
+
+
+---
+
+## 📚 Research & Intellectual Property
+
+This project is part of an ongoing research initiative focused on advancing autonomous, self-healing, and intelligent software systems. The implementation presented in this repository reflects active research and may continue to evolve as new findings and improvements are incorporated.
+
+### Patent Status
+
+A patent application related to the concepts and technologies implemented in this project has been filed in India.
+
+* **Patent Application Number:** **202611046286**
+* **Jurisdiction:** India
+* **Status:** Patent Application Accepted & Patent Issued
+
+> **Note:** The repository is intended for research, educational, and development purposes. Certain concepts and implementations may be subject to intellectual property protection.
+
+---
+
+## 📄 Research Publications
+
+Research publications and technical documentation associated with this project will be added here as they become publicly available.
+
+* *Research paper:* *Coming Soon*
+* *Preprint:* *Coming Soon*
+* *Technical Report:* *Coming Soon*
+* *Conference Publication:* *Coming Soon*
+
+---
