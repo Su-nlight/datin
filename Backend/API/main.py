@@ -94,7 +94,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(auth.router)
 
 # Voice router — all routes prefixed /voice
-app.include_router(voice_router.router)
+app.include_router(voice_router)
 
 # Code analysis router — all routes prefixed /code-analysis
 app.include_router(code_analysis_router)

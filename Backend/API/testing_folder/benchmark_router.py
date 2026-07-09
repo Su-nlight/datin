@@ -296,7 +296,6 @@ async def get_statistical_report(run_id: str):
     "/runs/{run_id}/markdown",
     status_code=status.HTTP_200_OK,
     summary="Get publication-ready Markdown report",
-    response_class=None,
 )
 async def get_markdown_report(run_id: str):
     """

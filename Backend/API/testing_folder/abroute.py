@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field
 from starlette import status
 
 from testing_folder.ab_testing import ABTestResult, ABTestStore, InstrumentedRagModel
+from llm_provider import get_llm
 
 load_dotenv("API.env")
 
@@ -47,18 +48,17 @@ _model: Optional[InstrumentedRagModel] = None
 def _get_model() -> InstrumentedRagModel:
     global _model
     if _model is None:
-        INDEX_NAME = os.getenv("INDEX_NAME")
-        PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-        GENAI_API_KEY = os.getenv("GENAI_API_KEY")
-        namespaces_raw = os.getenv("NAMESPACES", "")
-        namespaces = [ns.strip() for ns in namespaces_raw.split(",") if ns.strip()]
-        min_score = float(os.getenv("MIN_SCORE", "0.75"))
+        llm = get_llm(provider=os.getenv("LLM_PROVIDER", "gemini"))
         _model = InstrumentedRagModel(
-            PineconeAPIKey=PINECONE_API_KEY,
-            GenAIKey=GENAI_API_KEY,
-            NameSpaces=namespaces,
-            Index_Name=INDEX_NAME,
-            min_score=min_score,
+            llm=llm,
+            PineconeAPIKey=os.getenv("PINECONE_API_KEY"),
+            NameSpaces=[
+                ns.strip()
+                for ns in os.getenv("NAMESPACES", "").split(",")
+                if ns.strip()
+            ],
+            Index_Name=os.getenv("INDEX_NAME"),
+            min_score=float(os.getenv("MIN_SCORE", "0.75")),
         )
     return _model
 

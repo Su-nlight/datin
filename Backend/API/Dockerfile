@@ -16,16 +16,8 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python
 # Copy requirements first — leverages Docker layer cache.
 # If requirements.txt hasn't changed, pip install is skipped on rebuild.
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-RUN pip install --no-cache-dir torch==2.6.0 torchvision==0.21.0 \
-=======
-RUN pip install --no-cache-dir torch==2.7.1+cu128 torchvision \
->>>>>>> Stashed changes
-=======
 
 RUN pip install --no-cache-dir torch==2.7.1+cu128 torchvision \
->>>>>>> Stashed changes
     --index-url https://download.pytorch.org/whl/cu128
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
