@@ -13,12 +13,19 @@ load_dotenv("API.env")
 
 
 class RagModel:
-    def __init__(self, PineconeAPIKey: str, NameSpaces: list, Index_Name: str, min_score: float, llm: LLM):
+    def __init__(self, PineconeAPIKey: str, NameSpaces: list, Index_Name: str, min_score: float, llm: LLM,
+                 evaluation_llm: Optional[LLM] = None):
         """
-        llm: injected LLM instance (GeminiLLM or OllamaLLM).
+        llm: injected LLM instance (GeminiLLM or OllamaLLM) used for generation.
              RagModel does not instantiate its own LLM — caller's responsibility.
+        evaluation_llm: injected LLM instance used as the LLM-as-a-Judge for
+             evaluate_rag_parameters(). Falls back to `llm` if not supplied,
+             so existing callers that only pass `llm` keep working unchanged —
+             but callers wiring up GENERATION_LLM_PROVIDER / EVALUATION_LLM_PROVIDER
+             should pass both so generation and evaluation are truly independent.
         """
         self.llm = llm
+        self.evaluation_llm = evaluation_llm if evaluation_llm is not None else llm
         self.Name_Spaces = NameSpaces
         self.Pinecone_DB = PineconeDB(pinecone_api_key=PineconeAPIKey, index_name=Index_Name)
         self.Min_Score = min_score
@@ -192,23 +199,30 @@ class RagModel:
 
         # Step 4: Evaluate — pass ORIGINAL query, not contextualized,
         # so evaluator scores align with what the user actually asked.
-        eval_results = evaluate_rag_parameters(
-            llm=self._query_refiner,  # lightweight evaluator LLM
-            inputs={"question": user_query},
-            outputs={"answer": rag_response},
-            context={"documents": [i.strip() for i in full_context.split("---")]}
-        )
-        healing = eval_reflection(eval_results)
-        print(healing)  # debug
-
-        # Step 5: Healing pass if required
-        if healing["Healing_required"]:
-            healing_prompt = (
-                f'For the AI generated response: "{rag_response}".\n'
-                f'{healing["Healing_Prompt"]}'
-                f"Correct the answer as per the healing required and return the response accurately."
+        # Evaluation runs on its own LLM (self.evaluation_llm) and is wrapped
+        # in its own try/except: a judge failure (e.g. a 429 from the
+        # evaluation provider) must never discard an already-successful
+        # generation — it should just skip healing and return the answer.
+        try:
+            eval_results = evaluate_rag_parameters(
+                llm=self.evaluation_llm,
+                inputs={"question": user_query},
+                outputs={"answer": rag_response},
+                context={"documents": [i.strip() for i in full_context.split("---")]}
             )
-            rag_response = self.llm.predict(healing_prompt)
+            healing = eval_reflection(eval_results)
+            print(healing)  # debug
+
+            # Step 5: Healing pass if required
+            if healing["Healing_required"]:
+                healing_prompt = (
+                    f'For the AI generated response: "{rag_response}".\n'
+                    f'{healing["Healing_Prompt"]}'
+                    f"Correct the answer as per the healing required and return the response accurately."
+                )
+                rag_response = self.llm.predict(healing_prompt)
+        except Exception as exc:
+            print(f"[RagModel] evaluation/healing skipped due to error: {exc}")
 
         return rag_response
 

@@ -335,14 +335,17 @@ def restore_session():
 
 @dataclass
 class ScenarioResult:
-    scenario:          str               # TestScenario value
-    query_id:          str
-    response:          str
-    timing:            Dict[str, float]
-    quality:           Dict[str, Any]
-    healing_triggered: bool
-    keyword_recall:    float = 0.0       # fraction of expected_keywords found
-    error:             Optional[str] = None
+    scenario:            str               # TestScenario value
+    query_id:            str
+    response:            str
+    timing:              Dict[str, float]
+    quality:             Dict[str, Any]
+    healing_triggered:   bool
+    keyword_recall:      float = 0.0       # fraction of expected_keywords found
+    error:               Optional[str] = None
+    evaluation_error:    Optional[str] = None  # set only if the judge failed; `response`/`error` stay untouched
+    generation_provider: str = ""   # filled per-scenario in ScenarioRunner.run() — e.g. "gemini" or "ollama"
+    evaluation_provider: str = field(default_factory=lambda: os.getenv("EVALUATION_LLM_PROVIDER", "gemini"))
 
 
 @dataclass
@@ -433,10 +436,17 @@ class ScenarioRunner:
     def run(self, bq: BenchmarkQuery, context: str) -> ScenarioResult:
         t0 = time.perf_counter()
         error: Optional[str] = None
+        evaluation_error: Optional[str] = None
         response = ""
         quality: Dict[str, Any] = {}
         timing: Dict[str, float] = {}
         healing_triggered = False
+        gen_ms = 0.0
+        eval_ms = 0.0
+        heal_ms = 0.0
+        # Scenario values are "gemini_no_heal" / "ollama_heal" / etc. — the
+        # provider prefix tells us which backend actually generated this run.
+        generation_provider = self.scenario.value.split("_")[0]
 
         try:
             prompt = self.rag_model._build_rag_prompt(bq.query, context, history=[])
@@ -445,45 +455,56 @@ class ScenarioRunner:
             response = self.rag_model.llm.predict(prompt)
             gen_ms = (time.perf_counter() - t_g) * 1_000
 
-            t_e = time.perf_counter()
-            eval_res = evaluate_rag_parameters(
-                llm=self.eval_llm,
-                inputs={"question": bq.query},
-                outputs={"answer": response},
-                context={"documents": [s.strip() for s in context.split("---")]},
-            )
-            eval_ms = (time.perf_counter() - t_e) * 1_000
+            # Evaluation (+ healing) is wrapped in its own try/except: a judge
+            # failure (e.g. a 429 from the evaluation provider) must not
+            # discard the response we already generated successfully above.
+            try:
+                t_e = time.perf_counter()
+                eval_res = evaluate_rag_parameters(
+                    llm=self.eval_llm,
+                    inputs={"question": bq.query},
+                    outputs={"answer": response},
+                    context={"documents": [s.strip() for s in context.split("---")]},
+                )
+                eval_ms = (time.perf_counter() - t_e) * 1_000
 
-            heal_ms = 0.0
-            if self.apply_healing:
-                healing = eval_reflection(eval_res)
-                healing_triggered = healing["Healing_required"]
-                t_h = time.perf_counter()
-                if healing_triggered:
-                    response = self.rag_model.llm.predict(
-                        f'For the AI generated response: "{response}".\n'
-                        f'{healing["Healing_Prompt"]}\n'
-                        "Correct the answer per healing instructions."
-                    )
-                    # Re-evaluate healed output
-                    t_re = time.perf_counter()
-                    eval_res = evaluate_rag_parameters(
-                        llm=self.eval_llm,
-                        inputs={"question": bq.query},
-                        outputs={"answer": response},
-                        context={"documents": [s.strip() for s in context.split("---")]},
-                    )
-                    eval_ms += (time.perf_counter() - t_re) * 1_000
-                heal_ms = (time.perf_counter() - t_h) * 1_000
+                if self.apply_healing:
+                    healing = eval_reflection(eval_res)
+                    healing_triggered = healing["Healing_required"]
+                    t_h = time.perf_counter()
+                    if healing_triggered:
+                        response = self.rag_model.llm.predict(
+                            f'For the AI generated response: "{response}".\n'
+                            f'{healing["Healing_Prompt"]}\n'
+                            "Correct the answer per healing instructions."
+                        )
+                        # Re-evaluate healed output — also isolated, so a
+                        # failure here still leaves the healed `response` and
+                        # the pre-heal quality scores intact.
+                        try:
+                            t_re = time.perf_counter()
+                            eval_res = evaluate_rag_parameters(
+                                llm=self.eval_llm,
+                                inputs={"question": bq.query},
+                                outputs={"answer": response},
+                                context={"documents": [s.strip() for s in context.split("---")]},
+                            )
+                            eval_ms += (time.perf_counter() - t_re) * 1_000
+                        except Exception as reeval_exc:
+                            evaluation_error = f"re_evaluation_error: {reeval_exc}"
+                    heal_ms = (time.perf_counter() - t_h) * 1_000
 
-            qs = QualityScores.from_evaluation(eval_res)
-            quality = {
-                "correctness":        qs.correctness,
-                "helpfulness":        qs.helpfulness,
-                "groundedness":       qs.groundedness,
-                "retrieval_relevance": qs.retrieval_relevance,
-                "overall_score":      qs.overall_score,
-            }
+                qs = QualityScores.from_evaluation(eval_res)
+                quality = {
+                    "correctness":        qs.correctness,
+                    "helpfulness":        qs.helpfulness,
+                    "groundedness":       qs.groundedness,
+                    "retrieval_relevance": qs.retrieval_relevance,
+                    "overall_score":      qs.overall_score,
+                }
+            except Exception as eval_exc:
+                evaluation_error = f"evaluation_error: {eval_exc}"
+
             timing = {
                 "generation_ms": round(gen_ms, 2),
                 "evaluation_ms": round(eval_ms, 2),
@@ -491,6 +512,8 @@ class ScenarioRunner:
                 "total_ms":      round((time.perf_counter() - t0) * 1_000, 2),
             }
         except Exception as exc:
+            # Generation itself failed — this is the only case that marks
+            # the whole scenario as failed.
             error = str(exc)
             timing = {"total_ms": round((time.perf_counter() - t0) * 1_000, 2)}
 
@@ -503,6 +526,8 @@ class ScenarioRunner:
             healing_triggered=healing_triggered,
             keyword_recall=_keyword_recall(response, bq.expected_keywords),
             error=error,
+            evaluation_error=evaluation_error,
+            generation_provider=generation_provider,
         )
 
 
@@ -545,7 +570,14 @@ class BenchmarkRunner:
         NameSpaces       = [n.strip() for n in ns_raw.split(",") if n.strip()]
         min_score        = float(os.getenv("MIN_SCORE", "0.75"))
 
-        # Build one InstrumentedRagModel per provider (shared across healing variants)
+        # Build one InstrumentedRagModel per provider (shared across healing variants).
+        # NOTE: unlike other call sites, this intentionally instantiates BOTH
+        # "gemini" and "ollama" directly rather than going through
+        # get_generation_llm() — the whole point of this benchmark is to run
+        # generation on both providers side-by-side for comparison, so there
+        # is no single "the" generation provider to resolve from
+        # GENERATION_LLM_PROVIDER here. The evaluator below still goes
+        # through get_evaluation_llm() via _build_evaluator_llm().
         gemini_llm = get_llm("gemini")
         self._gemini_model = InstrumentedRagModel(
             llm=gemini_llm,
@@ -683,6 +715,12 @@ class BenchmarkRunner:
             bq for bq in BENCHMARK_QUERY_BANK
             if self.query_ids is None or bq.id in self.query_ids
         ]
+
+        print("=" * 50)
+        print(f"Generation LLM(s) : {', '.join(s.value.split('_')[0] for s in self.scenarios) or 'none'}")
+        print(f"Evaluation LLM    : {os.getenv('EVALUATION_LLM_PROVIDER', 'gemini')}")
+        print("=" * 50)
+
         run = BenchmarkRun(
             run_id=run_id,
             started_at=time.time(),

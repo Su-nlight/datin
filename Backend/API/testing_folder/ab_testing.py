@@ -40,7 +40,7 @@ from dotenv import load_dotenv
 from langchain.llms.base import LLM
 
 from evaluator    import evaluate_rag_parameters, eval_reflection
-from llm_provider import GeminiLLM                # ← was in evaluator.py
+from llm_provider import GeminiLLM, get_evaluation_llm  # GeminiLLM kept only for the type hint below
 from ragroute     import RagModel
 
 load_dotenv("API.env")
@@ -114,19 +114,24 @@ class ABTestResult:
 
 def _build_evaluator_llm() -> GeminiLLM:
     """
-    Returns a lightweight, fixed Gemini Flash-Lite instance used exclusively
-    as the LLM-as-Judge.  Using a fixed provider ensures evaluation quality
-    scores are comparable across Gemini vs Ollama variants.
+    Returns the judge LLM used exclusively as the LLM-as-Judge, resolved from
+    EVALUATION_LLM_PROVIDER (defaults to "gemini" — Flash-Lite — so scores
+    stay comparable across Gemini vs Ollama generation variants unless the
+    user explicitly opts into a different evaluation provider).
     """
-    return GeminiLLM(
-        api_key=os.getenv("GENAI_API_KEY"),
-        model_name="gemini-2.0-flash-lite-001",
+    judge_kwargs = dict(
         temperature=0.3,
         system_instruction=(
             "You are a JUDGE for evaluating LLM responses. "
             "Provide SCORE (True or False) and a single-line COMMENT."
         ),
     )
+    # gemini-2.0-flash-lite-001 is a Gemini-only model id — only apply it
+    # when the resolved evaluation provider is actually gemini, otherwise
+    # let get_llm() fall back to its own provider-appropriate default.
+    if os.getenv("EVALUATION_LLM_PROVIDER", "gemini").lower() == "gemini":
+        judge_kwargs["model_name"] = "gemini-2.0-flash-lite-001"
+    return get_evaluation_llm(**judge_kwargs)
 
 
 # ---------------------------------------------------------------------------
@@ -179,19 +184,26 @@ class InstrumentedRagModel(RagModel):
             t_g = time.perf_counter()
             response = self.llm.predict(prompt)
             gen_ms = (time.perf_counter() - t_g) * 1_000
+            result.response = response  # generation succeeded — keep it no matter what happens next
 
-            t_e = time.perf_counter()
-            eval_res = evaluate_rag_parameters(
-                llm=self._eval_llm,
-                inputs={"question": user_query},
-                outputs={"answer": response},
-                context={"documents": [s.strip() for s in context.split("---")]},
-            )
-            eval_ms = (time.perf_counter() - t_e) * 1_000
+            # Evaluation gets its own try/except: a judge-side failure (e.g. a
+            # 429 from the evaluation provider) must not wipe out an already
+            # -successful generation.
+            eval_ms = 0.0
+            try:
+                t_e = time.perf_counter()
+                eval_res = evaluate_rag_parameters(
+                    llm=self._eval_llm,
+                    inputs={"question": user_query},
+                    outputs={"answer": response},
+                    context={"documents": [s.strip() for s in context.split("---")]},
+                )
+                eval_ms = (time.perf_counter() - t_e) * 1_000
+                result.quality = QualityScores.from_evaluation(eval_res)
+            except Exception as eval_exc:
+                result.error = f"evaluation_error: {eval_exc}"
 
-            result.response = response
-            result.quality  = QualityScores.from_evaluation(eval_res)
-            result.timing   = TimingBreakdown(
+            result.timing = TimingBreakdown(
                 generation_ms=gen_ms,
                 evaluation_ms=eval_ms,
                 total_ms=(time.perf_counter() - t0) * 1_000,
@@ -208,51 +220,66 @@ class InstrumentedRagModel(RagModel):
     def run_variant_b(self, user_query: str, context: str) -> VariantResult:
         result = VariantResult(name="B – With Healing")
         t0 = time.perf_counter()
+        eval_ms = 0.0
+        heal_ms = 0.0
         try:
             prompt = self._build_rag_prompt(user_query, context, history=[])
 
             t_g = time.perf_counter()
             response = self.llm.predict(prompt)
             gen_ms = (time.perf_counter() - t_g) * 1_000
+            result.response = response  # generation succeeded — preserve regardless of eval outcome
 
-            t_e = time.perf_counter()
-            eval_res = evaluate_rag_parameters(
-                llm=self._eval_llm,
-                inputs={"question": user_query},
-                outputs={"answer": response},
-                context={"documents": [s.strip() for s in context.split("---")]},
-            )
-            healing = eval_reflection(eval_res)
-            eval_ms = (time.perf_counter() - t_e) * 1_000
-
-            t_h = time.perf_counter()
-            triggered = healing["Healing_required"]
-            heal_prompt_used: Optional[str] = None
-            if triggered:
-                heal_prompt_used = healing["Healing_Prompt"]
-                response = self.llm.predict(
-                    f'For the AI generated response: "{response}".\n'
-                    f"{heal_prompt_used}\n"
-                    "Correct the answer per the healing instructions and return accurate response."
-                )
-            heal_ms = (time.perf_counter() - t_h) * 1_000
-
-            # Re-evaluate the healed response so quality reflects final output
-            if triggered:
-                t_re = time.perf_counter()
+            # Evaluation (+ any healing/re-evaluation) gets its own try/except
+            # so a judge-side failure (e.g. a 429) never discards the
+            # already-generated answer — it just skips healing.
+            try:
+                t_e = time.perf_counter()
                 eval_res = evaluate_rag_parameters(
                     llm=self._eval_llm,
                     inputs={"question": user_query},
                     outputs={"answer": response},
                     context={"documents": [s.strip() for s in context.split("---")]},
                 )
-                eval_ms += (time.perf_counter() - t_re) * 1_000
+                healing = eval_reflection(eval_res)
+                eval_ms = (time.perf_counter() - t_e) * 1_000
 
-            result.response          = response
-            result.quality           = QualityScores.from_evaluation(eval_res)
-            result.healing_triggered = triggered
-            result.healing_prompt    = heal_prompt_used
-            result.timing            = TimingBreakdown(
+                t_h = time.perf_counter()
+                triggered = healing["Healing_required"]
+                heal_prompt_used: Optional[str] = None
+                if triggered:
+                    heal_prompt_used = healing["Healing_Prompt"]
+                    response = self.llm.predict(
+                        f'For the AI generated response: "{response}".\n'
+                        f"{heal_prompt_used}\n"
+                        "Correct the answer per the healing instructions and return accurate response."
+                    )
+                    result.response = response
+                heal_ms = (time.perf_counter() - t_h) * 1_000
+
+                # Re-evaluate the healed response so quality reflects final output.
+                # Wrapped separately too — if the re-evaluation fails, the healed
+                # response and the original eval_res quality are still kept.
+                if triggered:
+                    try:
+                        t_re = time.perf_counter()
+                        eval_res = evaluate_rag_parameters(
+                            llm=self._eval_llm,
+                            inputs={"question": user_query},
+                            outputs={"answer": response},
+                            context={"documents": [s.strip() for s in context.split("---")]},
+                        )
+                        eval_ms += (time.perf_counter() - t_re) * 1_000
+                    except Exception as reeval_exc:
+                        result.error = f"re_evaluation_error: {reeval_exc}"
+
+                result.quality           = QualityScores.from_evaluation(eval_res)
+                result.healing_triggered = triggered
+                result.healing_prompt    = heal_prompt_used
+            except Exception as eval_exc:
+                result.error = f"evaluation_error: {eval_exc}"
+
+            result.timing = TimingBreakdown(
                 generation_ms=gen_ms,
                 evaluation_ms=eval_ms,
                 healing_ms=heal_ms,

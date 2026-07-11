@@ -88,6 +88,10 @@ services:
       # LLM provider — switch to 'gemini' and set GENAI_API_KEY to use Gemini instead
       - LLM_PROVIDER=ollama
       - OLLAMA_BASE_URL=http://ollama:11434   # service name resolution via Docker DNS
+      # swap without code changes
+      - GENERATION_LLM_PROVIDER=ollama
+      - EVALUATION_LLM_PROVIDER=ollama
+
 
       # Redis — service name as host
       - REDIS_URL=redis://redis:6379
@@ -108,7 +112,7 @@ services:
       - ALLOWED_ORIGINS={}
       - MIN_SCORE={}
       - MODEL={}
-
+      
     depends_on:
       redis:
         condition: service_healthy       # won't start until Redis passes healthcheck
