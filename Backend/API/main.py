@@ -18,8 +18,8 @@ from auth import token_verifier
 from models import RagResponse, ChatRequest
 from ragroute import RagModel
 from memory import get_session_history, get_trimmed_history
-from llm_provider import get_llm
-from voice_router import router as voice_router
+from llm_provider import get_generation_llm, get_evaluation_llm
+# from voice_router import router as voice_router
 
 # both A/B and benchmark routers from testing_folder
 from testing_folder import ab_router, benchmark_router
@@ -45,11 +45,18 @@ limiter = Limiter(key_func=get_remote_address)
 async def lifespan(app: FastAPI):
     """Initialize heavy resources once at startup, clean up on shutdown."""
     
+    logger.info("=" * 50)
+    logger.info(f"Generation LLM : {os.getenv('GENERATION_LLM_PROVIDER', 'gemini')}")
+    logger.info(f"Evaluation LLM : {os.getenv('EVALUATION_LLM_PROVIDER', 'gemini')}")
+    logger.info("=" * 50)
     logger.info("Initializing LLM and models...")
-    
-    # 1️⃣ Create LLM
-    llm = get_llm(provider=os.getenv("LLM_PROVIDER", "gemini"))
-    
+
+    # 1️⃣ Create the two independent LLMs — generation and evaluation are
+    #    resolved from separate env vars so either can be swapped (e.g. to
+    #    Ollama) without touching the other.
+    generation_llm = get_generation_llm()
+    evaluation_llm = get_evaluation_llm()
+
     # 2️⃣ Create RAG Model
     rag_model = RagModel(
         PineconeAPIKey=os.getenv("PINECONE_API_KEY"),
@@ -57,20 +64,22 @@ async def lifespan(app: FastAPI):
         NameSpaces=[s.strip() for s in os.getenv("NAMESPACES", "").split(",") if s],
         Index_Name=os.getenv("INDEX_NAME"),
         min_score=float(os.getenv("MIN_SCORE", 0.75)),
-        llm=llm
+        llm=generation_llm,
+        evaluation_llm=evaluation_llm
     )
-    
-    # 3️⃣ Create Code Analyzer
-    code_analyzer = SecurityCodeAnalyzer(llm=llm, rag_model=rag_model)
-    
-    # 4️⃣ Create Code Evaluator
-    code_evaluator = CodeSecurityEvaluator(llm=llm)
-    
+
+    # 3️⃣ Create Code Analyzer (generates security findings → generation LLM)
+    code_analyzer = SecurityCodeAnalyzer(llm=generation_llm, rag_model=rag_model)
+
+    # 4️⃣ Create Code Evaluator (judges findings → evaluation LLM)
+    code_evaluator = CodeSecurityEvaluator(llm=evaluation_llm)
+
     # 5️⃣ STORE ALL in app.state (in any order now)
-    app.state.llm = llm
+    app.state.llm = generation_llm
+    app.state.generation_llm = generation_llm
+    app.state.evaluation_llm = evaluation_llm
     app.state.rag_model = rag_model
     app.state.code_analyzer = code_analyzer
-    app.state.code_evaluator = code_evaluator
     
     logger.info("✓ All models initialized")
     yield
@@ -94,7 +103,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(auth.router)
 
 # Voice router — all routes prefixed /voice
-app.include_router(voice_router)
+# app.include_router(voice_router)
 
 # Code analysis router — all routes prefixed /code-analysis
 app.include_router(code_analysis_router)

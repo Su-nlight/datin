@@ -32,7 +32,7 @@ from pydantic import BaseModel, Field
 from starlette import status
 
 from testing_folder.ab_testing import ABTestResult, ABTestStore, InstrumentedRagModel
-from llm_provider import get_llm
+from llm_provider import get_generation_llm
 
 load_dotenv("API.env")
 
@@ -48,7 +48,7 @@ _model: Optional[InstrumentedRagModel] = None
 def _get_model() -> InstrumentedRagModel:
     global _model
     if _model is None:
-        llm = get_llm(provider=os.getenv("LLM_PROVIDER", "gemini"))
+        llm = get_generation_llm()
         _model = InstrumentedRagModel(
             llm=llm,
             PineconeAPIKey=os.getenv("PINECONE_API_KEY"),

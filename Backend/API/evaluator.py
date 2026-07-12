@@ -12,7 +12,7 @@ import os  # For environment variables
 from dotenv import load_dotenv
 from typing import Optional, List, Any # Import Optional and List
 load_dotenv("API.env")
-from llm_provider import GeminiLLM
+from llm_provider import get_evaluation_llm
 
 
 def parse_gemini_judgment(text: str) -> dict:
@@ -162,8 +162,9 @@ def eval_reflection(results: dict):
     
 
 if __name__ == "__main__":
-    # Replace with your actual Gemini API key
-    gemini_llm = GeminiLLM(api_key=os.getenv('GENAI_API_KEY'))
+    # Judge resolved from EVALUATION_LLM_PROVIDER (defaults to "gemini") —
+    # no hardcoded provider here anymore.
+    judge = get_evaluation_llm()
 
     # Example data for evaluation
     inputs = {"question": "Where was the first president of FoobarLand born?"}
@@ -180,7 +181,7 @@ if __name__ == "__main__":
 
     # Perform evaluation
     evaluation_results = evaluate_rag_parameters(
-        gemini_llm, inputs, outputs, context
+        judge, inputs, outputs, context
     )
     print(evaluation_results)
     healing_promp = eval_reflection(evaluation_results)
