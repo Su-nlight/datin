@@ -10,3 +10,4 @@ node_*
 __pycache__
 
 Zynd*
+llm_benchmark_lab*/*

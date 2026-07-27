@@ -178,6 +178,97 @@ class GrokLLM(LLM):
     def _llm_type(self) -> str:
         return "grok"
 
+class GroqLLM(LLM):
+    """Groq API (OpenAI-compatible)."""
+
+    model_name: str = "llama-3.3-70b-versatile"
+    api_key: str
+    base_url: str = "https://api.groq.com/openai/v1"
+    temperature: float = 0.7
+    system_instruction: str = "You are a helpful assistant."
+
+    def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {"role": "system", "content": self.system_instruction},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": self.temperature,
+            "stream": False,
+        }
+
+        if stop:
+            payload["stop"] = stop
+
+        response = requests.post(
+            f"{self.base_url}/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=120,
+        )
+
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+
+    def _stream(self, prompt: str, stop: Optional[List[str]] = None) -> Iterator[str]:
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": self.model_name,
+            "messages": [
+                {"role": "system", "content": self.system_instruction},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": self.temperature,
+            "stream": True,
+        }
+
+        if stop:
+            payload["stop"] = stop
+
+        with requests.post(
+            f"{self.base_url}/chat/completions",
+            headers=headers,
+            json=payload,
+            stream=True,
+            timeout=120,
+        ) as response:
+
+            response.raise_for_status()
+
+            for line in response.iter_lines():
+                if not line:
+                    continue
+
+                line = line.decode("utf-8")
+
+                if not line.startswith("data: "):
+                    continue
+
+                data = line[6:]
+
+                if data == "[DONE]":
+                    break
+
+                chunk = json.loads(data)
+
+                delta = chunk["choices"][0]["delta"]
+
+                if "content" in delta:
+                    yield delta["content"]
+
+    @property
+    def _llm_type(self) -> str:
+        return "groq"
 
 def get_llm(settings: Settings, provider: Optional[str] = None, **kwargs) -> LLM:
     """
@@ -208,7 +299,15 @@ def get_llm(settings: Settings, provider: Optional[str] = None, **kwargs) -> LLM
             temperature=kwargs.get("temperature", 0.8),
             system_instruction=kwargs.get("system_instruction", DEFAULT_SYSTEM_INSTRUCTION),
         )
-    raise ValueError(f"Unsupported LLM provider: '{provider}'. Valid options: 'gemini', 'ollama', 'grok'")
+    elif provider == "groq":
+        return GroqLLM(
+            api_key=kwargs.get("api_key", settings.GROQ_API_KEY),
+            model_name=kwargs.get("model_name", settings.GROQ_MODEL),
+            temperature=kwargs.get("temperature", 0.8),
+            system_instruction=kwargs.get("system_instruction", DEFAULT_SYSTEM_INSTRUCTION),
+        )
+    else: 
+        raise ValueError(f"Unsupported LLM provider: '{provider}'. Valid options: 'gemini', 'ollama', 'grok' & 'groq'.")
 
 
 def get_generation_llm(settings: Settings, **kwargs) -> LLM:

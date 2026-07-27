@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "llama3.1"
     XAI_API_KEY: str = ""
     GROK_MODEL: str = "grok-4-fast-reasoning"
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_API_KEY: str = "" 
 
     # Generation and evaluation providers are resolved independently now —
     # the repo added get_generation_llm()/get_evaluation_llm() so the judge
@@ -102,8 +104,8 @@ class Settings(BaseSettings):
     @field_validator("LLM_PROVIDER")
     @classmethod
     def _validate_provider(cls, v: str) -> str:
-        if v.lower() not in ("gemini", "ollama"):
-            raise ValueError("LLM_PROVIDER must be 'gemini' or 'ollama'")
+        if v.lower() not in ("gemini", "ollama", "grok", 'groq'):
+            raise ValueError("LLM_PROVIDER must be 'gemini', 'ollama', 'grok' & 'groq'.")
         return v.lower()
 
 
