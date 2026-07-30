@@ -25,7 +25,7 @@ from app.config import Settings, get_settings
 from app.dependencies import get_benchmark_store
 from app.routers.auth import token_verifier
 from app.services.benchmark_service import (
-    BENCHMARK_QUERY_BANK, CODE_BENCHMARK_BANK, BenchmarkRunner, BenchmarkStore, TestScenario,
+    BENCHMARK_QUERY_BANK, CODE_BENCHMARK_BANK, BenchmarkRunner, BenchmarkStore, available_scenarios,
 )
 from app.services.metrics_analyzer_service import BenchmarkAnalyzer
 
@@ -50,18 +50,18 @@ class SingleQueryRequest(BaseModel):
     scenarios: Optional[List[str]] = Field(None, description="Scenarios to run (defaults to all configured).")
 
 
-def _resolve_scenarios(raw: Optional[List[str]]) -> List[TestScenario]:
+def _resolve_scenarios(raw: Optional[List[str]], settings: Settings) -> List[str]:
+    valid = available_scenarios(settings)
     if not raw:
-        return list(TestScenario)
+        return valid
     out = []
     for s in raw:
-        try:
-            out.append(TestScenario(s))
-        except ValueError:
+        if s not in valid:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unknown scenario '{s}'. Valid: {[e.value for e in TestScenario]}",
+                detail=f"Unknown scenario '{s}'. Valid: {valid}",
             )
+        out.append(s)
     return out
 
 
@@ -71,7 +71,7 @@ async def trigger_benchmark_run(
     background_tasks: BackgroundTasks,
     settings: Settings = Depends(get_settings),
 ):
-    scenarios = _resolve_scenarios(request.scenarios)
+    scenarios = _resolve_scenarios(request.scenarios, settings)
     run_id = str(uuid.uuid4())
 
     _jobs[run_id] = {
@@ -104,7 +104,7 @@ async def run_single_query(
     request: SingleQueryRequest,
     settings: Settings = Depends(get_settings),
 ):
-    scenarios = _resolve_scenarios(request.scenarios)
+    scenarios = _resolve_scenarios(request.scenarios, settings)
     try:
         runner = BenchmarkRunner(settings=settings, scenarios=scenarios, query_ids=[query_id], run_code_bench=False)
         qr = runner.execute_single_query(query_id)

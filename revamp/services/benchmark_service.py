@@ -27,11 +27,14 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from app.config import Settings, get_settings
-from app.providers.llm_provider import get_evaluation_llm, get_llm
+from app.providers.llm_provider import get_evaluation_llm, get_generation_llm, get_llm, is_provider_ready
 from app.providers.pinecone_provider import PineconeProvider
 from app.services.ab_testing_service import InstrumentedRagModel, QualityScores
 from app.services.code_analysis_service import Language, SecurityCodeAnalyzer
 from app.services.evaluation_service import CodeSecurityEvaluator, EvaluationService
+
+_HEAL_SUFFIX = "_heal"
+_NO_HEAL_SUFFIX = "_no_heal"
 
 
 class QueryCategory(str, Enum):
@@ -43,11 +46,31 @@ class QueryCategory(str, Enum):
     CRYPTOGRAPHIC_ATTACK = "cryptographic_attack"
 
 
-class TestScenario(str, Enum):
-    GEMINI_NO_HEAL = "gemini_no_heal"
-    GEMINI_HEAL = "gemini_heal"
-    OLLAMA_NO_HEAL = "ollama_no_heal"
-    OLLAMA_HEAL = "ollama_heal"
+def scenario_name(provider: str, healing: bool) -> str:
+    """'groq' + True -> 'groq_heal'; 'groq' + False -> 'groq_no_heal'."""
+    return f"{provider}{_HEAL_SUFFIX}" if healing else f"{provider}{_NO_HEAL_SUFFIX}"
+
+
+def parse_scenario(scenario: str) -> tuple[str, bool]:
+    """Inverse of scenario_name(). Suffix-matched (not split-on-'_') so it
+    works regardless of the provider name's own formatting."""
+    if scenario.endswith(_NO_HEAL_SUFFIX):
+        return scenario[: -len(_NO_HEAL_SUFFIX)], False
+    if scenario.endswith(_HEAL_SUFFIX):
+        return scenario[: -len(_HEAL_SUFFIX)], True
+    raise ValueError(f"Malformed scenario name: '{scenario}' (expected '<provider>_heal' or '<provider>_no_heal')")
+
+
+def available_scenarios(settings: Settings) -> List[str]:
+    """
+    All scenario names that can be *requested* for a benchmark run, driven
+    by Settings.BENCHMARK_PROVIDERS rather than a fixed gemini/ollama pair.
+    This lists everything configured, not just what's currently reachable
+    — a provider missing its API key still produces valid scenario names,
+    it just resolves to an per-query error at run time (mirrors the old
+    "Ollama not configured" behavior, generalized to any provider).
+    """
+    return [scenario_name(p, heal) for p in settings.benchmark_provider_list for heal in (False, True)]
 
 
 @dataclass
@@ -210,7 +233,7 @@ def _keyword_recall(response: str, expected: List[str]) -> float:
 
 
 class ScenarioRunner:
-    def __init__(self, scenario: TestScenario, rag_model: InstrumentedRagModel, eval_service: EvaluationService, apply_healing: bool):
+    def __init__(self, scenario: str, rag_model: InstrumentedRagModel, eval_service: EvaluationService, apply_healing: bool):
         self.scenario = scenario
         self.rag_model = rag_model
         self.eval_service = eval_service
@@ -227,9 +250,9 @@ class ScenarioRunner:
         gen_ms = 0.0
         eval_ms = 0.0
         heal_ms = 0.0
-        # Scenario values are "gemini_no_heal" / "ollama_heal" / etc. — the
+        # Scenario names are "<provider>_no_heal" / "<provider>_heal" — the
         # provider prefix tells us which backend actually generated this run.
-        generation_provider = self.scenario.value.split("_")[0]
+        generation_provider, _ = parse_scenario(self.scenario)
 
         try:
             prompt = self.rag_model._build_rag_prompt(bq.query, context, history=[])
@@ -293,7 +316,7 @@ class ScenarioRunner:
             timing = {"total_ms": round((time.perf_counter() - t0) * 1_000, 2)}
 
         return ScenarioResult(
-            scenario=self.scenario.value, query_id=bq.id, response=response, timing=timing,
+            scenario=self.scenario, query_id=bq.id, response=response, timing=timing,
             quality=quality, healing_triggered=healing_triggered,
             keyword_recall=_keyword_recall(response, bq.expected_keywords), error=error,
             evaluation_error=evaluation_error, generation_provider=generation_provider,
@@ -310,12 +333,11 @@ class BenchmarkRunner:
     def __init__(
         self,
         settings: Settings,
-        scenarios: Optional[List[TestScenario]] = None,
+        scenarios: Optional[List[str]] = None,
         query_ids: Optional[List[str]] = None,
         run_code_bench: bool = True,
     ):
         self.settings = settings
-        self.scenarios = scenarios or list(TestScenario)
         self.query_ids = set(query_ids) if query_ids else None
         self.run_code_bench = run_code_bench
 
@@ -324,62 +346,82 @@ class BenchmarkRunner:
         self.store = BenchmarkStore(results_dir=self.results_dir)
 
         eval_llm = get_evaluation_llm(settings)
+        self.eval_llm = eval_llm
         self.eval_service = EvaluationService(evaluator_llm=eval_llm)
 
         pinecone = PineconeProvider(settings=settings, index_name=settings.INDEX_NAME)
 
-        # NOTE: unlike other call sites, this intentionally instantiates BOTH
-        # "gemini" and "ollama" directly rather than going through
-        # get_generation_llm() — the whole point of this benchmark is to run
-        # generation on both providers side-by-side for comparison, so there
-        # is no single "the" generation provider to resolve. The evaluator
-        # above still goes through get_evaluation_llm(), matching upstream.
-        gemini_llm = get_llm(settings, provider="gemini")
-        self._gemini_model = InstrumentedRagModel(
-            llm=gemini_llm, pinecone=pinecone,
-            namespaces=settings.namespace_list, min_score=settings.MIN_SCORE,
-            evaluation_service=self.eval_service, eval_llm=eval_llm,
-        )
-
-        ollama_available = bool(settings.OLLAMA_BASE_URL)
-        if ollama_available:
-            ollama_llm = get_llm(settings, provider="ollama")
-            self._ollama_model = InstrumentedRagModel(
-                llm=ollama_llm, pinecone=pinecone,
+        # Build one InstrumentedRagModel per provider listed in
+        # Settings.BENCHMARK_PROVIDERS that's actually ready to be called
+        # (has its API key / base URL set) — replaces the old fixed
+        # gemini+ollama pair. A provider that's listed but not ready is
+        # recorded in self._unavailable instead of raising, so a run can
+        # still proceed with whatever *is* ready (mirrors the old "Ollama
+        # not configured" skip behavior, generalized to any provider).
+        self._models: Dict[str, InstrumentedRagModel] = {}
+        self._unavailable: Dict[str, str] = {}
+        for provider in settings.benchmark_provider_list:
+            if not is_provider_ready(settings, provider):
+                self._unavailable[provider] = f"'{provider}' is not configured (missing API key / base URL)"
+                continue
+            try:
+                llm = get_llm(settings, provider=provider)
+            except Exception as exc:
+                self._unavailable[provider] = str(exc)
+                continue
+            self._models[provider] = InstrumentedRagModel(
+                llm=llm, pinecone=pinecone,
                 namespaces=settings.namespace_list, min_score=settings.MIN_SCORE,
                 evaluation_service=self.eval_service, eval_llm=eval_llm,
             )
-        else:
-            self._ollama_model = None
 
-        self._code_analyzer = SecurityCodeAnalyzer(llm=gemini_llm)
+        if not self._models:
+            raise ValueError(
+                "No benchmark generation providers are ready. Configure at least one of "
+                f"BENCHMARK_PROVIDERS={settings.BENCHMARK_PROVIDERS!r} "
+                f"(unavailable: {self._unavailable})."
+            )
+
+        self.scenarios: List[str] = (
+            scenarios if scenarios is not None
+            else [scenario_name(p, heal) for p in self._models for heal in (False, True)]
+        )
+
+        # Code-vulnerability benchmark now follows GENERATION_LLM_PROVIDER —
+        # reuse that provider's already-built model if it's one of the
+        # benchmark providers, otherwise resolve it directly so the code
+        # benchmark still reflects the app's actual generation LLM even if
+        # it isn't part of this particular comparison run.
+        gen_provider = settings.GENERATION_LLM_PROVIDER.lower()
+        code_llm = self._models[gen_provider].llm if gen_provider in self._models else get_generation_llm(settings)
+        self._code_analyzer = SecurityCodeAnalyzer(llm=code_llm)
         self._code_evaluator = CodeSecurityEvaluator(llm=eval_llm)
 
-        self._scenario_map: Dict[TestScenario, tuple] = {
-            TestScenario.GEMINI_NO_HEAL: (self._gemini_model, False),
-            TestScenario.GEMINI_HEAL: (self._gemini_model, True),
-            TestScenario.OLLAMA_NO_HEAL: (self._ollama_model, False),
-            TestScenario.OLLAMA_HEAL: (self._ollama_model, True),
-        }
+        # Retrieval is provider-agnostic (pure pinecone lookup, doesn't
+        # touch .llm) — any ready model can serve as the retriever.
+        self._retriever_model = next(iter(self._models.values()))
 
-    def _get_runner(self, scenario: TestScenario) -> Optional[ScenarioRunner]:
-        model, healing = self._scenario_map[scenario]
+    def _get_runner(self, scenario: str) -> Optional[ScenarioRunner]:
+        provider, healing = parse_scenario(scenario)
+        model = self._models.get(provider)
         if model is None:
             return None
         return ScenarioRunner(scenario=scenario, rag_model=model, eval_service=self.eval_service, apply_healing=healing)
 
     def _run_single_query(self, bq: BenchmarkQuery, run_id: str) -> QueryBenchmarkResult:
-        context = self._gemini_model._vector_data_retriever(query=bq.query)
+        context = self._retriever_model._vector_data_retriever(query=bq.query)
         result = QueryBenchmarkResult(query_id=bq.id, query=bq.query, category=bq.category.value, run_id=run_id, timestamp=time.time())
         for scenario in self.scenarios:
             runner = self._get_runner(scenario)
             if runner is None:
-                result.scenario_results[scenario.value] = ScenarioResult(
-                    scenario=scenario.value, query_id=bq.id, response="", timing={}, quality={},
-                    healing_triggered=False, error="Ollama not configured — set OLLAMA_BASE_URL to enable",
+                provider, _ = parse_scenario(scenario)
+                reason = self._unavailable.get(provider, f"Provider '{provider}' is not part of this benchmark run")
+                result.scenario_results[scenario] = ScenarioResult(
+                    scenario=scenario, query_id=bq.id, response="", timing={}, quality={},
+                    healing_triggered=False, error=reason,
                 )
                 continue
-            result.scenario_results[scenario.value] = runner.run(bq, context)
+            result.scenario_results[scenario] = runner.run(bq, context)
         return result
 
     def _run_code_sample(self, sample: VulnerableCodeSample, run_id: str) -> CodeBenchmarkResult:
@@ -416,13 +458,20 @@ class BenchmarkRunner:
         queries = [bq for bq in BENCHMARK_QUERY_BANK if self.query_ids is None or bq.id in self.query_ids]
         run = BenchmarkRun(
             run_id=run_id, started_at=time.time(), completed_at=None,
-            scenarios_enabled=[s.value for s in self.scenarios], total_queries=len(queries),
+            scenarios_enabled=list(self.scenarios), total_queries=len(queries),
             config={
                 "min_score": self.settings.MIN_SCORE,
-                "ollama_available": self._ollama_model is not None,
-                "gemini_model": "gemini-2.5-flash",
-                "ollama_model": self.settings.OLLAMA_MODEL,
-                "evaluator_model": "gemini-2.0-flash-lite-001",
+                "providers_available": list(self._models.keys()),
+                "providers_unavailable": dict(self._unavailable),
+                # Read straight off the instantiated LLM objects — every
+                # provider class (GeminiLLM/OllamaLLM/GrokLLM/GroqLLM) has a
+                # model_name field, so this can never drift from what was
+                # actually called, unlike the old hardcoded strings.
+                "generation_models": {p: m.llm.model_name for p, m in self._models.items()},
+                "evaluator_provider": self.settings.EVALUATION_LLM_PROVIDER,
+                "evaluator_model": self.eval_llm.model_name,
+                "code_analysis_provider": self.settings.GENERATION_LLM_PROVIDER,
+                "code_analysis_model": self._code_analyzer.llm.model_name,
             },
         )
 

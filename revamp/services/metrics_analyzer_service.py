@@ -307,12 +307,15 @@ class BenchmarkAnalyzer:
         return out
 
     def compute_healing_roi_summary(self) -> Dict[str, Any]:
-        heal_scenarios = [s for s in self._scenarios if "heal" in s and "no" not in s]
-        no_heal_map = {"gemini_heal": "gemini_no_heal", "ollama_heal": "ollama_no_heal"}
+        # Any scenario ending in "_heal" (but not "_no_heal") pairs with the
+        # "<same provider>_no_heal" scenario, whatever the provider is —
+        # replaces the old fixed {"gemini_heal": ..., "ollama_heal": ...}
+        # map, which silently dropped any provider besides those two.
+        heal_scenarios = [s for s in self._scenarios if s.endswith("_heal") and not s.endswith("_no_heal")]
         out = {}
         for s_heal in heal_scenarios:
-            s_base = no_heal_map.get(s_heal)
-            if not s_base:
+            s_base = s_heal[: -len("_heal")] + "_no_heal"
+            if s_base not in self._scenarios:
                 continue
 
             q_base = self._scores_for(s_base)
@@ -347,8 +350,11 @@ class BenchmarkAnalyzer:
             "metadata": {
                 "run_id": self.run_id, "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 "total_queries": self._data.get("total_queries"), "scenarios": self._scenarios,
-                "evaluator_model": cfg.get("evaluator_model"), "gemini_model": cfg.get("gemini_model"),
-                "ollama_model": cfg.get("ollama_model"), "scipy_available": _SCIPY,
+                "evaluator_provider": cfg.get("evaluator_provider"), "evaluator_model": cfg.get("evaluator_model"),
+                "generation_models": cfg.get("generation_models", {}),
+                "providers_available": cfg.get("providers_available", []),
+                "providers_unavailable": cfg.get("providers_unavailable", {}),
+                "scipy_available": _SCIPY,
             },
             "scenario_stats": self.compute_scenario_stats(),
             "pairwise_comparisons": self.compute_pairwise_comparisons(),
@@ -372,7 +378,8 @@ class BenchmarkAnalyzer:
             "# DATIN RAG Pipeline — Benchmark Report", "",
             f"**Run ID**: `{meta['run_id']}`  ", f"**Generated**: {meta['generated_at']}  ",
             f"**Queries**: {meta['total_queries']}  ", f"**Scenarios**: {', '.join(meta['scenarios'])}  ",
-            f"**Evaluator**: {meta['evaluator_model']}  ",
+            f"**Generation models**: {', '.join(f'{p}={m}' for p, m in meta.get('generation_models', {}).items())}  ",
+            f"**Evaluator**: {meta.get('evaluator_provider', '')}={meta['evaluator_model']}  ",
             f"**Statistical test**: {'Wilcoxon signed-rank (scipy)' if meta['scipy_available'] else 'Sign test (scipy absent)'}",
             "", "---", "", "## 1. Scenario Quality Scores", "",
             "| Scenario | N | Mean ± SD | Median | 95% CI | Heal Rate |", "|---|---|---|---|---|---|",

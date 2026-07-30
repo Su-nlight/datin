@@ -7,6 +7,12 @@ onto app.state, no manual construction of anything. Settings are
 validated once at import (get_settings() raises immediately if a
 required var like JWT_SECRET_KEY is missing, instead of failing deep
 inside a request later). Every router pulls what it needs via Depends().
+
+Voice is included but commented out, matching the current upstream
+main.py (`# from voice_router import router as voice_router` is
+commented there too) — the code is fully migrated to app/routers/voice.py
+and app/services/voice_service.py, ready to enable whenever Twilio/
+Deepgram creds are wired back in.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,10 +22,9 @@ from slowapi.util import get_remote_address
 from starlette import status
 
 from app.config import get_settings
-from app.routers import auth, rag
+from app.routers import auth, abroute, benchmark, code_analysis, rag
 
-# from app.routers import code_analysis, voice          # see MIGRATION.md
-# from app.routers import abroute, benchmark_router      # see MIGRATION.md
+# from app.routers import voice   # disabled upstream too — enable once Twilio/Deepgram creds are set
 
 settings = get_settings()
 limiter = Limiter(key_func=get_remote_address)
@@ -31,10 +36,10 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(auth.router)
 app.include_router(rag.router)
-# app.include_router(code_analysis.router)
-# app.include_router(voice.router)
-# app.include_router(abroute.router)
-# app.include_router(benchmark_router.router)
+app.include_router(code_analysis.router)
+app.include_router(abroute.router)        # /ab-test/*   (A/B testing)
+app.include_router(benchmark.router)      # /benchmark/* (research benchmarks)
+# app.include_router(voice.router)        # /voice/*     (disabled — see note above)
 
 app.add_middleware(
     CORSMiddleware,

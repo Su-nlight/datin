@@ -270,6 +270,26 @@ class GroqLLM(LLM):
     def _llm_type(self) -> str:
         return "groq"
 
+def is_provider_ready(settings: Settings, provider: str) -> bool:
+    """
+    Whether `provider` has the credentials/config it needs to actually be
+    called — i.e. get_llm(settings, provider=provider) would produce a
+    usable client, not just an object that will 401/connection-error on
+    first request. Used by BenchmarkRunner to decide which providers to
+    stand up scenarios for.
+    """
+    provider = provider.lower()
+    if provider == "gemini":
+        return bool(settings.GENAI_API_KEY)
+    if provider == "ollama":
+        return bool(settings.OLLAMA_BASE_URL)
+    if provider == "grok":
+        return bool(settings.XAI_API_KEY)
+    if provider == "groq":
+        return bool(settings.GROQ_API_KEY)
+    return False
+
+
 def get_llm(settings: Settings, provider: Optional[str] = None, **kwargs) -> LLM:
     """
     Factory — provider defaults to settings.LLM_PROVIDER but can be

@@ -39,6 +39,19 @@ class Settings(BaseSettings):
     GENERATION_LLM_PROVIDER: str = "gemini"
     EVALUATION_LLM_PROVIDER: str = "gemini"
 
+    # ---- Benchmark suite -------------------------------------------------
+    # Comma-separated list of providers the benchmark suite should build a
+    # generation scenario for (each becomes "<provider>_no_heal" /
+    # "<provider>_heal"). Defaults to the historical gemini-vs-ollama pair
+    # so existing runs/reports keep working, but any of "gemini", "ollama",
+    # "grok", "groq" can be added/removed here — the benchmark runner reads
+    # this instead of hardcoding two fixed providers.
+    BENCHMARK_PROVIDERS: str = "gemini,ollama"
+
+    @property
+    def benchmark_provider_list(self) -> List[str]:
+        return [p.strip().lower() for p in self.BENCHMARK_PROVIDERS.split(",") if p.strip()]
+
     # ---- Pinecone / embeddings ----------------------------------------
     PINECONE_API_KEY: str = ""
     INDEX_NAME: str = ""
