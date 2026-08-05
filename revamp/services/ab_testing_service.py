@@ -76,6 +76,7 @@ class VariantResult:
     quality: QualityScores = field(default_factory=QualityScores)
     healing_triggered: bool = False
     healing_prompt: Optional[str] = None
+    healing_error: Optional[str] = None
     error: Optional[str] = None
 
 

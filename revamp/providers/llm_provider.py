@@ -14,6 +14,8 @@ Updated to match the upstream repo's latest changes:
 load_dotenv() removed; everything takes an injected Settings instance.
 """
 import json
+import re
+import time
 from typing import Any, Iterator, List, Optional
 
 import requests
@@ -181,11 +183,57 @@ class GrokLLM(LLM):
 class GroqLLM(LLM):
     """Groq API (OpenAI-compatible)."""
 
-    model_name: str = "llama-3.3-70b-versatile"
+    model_name: str = "openai/gpt-oss-20b"
     api_key: str
     base_url: str = "https://api.groq.com/openai/v1"
     temperature: float = 0.7
     system_instruction: str = "You are a helpful assistant."
+    # Groq's free tier enforces per-model tokens-per-minute caps (e.g. 8K
+    # TPM for openai/gpt-oss-120b) that a benchmark run's burst of judge
+    # calls can exceed quickly. Rather than failing the whole call on the
+    # first 429, retry using the wait time Groq itself reports.
+    max_retries: int = 5
+    retry_wait_cap_s: float = 90.0
+    # Cumulative seconds this instance has spent sleeping out 429 backoffs.
+    # Callers (e.g. BenchmarkRunner) read the delta across a call to strip
+    # rate-limit wait time out of latency metrics — a call that took 30s
+    # because it retried a 429 isn't 30s of real model inference.
+    rate_limit_wait_s: float = 0.0
+
+    @staticmethod
+    def _retry_delay_seconds(response: requests.Response) -> float:
+        retry_after = response.headers.get("retry-after")
+        if retry_after:
+            try:
+                return float(retry_after)
+            except ValueError:
+                pass
+        # Fallback: Groq's 429 body includes "Please try again in 20.76s"
+        # even when the header is absent — parse it directly.
+        match = re.search(r"try again in\s+([\d.]+)\s*s", response.text)
+        if match:
+            return float(match.group(1))
+        return 5.0  # generic backoff if neither signal is present
+
+    def _post_with_retry(self, payload: dict, headers: dict, *, stream: bool = False) -> requests.Response:
+        last_response: Optional[requests.Response] = None
+        for attempt in range(self.max_retries + 1):
+            response = requests.post(
+                f"{self.base_url}/chat/completions", headers=headers, json=payload, timeout=120, stream=stream,
+            )
+            if response.ok:
+                return response
+            last_response = response
+            if response.status_code == 429 and attempt < self.max_retries:
+                wait = min(self._retry_delay_seconds(response), self.retry_wait_cap_s) + 0.25  # small buffer
+                self.rate_limit_wait_s += wait
+                time.sleep(wait)
+                continue
+            break
+        raise RuntimeError(
+            f"Groq API error {last_response.status_code} for model '{self.model_name}' "
+            f"(after {min(attempt + 1, self.max_retries + 1)} attempt(s)): {last_response.text}"
+        )
 
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
         headers = {
@@ -206,14 +254,7 @@ class GroqLLM(LLM):
         if stop:
             payload["stop"] = stop
 
-        response = requests.post(
-            f"{self.base_url}/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=120,
-        )
-
-        response.raise_for_status()
+        response = self._post_with_retry(payload, headers)
         return response.json()["choices"][0]["message"]["content"]
 
     def _stream(self, prompt: str, stop: Optional[List[str]] = None) -> Iterator[str]:
@@ -235,16 +276,7 @@ class GroqLLM(LLM):
         if stop:
             payload["stop"] = stop
 
-        with requests.post(
-            f"{self.base_url}/chat/completions",
-            headers=headers,
-            json=payload,
-            stream=True,
-            timeout=120,
-        ) as response:
-
-            response.raise_for_status()
-
+        with self._post_with_retry(payload, headers, stream=True) as response:
             for line in response.iter_lines():
                 if not line:
                     continue

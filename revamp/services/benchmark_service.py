@@ -180,6 +180,7 @@ class ScenarioResult:
     keyword_recall: float = 0.0
     error: Optional[str] = None
     evaluation_error: Optional[str] = None  # set only if the judge failed; response/error stay untouched
+    healing_error: Optional[str] = None
     generation_provider: str = ""  # filled per-scenario in ScenarioRunner.run(), e.g. "gemini" or "ollama"
     evaluation_provider: str = field(default_factory=lambda: get_settings().EVALUATION_LLM_PROVIDER)
 
@@ -243,6 +244,7 @@ class ScenarioRunner:
         t0 = time.perf_counter()
         error: Optional[str] = None
         evaluation_error: Optional[str] = None
+        healing_error: Optional[str] = None
         response = ""
         quality: Dict[str, Any] = {}
         timing: Dict[str, float] = {}
@@ -250,51 +252,72 @@ class ScenarioRunner:
         gen_ms = 0.0
         eval_ms = 0.0
         heal_ms = 0.0
+        rate_limited_ms = 0.0  # time spent sleeping out 429s — excluded from gen/eval/heal above, kept separately
         # Scenario names are "<provider>_no_heal" / "<provider>_heal" — the
         # provider prefix tells us which backend actually generated this run.
         generation_provider, _ = parse_scenario(self.scenario)
+        gen_llm = self.rag_model.llm
+        eval_llm = self.eval_service.llm
+
+        def wait_s(llm) -> float:
+            # Only GroqLLM currently tracks this; any other provider is
+            # simply 0 via getattr's default, so this is safe everywhere.
+            return getattr(llm, "rate_limit_wait_s", 0.0)
 
         try:
             prompt = self.rag_model._build_rag_prompt(bq.query, context, history=[])
 
             t_g = time.perf_counter()
+            w0 = wait_s(gen_llm)
             response = self.rag_model.llm.predict(prompt)
-            gen_ms = (time.perf_counter() - t_g) * 1_000
+            gen_wait_ms = (wait_s(gen_llm) - w0) * 1_000
+            gen_ms = (time.perf_counter() - t_g) * 1_000 - gen_wait_ms
+            rate_limited_ms += gen_wait_ms
 
             # Evaluation (+ healing) is wrapped in its own try/except: a judge
             # failure (e.g. a 429 from the evaluation provider) must not
             # discard the response we already generated successfully above.
             try:
                 t_e = time.perf_counter()
+                w0 = wait_s(eval_llm)
                 eval_res = self.eval_service.evaluate_rag_parameters(
                     inputs={"question": bq.query}, outputs={"answer": response},
                     context={"documents": [s.strip() for s in context.split("---")]},
                 )
-                eval_ms = (time.perf_counter() - t_e) * 1_000
+                eval_wait_ms = (wait_s(eval_llm) - w0) * 1_000
+                eval_ms = (time.perf_counter() - t_e) * 1_000 - eval_wait_ms
+                rate_limited_ms += eval_wait_ms
 
                 if self.apply_healing:
                     healing = self.eval_service.eval_reflection(eval_res)
                     healing_triggered = healing["Healing_required"]
                     t_h = time.perf_counter()
+                    heal_wait_ms = 0.0
                     if healing_triggered:
+                        w0 = wait_s(gen_llm)
                         response = self.rag_model.llm.predict(
                             f'For the AI generated response: "{response}".\n'
                             f'{healing["Healing_Prompt"]}\n'
                             "Correct the answer per healing instructions."
                         )
+                        heal_wait_ms += (wait_s(gen_llm) - w0) * 1_000
                         # Re-evaluate healed output — also isolated, so a
                         # failure here still leaves the healed `response` and
                         # the pre-heal quality scores intact.
                         try:
                             t_re = time.perf_counter()
+                            w0 = wait_s(eval_llm)
                             eval_res = self.eval_service.evaluate_rag_parameters(
                                 inputs={"question": bq.query}, outputs={"answer": response},
                                 context={"documents": [s.strip() for s in context.split("---")]},
                             )
-                            eval_ms += (time.perf_counter() - t_re) * 1_000
+                            reeval_wait_ms = (wait_s(eval_llm) - w0) * 1_000
+                            eval_ms += (time.perf_counter() - t_re) * 1_000 - reeval_wait_ms
+                            rate_limited_ms += reeval_wait_ms
+                            heal_wait_ms += reeval_wait_ms
                         except Exception as reeval_exc:
                             evaluation_error = f"re_evaluation_error: {reeval_exc}"
-                    heal_ms = (time.perf_counter() - t_h) * 1_000
+                    heal_ms = (time.perf_counter() - t_h) * 1_000 - heal_wait_ms
 
                 qs = QualityScores.from_evaluation(eval_res)
                 quality = {
@@ -306,8 +329,9 @@ class ScenarioRunner:
                 evaluation_error = f"evaluation_error: {eval_exc}"
 
             timing = {
-                "generation_ms": round(gen_ms, 2), "evaluation_ms": round(eval_ms, 2),
-                "healing_ms": round(heal_ms, 2), "total_ms": round((time.perf_counter() - t0) * 1_000, 2),
+                "generation_ms": round(max(gen_ms, 0.0), 2), "evaluation_ms": round(max(eval_ms, 0.0), 2),
+                "healing_ms": round(max(heal_ms, 0.0), 2), "total_ms": round((time.perf_counter() - t0) * 1_000, 2),
+                "rate_limited_ms": round(rate_limited_ms, 2),
             }
         except Exception as exc:
             # Generation itself failed — this is the only case that marks

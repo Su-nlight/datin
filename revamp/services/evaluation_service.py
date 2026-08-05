@@ -25,6 +25,15 @@ logger = logging.getLogger(__name__)
 
 
 def parse_gemini_judgment(text: str) -> Dict[str, Any]:
+    # Try to find JSON block first
+    json_match = re.search(r"\{.*\}", text, re.DOTALL)
+    if json_match:
+        try:
+            data = json.loads(json_match.group(0))
+            return {"score": bool(data.get("score")), "comment": data.get("comment", "")}
+        except:
+            pass
+    # Fallback to regex
     score_match = re.search(r"Score:\s*(True|False)", text, re.IGNORECASE)
     comment_match = re.search(r"Comment:\s*(.*)", text, re.IGNORECASE)
 
@@ -92,18 +101,26 @@ class EvaluationService:
         return results
 
     @staticmethod
-    def eval_reflection(results: dict) -> Dict[str, Any]:
+    def eval_reflection(results: dict, question: str = "") -> Dict[str, Any]:
         heal_flag = False
         healing_prompt = "Following is the reflection of the above response.\n"
         for eval_para, eval_result in results.items():
             if eval_result["score"] is False:
                 heal_flag = True
                 healing_prompt += (
-                    f"For parameter {eval_para.upper()} following is the evaluation "
-                    f"result's final comment:\n{eval_result['comment']}\n"
+                    f"For parameter {eval_para.upper()} the evaluation result is "
+                    f"FAILED with the following final comment:\n{eval_result['comment']}\n"
                 )
         if not heal_flag:
             return {"Healing_required": False, "Healing_Prompt": ""}
+        # Self-contained heal prompt: without the original question the heal
+        # pass cannot know what the answer should address (observed failure:
+        # the model replied "I need more context to give a grounded reply").
+        if question:
+            healing_prompt = (
+                f"ORIGINAL QUESTION:\n{question}\n\n"
+                f"{healing_prompt}"
+            )
         return {"Healing_required": True, "Healing_Prompt": healing_prompt}
 
 

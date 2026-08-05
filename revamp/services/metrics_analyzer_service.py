@@ -289,6 +289,10 @@ class BenchmarkAnalyzer:
             gen = self._timing_for(s, "generation_ms")
             evl = self._timing_for(s, "evaluation_ms")
             heal = self._timing_for(s, "healing_ms")
+            # Not gated into `n` below — older run files saved before this
+            # field existed simply won't have it, and that shouldn't zero
+            # out the rest of the latency table for those runs.
+            rl = self._timing_for(s, "rate_limited_ms")
             n = min(len(tot), len(gen), len(evl), len(heal))
             if n == 0:
                 continue
@@ -303,6 +307,7 @@ class BenchmarkAnalyzer:
                 "healing_pct_of_total": round(_mean(heal_pct), 1),
                 "p95_total_ms": round(_percentile(tot, 95), 1),
                 "p99_total_ms": round(_percentile(tot, 99), 1),
+                "rate_limited_ms_mean": round(_mean(rl), 1) if rl else 0.0,
             }
         return out
 
@@ -413,10 +418,19 @@ class BenchmarkAnalyzer:
                 row += f" {val:.3f} |" if isinstance(val, float) else " — |"
             lines.append(row)
 
-        lines += ["", "## 5. Latency Budget", "", "| Scenario | Mean Total (ms) | Gen % | Eval % | Heal % | p95 (ms) |", "|---|---|---|---|---|---|"]
+        lines += [
+            "", "## 5. Latency Budget", "",
+            "| Scenario | Mean Total (ms) | Gen % | Eval % | Heal % | p95 (ms) | Rate-Limit Wait (ms) |",
+            "|---|---|---|---|---|---|---|",
+        ]
         for s, d in lat.items():
             tot = d["total_ms"]
-            lines.append(f"| {s} | {tot['mean']:.0f} ± {tot['std']:.0f} | {d['generation_pct_of_total']}% | {d['evaluation_pct_of_total']}% | {d['healing_pct_of_total']}% | {d['p95_total_ms']:.0f} |")
+            rl = d.get("rate_limited_ms_mean", 0.0)
+            lines.append(
+                f"| {s} | {tot['mean']:.0f} ± {tot['std']:.0f} | {d['generation_pct_of_total']}% | "
+                f"{d['evaluation_pct_of_total']}% | {d['healing_pct_of_total']}% | {d['p95_total_ms']:.0f} | "
+                f"{rl:.0f} |"
+            )
 
         lines += ["", "## 6. Self-Healing ROI", ""]
         for pair, d in roi.items():

@@ -181,7 +181,7 @@ class RagService:
                 outputs={"answer": response},
                 context={"documents": [d.strip() for d in context.split("---")]},
             )
-            healing = self.evaluation_service.eval_reflection(eval_results)
+            healing = self.evaluation_service.eval_reflection(eval_results, question=user_query)
 
             if healing["Healing_required"]:
                 healing_prompt = (
