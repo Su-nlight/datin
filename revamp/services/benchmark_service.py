@@ -289,22 +289,36 @@ class ScenarioRunner:
                 rate_limited_ms += eval_wait_ms
 
                 if self.apply_healing:
-                    healing = self.eval_service.eval_reflection(eval_res)
+                    healing = self.eval_service.eval_reflection(eval_res, question=bg.query)
                     healing_triggered = healing["Healing_required"]
                     t_h = time.perf_counter()
                     heal_wait_ms = 0.0
-                    if healing_triggered:
-                        w0 = wait_s(gen_llm)
-                        response = self.rag_model.llm.predict(
-                            f'For the AI generated response: "{response}".\n'
-                            f'{healing["Healing_Prompt"]}\n'
-                            "Correct the answer per healing instructions."
-                        )
-                        heal_wait_ms += (wait_s(gen_llm) - w0) * 1_000
-                        # Re-evaluate healed output — also isolated, so a
-                        # failure here still leaves the healed `response` and
-                        # the pre-heal quality scores intact.
-                        try:
+                    # if healing_triggered:
+                    #     w0 = wait_s(gen_llm)
+                    #     response = self.rag_model.llm.predict(
+                    #         f'For the AI generated response: "{response}".\n'
+                    #         f'{healing["Healing_Prompt"]}\n'
+                    #         "Correct the answer per healing instructions."
+                    #     )
+                    #     heal_wait_ms += (wait_s(gen_llm) - w0) * 1_000
+                    #     # Re-evaluate healed output — also isolated, so a
+                    #     # failure here still leaves the healed `response` and
+                    #     # the pre-heal quality scores intact.
+                    #     try:
+                    if healing_triggered: 
+                        pre_heal_response = response 
+                        w0 = wait_s(gen_llm) 
+                        response = self.rag_model.llm.predict( f'ORIGINAL QUESTION:\n{bq.query}\n\n' f'AI GENERATED RESPONSE (to be corrected):\n"{response}"\n\n' f'{healing["Healing_Prompt"]}\n' "Correct the answer per the healing instructions. " "Reply with the corrected answer only, directly addressing the ORIGINAL QUESTION." ) 
+                        heal_wait_ms += (wait_s(gen_llm) - w0) * 1_000 
+                        # Surface a no-op heal instead of recording it as success. 
+                        if not response.strip() or response.strip() == pre_heal_response.strip(): 
+                            healing_error = "healing_error: heal pass returned empty/unchanged response" 
+                        # Re-evaluate healed output — only when the heal pass 
+                        # actually changed the answer; also isolated, so a 
+                        # failure here still leaves the healed response and 
+                        # the pre-heal quality scores intact. 
+                        if not healing_error: 
+                            try:
                             t_re = time.perf_counter()
                             w0 = wait_s(eval_llm)
                             eval_res = self.eval_service.evaluate_rag_parameters(
@@ -343,7 +357,7 @@ class ScenarioRunner:
             scenario=self.scenario, query_id=bq.id, response=response, timing=timing,
             quality=quality, healing_triggered=healing_triggered,
             keyword_recall=_keyword_recall(response, bq.expected_keywords), error=error,
-            evaluation_error=evaluation_error, generation_provider=generation_provider,
+            evaluation_error=evaluation_error, healing_error=healing_error, generation_provider=generation_provider,
         )
 
 

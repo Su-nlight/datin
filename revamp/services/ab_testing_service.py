@@ -166,28 +166,64 @@ class InstrumentedRagModel(RagService):
                 outputs={"answer": response},
                 context={"documents": [s.strip() for s in context.split("---")]},
             )
-            healing = self._eval_service.eval_reflection(eval_res)
+            healing = self._eval_service.eval_reflection(eval_res, question=user_query)
             eval_ms = (time.perf_counter() - t_e) * 1_000
 
             t_h = time.perf_counter()
             triggered = healing["Healing_required"]
             heal_prompt_used: Optional[str] = None
+            # if triggered:
+            #     heal_prompt_used = healing["Healing_Prompt"]
+            #     response = self.llm.predict(
+            #         f'For the AI generated response: "{response}".\n'
+            #         f"{heal_prompt_used}\n"
+            #         "Correct the answer per the healing instructions and return accurate response."
+            #     )
+            # heal_ms = (time.perf_counter() - t_h) * 1_000
+
+            # if triggered:
+            #     t_re = time.perf_counter()
+            #     eval_res = self._eval_service.evaluate_rag_parameters(
+            #         inputs={"question": user_query},
+            #         outputs={"answer": response},
+            #         context={"documents": [s.strip() for s in context.split("---")]},
+            #     )
+            #     eval_ms += (time.perf_counter() - t_re) * 1_000
             if triggered:
                 heal_prompt_used = healing["Healing_Prompt"]
+                pre_heal_response = response
+
                 response = self.llm.predict(
-                    f'For the AI generated response: "{response}".\n'
+                    f"ORIGINAL QUESTION:\n{user_query}\n\n"
+                    f'AI GENERATED RESPONSE (to be corrected):\n"{response}"\n\n'
                     f"{heal_prompt_used}\n"
-                    "Correct the answer per the healing instructions and return accurate response."
+                    "Correct the answer per the healing instructions and return accurate response. "
+                    "Reply with the corrected answer only, directly addressing the ORIGINAL QUESTION."
                 )
+
+                if (
+                    not response.strip()
+                    or response.strip() == pre_heal_response.strip()
+                ):
+                    result.healing_error = (
+                        "healing_error: heal pass returned empty/unchanged response"
+                    )
+
             heal_ms = (time.perf_counter() - t_h) * 1_000
 
-            if triggered:
+            if triggered and not result.healing_error:
                 t_re = time.perf_counter()
+
                 eval_res = self._eval_service.evaluate_rag_parameters(
                     inputs={"question": user_query},
                     outputs={"answer": response},
-                    context={"documents": [s.strip() for s in context.split("---")]},
+                    context={
+                        "documents": [
+                            s.strip() for s in context.split("---")
+                        ]
+                    },
                 )
+
                 eval_ms += (time.perf_counter() - t_re) * 1_000
 
             result.response = response

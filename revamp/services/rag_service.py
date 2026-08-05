@@ -185,9 +185,11 @@ class RagService:
 
             if healing["Healing_required"]:
                 healing_prompt = (
-                    f'For the AI generated response: "{response}".\n'
+                    f"ORIGINAL QUESTION:\n{user_query}\n\n"
+                    f'AI GENERATED RESPONSE (to be corrected):\n"{response}"\n\n'
                     f'{healing["Healing_Prompt"]}'
-                    f"Correct the answer as per the healing required and return the response accurately."
+                    "Correct the answer as per the healing required and return the response accurately. "
+                    "Reply with the corrected answer only, directly addressing the ORIGINAL QUESTION."
                 )
                 response = self.llm.predict(healing_prompt)
         except Exception as exc:
