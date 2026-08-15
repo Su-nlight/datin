@@ -26,6 +26,9 @@ from app.services.memory_service import MemoryService
 from app.services.rag_service import RagService
 from langchain.llms.base import LLM
 
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+limiter = Limiter(key_func=get_remote_address)
 
 @lru_cache
 def get_generation_llm_dependency() -> LLM:

@@ -88,7 +88,7 @@ class VoiceService:
 
     async def text_to_speech(self, text: str) -> Path:
         filename = AUDIO_DIR / f"{uuid.uuid4()}.mp3"
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, lambda: gTTS(text=text, lang="en", slow=False).save(str(filename)))
         return filename
 

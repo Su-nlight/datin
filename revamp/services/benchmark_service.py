@@ -85,8 +85,8 @@ BENCHMARK_QUERY_BANK: List[BenchmarkQuery] = [
     BenchmarkQuery(id="APT-01", query="Describe the initial access and lateral movement techniques used by APT28 (Fancy Bear) against NATO member states, including specific MITRE ATT&CK technique IDs.", category=QueryCategory.APT_THREAT_ACTOR, expected_keywords=["APT28", "spearphishing", "T1566", "lateral movement", "credential"]),
     BenchmarkQuery(id="APT-02", query="What are the command and control infrastructure patterns and communication protocols attributed to the Lazarus Group in their financial sector attacks?", category=QueryCategory.APT_THREAT_ACTOR, expected_keywords=["Lazarus", "C2", "DPRK", "SWIFT", "beaconing"]),
     BenchmarkQuery(id="APT-03", query="How does APT41 combine nation-state espionage operations with financially motivated cybercrime, and what TTPs distinguish these two operational modes?", category=QueryCategory.APT_THREAT_ACTOR, expected_keywords=["APT41", "espionage", "ransomware", "supply chain", "China"]),
-    BenchmarkQuery(id="APT-04", query="Explain the supply chain attack methodology used in the SolarWinds SUNBURST campaign, including the build-system compromise and TEARDROP payload delivery mechanism.", category=QueryCategory.APT_THREAT_ACTOR, expected_keywords=["SolarWinds", "SUNBURST", "Orion", "build system", "DGA"]),
-    BenchmarkQuery(id="MAL-01", query="Describe the persistence mechanisms, propagation method via EternalBlue, and kill-switch domain mechanism of WannaCry ransomware.", category=QueryCategory.MALWARE_ANALYSIS, expected_keywords=["WannaCry", "EternalBlue", "kill switch", "SMB", "MBR"]),
+    BenchmarkQuery(id="APT-04", query="Explain the supply chain attack methodology used in the SolarWinds SUNBURST campaign, including the build-system compromise and TEARDROP payload delivery mechanism.", category=QueryCategory.APT_THREAT_ACTOR, expected_keywords=["SolarWinds", "SUNBURST", "Orion", "build system", "DGA", "C2"]),
+    BenchmarkQuery(id="MAL-01", query="Describe the persistence mechanisms, propagation method via EternalBlue, and kill-switch domain mechanism of WannaCry ransomware.", category=QueryCategory.MALWARE_ANALYSIS, expected_keywords=["WannaCry", "EternalBlue", "kill switch", "SMB", "MBR", "iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com"]),
     BenchmarkQuery(id="MAL-02", query="How does Emotet achieve lateral movement using pass-the-hash and credential dumping, and what network-based indicators of compromise should SOC teams monitor?", category=QueryCategory.MALWARE_ANALYSIS, expected_keywords=["Emotet", "pass-the-hash", "credential", "network", "IOC"]),
     BenchmarkQuery(id="MAL-03", query="What kernel-level rootkit techniques does the Necurs botnet employ for self-preservation, and how can these be detected using memory forensics?", category=QueryCategory.MALWARE_ANALYSIS, expected_keywords=["Necurs", "rootkit", "kernel", "DKOM", "memory forensics"]),
     BenchmarkQuery(id="MAL-04", query="Explain the EDR evasion techniques used by TrickBot, specifically its use of process injection and anti-analysis mechanisms including timing-based sandbox detection.", category=QueryCategory.MALWARE_ANALYSIS, expected_keywords=["TrickBot", "EDR", "process injection", "sandbox", "evasion"]),
@@ -178,11 +178,14 @@ class ScenarioResult:
     quality: Dict[str, Any]
     healing_triggered: bool
     keyword_recall: float = 0.0
+    response_length: int = 0  # New field
     error: Optional[str] = None
     evaluation_error: Optional[str] = None  # set only if the judge failed; response/error stay untouched
     healing_error: Optional[str] = None
     generation_provider: str = ""  # filled per-scenario in ScenarioRunner.run(), e.g. "gemini" or "ollama"
     evaluation_provider: str = field(default_factory=lambda: get_settings().EVALUATION_LLM_PROVIDER)
+    initial_evaluation_ms: float = 0.0
+    re_evaluation_ms: float = 0.0
 
 
 @dataclass
@@ -249,6 +252,10 @@ class ScenarioRunner:
         quality: Dict[str, Any] = {}
         timing: Dict[str, float] = {}
         healing_triggered = False
+
+        initial_evaluation_ms: float = 0.0
+        re_evaluation_ms: float = 0.0
+
         gen_ms = 0.0
         eval_ms = 0.0
         heal_ms = 0.0
@@ -285,7 +292,7 @@ class ScenarioRunner:
                     context={"documents": [s.strip() for s in context.split("---")]},
                 )
                 eval_wait_ms = (wait_s(eval_llm) - w0) * 1_000
-                eval_ms = (time.perf_counter() - t_e) * 1_000 - eval_wait_ms
+                initial_evaluation_ms += (time.perf_counter() - t_e) * 1_000 - eval_wait_ms
                 rate_limited_ms += eval_wait_ms
 
                 if self.apply_healing:
@@ -312,7 +319,7 @@ class ScenarioRunner:
                                 context={"documents": [s.strip() for s in context.split("---")]},
                             )
                             reeval_wait_ms = (wait_s(eval_llm) - w0) * 1_000
-                            eval_ms += (time.perf_counter() - t_re) * 1_000 - reeval_wait_ms
+                            re_evaluation_ms += (time.perf_counter() - t_re) * 1_000 - reeval_wait_ms
                             rate_limited_ms += reeval_wait_ms
                             heal_wait_ms += reeval_wait_ms
                         except Exception as reeval_exc:
@@ -329,9 +336,9 @@ class ScenarioRunner:
                 evaluation_error = f"evaluation_error: {eval_exc}"
 
             timing = {
-                "generation_ms": round(max(gen_ms, 0.0), 2), "evaluation_ms": round(max(eval_ms, 0.0), 2),
+                "generation_ms": round(max(gen_ms, 0.0), 2), "evaluation_ms": round(max(initial_evaluation_ms, 0.0), 2),
                 "healing_ms": round(max(heal_ms, 0.0), 2), "total_ms": round((time.perf_counter() - t0) * 1_000, 2),
-                "rate_limited_ms": round(rate_limited_ms, 2),
+                "rate_limited_ms": round(rate_limited_ms, 2), "re_evaluation_ms": round(max(re_evaluation_ms, 0.0), 2), 
             }
         except Exception as exc:
             # Generation itself failed — this is the only case that marks
@@ -344,6 +351,8 @@ class ScenarioRunner:
             quality=quality, healing_triggered=healing_triggered,
             keyword_recall=_keyword_recall(response, bq.expected_keywords), error=error,
             evaluation_error=evaluation_error, generation_provider=generation_provider,
+            initial_evaluation_ms=initial_evaluation_ms,
+            re_evaluation_ms=re_evaluation_ms,
         )
 
 
@@ -433,7 +442,9 @@ class BenchmarkRunner:
         return ScenarioRunner(scenario=scenario, rag_model=model, eval_service=self.eval_service, apply_healing=healing)
 
     def _run_single_query(self, bq: BenchmarkQuery, run_id: str) -> QueryBenchmarkResult:
+        t_ret = time.perf_counter()
         context = self._retriever_model._vector_data_retriever(query=bq.query)
+        ret_ms = (time.perf_counter() - t_ret) * 1_000
         result = QueryBenchmarkResult(query_id=bq.id, query=bq.query, category=bq.category.value, run_id=run_id, timestamp=time.time())
         for scenario in self.scenarios:
             runner = self._get_runner(scenario)
@@ -446,6 +457,7 @@ class BenchmarkRunner:
                 )
                 continue
             result.scenario_results[scenario] = runner.run(bq, context)
+            result.scenario_results[scenario].timing["retrieval_ms"] = ret_ms
         return result
 
     def _run_code_sample(self, sample: VulnerableCodeSample, run_id: str) -> CodeBenchmarkResult:

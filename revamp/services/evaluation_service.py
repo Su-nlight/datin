@@ -9,6 +9,7 @@ as a sibling class in this same module — it already imported
 parse_gemini_judgment from evaluator.py, so keeping it here removes a
 cross-file import instead of adding one.
 """
+import json
 import logging
 import re
 from typing import Any, Dict, List, Optional
@@ -30,8 +31,17 @@ def parse_gemini_judgment(text: str) -> Dict[str, Any]:
     if json_match:
         try:
             data = json.loads(json_match.group(0))
-            return {"score": bool(data.get("score")), "comment": data.get("comment", "")}
-        except:
+            raw_score = data.get("score")
+            if isinstance(raw_score, bool):
+                score = raw_score
+            elif isinstance(raw_score, str):
+                # A judge may emit "true"/"false" as strings; bool("false")
+                # is True (non-empty string), so normalize explicitly.
+                score = raw_score.strip().lower() == "true"
+            else:
+                score = bool(raw_score) if raw_score is not None else None
+            return {"score": score, "comment": data.get("comment", "")}
+        except (json.JSONDecodeError, ValueError, KeyError):
             pass
     # Fallback to regex
     score_match = re.search(r"Score:\s*(True|False)", text, re.IGNORECASE)
@@ -105,7 +115,12 @@ class EvaluationService:
         heal_flag = False
         healing_prompt = "Following is the reflection of the above response.\n"
         for eval_para, eval_result in results.items():
-            if eval_result["score"] is False:
+            # Heal on anything that is not a clear pass: a failed parse
+            # (score=None) must trigger healing too, otherwise the worst
+            # answers — the ones the judge couldn't even classify — are
+            # exactly the ones that never get healed.
+            if eval_result.get("score") is not True:
+
                 heal_flag = True
                 healing_prompt += (
                     f"For parameter {eval_para.upper()} the evaluation result is "

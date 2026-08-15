@@ -20,13 +20,13 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from starlette import status
 
-from app.dependencies import get_auth_service, get_database_service
+from app.dependencies import get_auth_service, get_database_service, limiter
 from app.models.auth_models import CreateUserDatabase, RefreshRequest, Token, UserCreate
 from app.services.auth_service import AuthService
 from app.services.database_service import DatabaseService
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="authenticate/login")
-limiter = Limiter(key_func=get_remote_address)
+
 
 router = APIRouter(prefix="/authenticate", tags=["authenticate"])
 

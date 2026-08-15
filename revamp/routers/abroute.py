@@ -19,11 +19,14 @@ from starlette import status
 
 from app.dependencies import get_ab_test_store, get_instrumented_rag_service
 from app.services.ab_testing_service import ABTestResult, ABTestStore, InstrumentedRagModel
+from app.routers.auth import token_verifier
 
-router = APIRouter(prefix="/ab-test", tags=["ab-testing"])
+router = APIRouter(prefix="/ab-test", tags=["ab-testing"], dependencies=[Depends(token_verifier)],)
 
-_batch_jobs: dict = {}  # job_id → progress dict; same in-memory registry as before
-
+# _batch_jobs: dict = {}  # job_id → progress dict; same in-memory registry as before
+_batch_jobs: Dict[str, Dict] = {}
+_jobs_file = Path("data/ab_batch_jobs.json")
+_jobs_file.parent.mkdir(exist_ok=True)
 
 class ABTestRequest(BaseModel):
     query: str = Field(..., min_length=5, description="Cybersecurity query to test")

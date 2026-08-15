@@ -35,8 +35,19 @@ router = APIRouter(
     dependencies=[Depends(token_verifier)],
 )
 
-_jobs: dict = {}  # job_id → progress dict; same in-memory registry as before
+# _jobs: dict = {}  # job_id → progress dict; same in-memory registry as before
+_jobs: Dict[str, Dict] = {}
+_jobs_file = Path("data/benchmark_jobs.json")  # New
+_jobs_file.parent.mkdir(exist_ok=True)
 
+def _load_jobs():
+    global _jobs
+    if _jobs_file.exists():
+        _jobs = json.loads(_jobs_file.read_text())
+_load_jobs()
+
+def _save_jobs():
+    _jobs_file.write_text(json.dumps(_jobs))
 
 class BenchmarkRunRequest(BaseModel):
     scenarios: Optional[List[str]] = Field(

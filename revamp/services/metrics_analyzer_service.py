@@ -189,6 +189,7 @@ class BenchmarkAnalyzer:
             heal_ms = self._timing_for(s, "healing_ms")
 
             heal_cnt = sum(1 for qr in self._qr if qr.get("scenario_results", {}).get(s, {}).get("healing_triggered", False))
+            heal_err_cnt = sum(1 for qr in self._qr if qr.get("scenario_results", {}).get(s, {}).get("healing_error")) # New
             n_valid = sum(1 for qr in self._qr if not qr.get("scenario_results", {}).get(s, {}).get("error"))
 
             ci_low, ci_hi = bootstrap_ci(scores) if scores else (0.0, 0.0)
@@ -201,6 +202,7 @@ class BenchmarkAnalyzer:
                     "evaluation": describe(eval_ms), "healing": describe(heal_ms),
                 },
                 "healing_trigger_rate": round(heal_cnt / n_valid, 3) if n_valid else 0.0,
+                "healing_success_rate": round((heal_cnt - heal_err_cnt) / heal_cnt, 3) if heal_cnt else 0.0
             }
         return out
 

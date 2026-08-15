@@ -16,7 +16,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from starlette import status
 
-from app.dependencies import get_code_analysis_service, get_code_evaluator, get_generation_llm_dependency
+from app.dependencies import get_code_analysis_service, get_code_evaluator, get_generation_llm_dependency, limiter
 from app.models.code_analysis_models import (
     CodeAnalysisRequest, CodeAnalysisResponse, CodeSecurityReport,
     CodeSecurityReportRequest, VulnerabilityRemediationRequest,
@@ -27,7 +27,6 @@ from app.services.code_analysis_service import Language, SecurityCodeAnalyzer
 from app.services.evaluation_service import CodeSecurityEvaluator
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter(
     prefix="/code-analysis",
