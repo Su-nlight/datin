@@ -17,10 +17,12 @@ import tempfile
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
+from pathlib import Path
 
 from langchain.llms.base import LLM
 
 from app.services.rag_service import RagService
+from app.models.code_analysis_models import CodeAnalysisResult, CodeAnalysisRequest, SecurityFinding
 
 logger = logging.getLogger(__name__)
 
@@ -31,16 +33,6 @@ class Language(Enum):
     JAVA = "java"
     JAVASCRIPT = "javascript"
 
-
-@dataclass
-class SecurityFinding:
-    severity: str
-    category: str
-    description: str
-    line: int
-    column: int
-    remediation: str
-    source: str
 
 
 class StaticAnalyzer:
@@ -106,13 +98,12 @@ class StaticAnalyzer:
                     for res in output.get("results", []):
                         severity_map = {"ERROR": "critical", "WARNING": "high", "INFO": "medium"}
                         findings.append(SecurityFinding(
-                            severity=severity_map.get(res.get("extra", {}).get("severity", "ERROR"), "high"),
-                            category=res.get("check_id", "unknown").split(".")[-1],
-                            description=res.get("extra", {}).get("message", res.get("message", "Unknown")),
+                            rule_id=res.get("check_id", "unknown"),
+                            message=res.get("extra", {}).get("message", res.get("message", "Unknown")),
+                            path="",  # semgrep doesn't provide file path in this context
                             line=res.get("start", {}).get("line", 0),
-                            column=res.get("start", {}).get("col", 0),
-                            remediation="See semgrep docs",
-                            source="static_analysis",
+                            severity=severity_map.get(res.get("extra", {}).get("severity", "ERROR"), "high").lower(),
+                            tool="semgrep",
                         ))
             finally:
                 os.unlink(temp_file)
@@ -153,18 +144,17 @@ class StaticAnalyzer:
                 f.write(code)
                 temp_file = f.name
             try:
-                result = subprocess.run(["cppcheck", "--json", "--enable=security", temp_file], capture_output=True, text=True, timeout=15)
+                result = subprocess.run(["cppcheck", "--template=json", "--enable=security", temp_file], capture_output=True, text=True, timeout=15)
                 output = json.loads(result.stdout)
                 severity_map = {"error": "critical", "warning": "high", "style": "low", "information": "info"}
                 for error in output.get("errors", []):
                     findings.append(SecurityFinding(
-                        severity=severity_map.get(error.get("severity", "warning"), "high"),
-                        category=error.get("id", "unknown"),
-                        description=error.get("message", "Unknown"),
+                        rule_id=error.get("id", "unknown"),
+                        message=error.get("message", "Unknown"),
+                        path="",
                         line=error.get("location", {}).get("info", [{}])[0].get("line", 0),
-                        column=0,
-                        remediation="See cppcheck docs",
-                        source="static_analysis",
+                        severity=severity_map.get(error.get("severity", "warning"), "high").lower(),
+                        tool="cppcheck",
                     ))
             finally:
                 os.unlink(temp_file)
@@ -174,6 +164,10 @@ class StaticAnalyzer:
 
     def _run_eslint(self, code: str) -> List[SecurityFinding]:
         findings = []
+        # Skip if no eslint config exists — avoids config-error "findings"
+        eslint_rc = any(Path(p).exists() for p in [".eslintrc", ".eslintrc.json", ".eslintrc.js", ".eslintrc.yml", ".eslintrc.yaml"])
+        if not eslint_rc:
+            return findings
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False) as f:
                 f.write(code)
@@ -185,13 +179,12 @@ class StaticAnalyzer:
                     for msg in file_res.get("messages", []):
                         severity_map = {2: "critical", 1: "high"}
                         findings.append(SecurityFinding(
-                            severity=severity_map.get(msg.get("severity", 1), "high"),
-                            category=msg.get("ruleId", "unknown"),
-                            description=msg.get("message", "Unknown"),
+                            rule_id=msg.get("ruleId", "unknown"),
+                            message=msg.get("message", "Unknown"),
+                            path="",
                             line=msg.get("line", 0),
-                            column=msg.get("column", 0),
-                            remediation="See ESLint docs",
-                            source="static_analysis",
+                            severity=severity_map.get(msg.get("severity", 1), "high").lower(),
+                            tool="eslint",
                         ))
             finally:
                 os.unlink(temp_file)
@@ -287,14 +280,8 @@ Provide:
                     summary_lines.append(f"  - Line {finding.line}: {finding.category} - {finding.description}")
         return "\n".join(summary_lines)
 
-    def format_findings_for_output(self, findings: List[SecurityFinding]) -> List[Dict]:
-        return [
-            {
-                "severity": f.severity, "category": f.category, "description": f.description,
-                "line": f.line, "column": f.column, "remediation": f.remediation, "source": f.source,
-            }
-            for f in findings
-        ]
+    def format_findings_for_output(self, findings: List[SecurityFinding]) -> List[SecurityFinding]:
+        return findings  # Already pydantic SecurityFinding instances
 
     def analyze_stream(self, code: str, language: Optional[Language] = None):
         if language is None:

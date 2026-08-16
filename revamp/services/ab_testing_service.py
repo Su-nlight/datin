@@ -55,15 +55,16 @@ class QualityScores:
         def _b(k):
             return eval_results.get(k, {}).get("score")
 
-        scores = [_b("correctness"), _b("helpfulness"), _b("groundedness"), _b("retrieval_relevance")]
-        true_cnt = sum(1 for s in scores if s is True)
-        valid_cnt = sum(1 for s in scores if s is not None)
+        # Count only explicitly True/False as valid for overall_score calculation
+        valid_scores = [s for s in scores if s is not None]
+        true_cnt = sum(1 for s in valid_scores if s is True) 
+
         return cls(
             correctness=_b("correctness"),
             helpfulness=_b("helpfulness"),
             groundedness=_b("groundedness"),
             retrieval_relevance=_b("retrieval_relevance"),
-            overall_score=round(true_cnt / valid_cnt, 3) if valid_cnt else 0.0,
+            overall_score=round(true_cnt / len(valid_scores), 3) if valid_scores else 0.0,
             raw_evaluation=eval_results,
         )
 

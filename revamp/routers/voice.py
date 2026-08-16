@@ -164,7 +164,7 @@ async def voice_process(
         _cleanup_voice_session(CallSid, memory)
         return Response(content=VoiceService.twiml_goodbye(), media_type="application/xml")
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     loop.run_in_executor(None, _run_rag_and_store, rag_service, memory, transcript, session_id, CallSid)
 
     deliver_url = f"{settings.PUBLIC_BASE_URL}/voice/deliver"

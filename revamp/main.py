@@ -22,12 +22,12 @@ from slowapi.util import get_remote_address
 from starlette import status
 
 from app.config import get_settings
+from app.dependencies import limiter
 from app.routers import auth, abroute, benchmark, code_analysis, rag
 
 # from app.routers import voice   # disabled upstream too — enable once Twilio/Deepgram creds are set
 
 settings = get_settings()
-limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="Airi — Cybersecurity RAG API", version="2.0.0")
 
